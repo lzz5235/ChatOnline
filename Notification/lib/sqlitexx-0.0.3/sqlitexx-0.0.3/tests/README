@@ -1,0 +1,7 @@
+testc	- plain C sqlite test
+test1	- basic connect and disconnect in the scope of the connection object
+test2	- basic DDL, insert data, select data, size() and column() operators
+test3	- select data, accessors and associative arrays for column reference
+test4	- more complex prepare and insert statement
+test5	- exec without transaction, execution of pragmas
+test6	- basic cursor with result::const_iterator

@@ -1,0 +1,64 @@
+TOPDIR = ..
+
+SUBDIRS =
+
+INCLUDE_DIRS = \
+	/I$(TOPDIR)\include /I. \
+	/I$(TOPDIR)\sqlite-3.6.18 \
+	/D_WIN32_WINNT=0x400 /I"$(PLATFORM_SDK_DIR)\Include"
+
+INCLUDE_LDFLAGS = \
+	/LIBPATH:"$(PLATFORM_SDK_DIR)\lib"
+
+INCLUDE_LIBS = \
+	$(TOPDIR)\src\sqlite3xx.lib \
+	$(TOPDIR)\sqlite-3.6.18\sqlite3.lib
+
+TEST_CPP_BINS = \
+	test1.exe \
+	test2.exe \
+	test3.exe \
+	test4.exe \
+	test5.exe \
+	test6.exe \
+	test7.exe \
+	test8.exe
+
+TEST_BINS = \
+	testc.exe
+
+!INCLUDE $(TOPDIR)\makefiles\nmake\sub.mk
+
+# temporary
+testc.exe: testc.obj
+test1.exe: test1.obj
+test2.exe: test2.obj
+test3.exe: test3.obj
+test4.exe: test4.obj
+test5.exe: test5.obj
+test6.exe: test6.obj
+test7.exe: test7.obj
+test8.exe: test8.obj
+
+local_all:
+
+local_clean:
+	@-erase *.db *.db-journal 2>NUL
+	@-erase *.RES *.DIFF 2>NUL
+
+local_distclean:
+
+# disabled tests
+#-@./exec_test test6 "STL iterators" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+#-@./exec_test test7 "tracing" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+
+# create the must files with ./test2 | sed 's/\(time:[^\)]*\)//g' > test2.MUST
+# to eliminate the execution time..
+local_test: $(CPP_BINS) $(BINS)
+	@exec_test.cmd testc "test plain old C API" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test1 "create and close database" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test2 "create simple table, insert some data, query it" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test3 "prepared statements with parameter binding" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test4 "type conversion of bind parameters" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test5 "PRAGMAs outside a transaction" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"
+	@exec_test.cmd test8 "ticket #14: to conversion fails with SQLITE_NULL" "$(PLATFORM)" "$(LINUX_DIST)" "$(LINUX_REV)"

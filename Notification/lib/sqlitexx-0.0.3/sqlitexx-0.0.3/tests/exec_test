@@ -1,0 +1,21 @@
+#!/bin/sh
+
+BINARY=$1
+TITLE=$2
+PLATFORM=$3
+LINUX_DIST=$4
+LINUX_REV=$5
+
+if test "x${PLATFORM}" = "xLINUX"; then
+SPECIAL="${PLATFORM}_${LINUX_DIST}_${LINUX_REV}"
+else
+SPECIAL="${PLATFORM}"
+fi
+
+printf "$BINARY: $TITLE .. "
+./$BINARY | sed 's/\(time: .* ms\)//g' >$BINARY.RES 2>&1
+if test -f $BINARY.MUST.$SPECIAL; then
+  diff $BINARY.MUST.$SPECIAL $BINARY.RES > $BINARY.DIFF && printf "OK\n" || printf "ERROR\n"
+else
+  diff $BINARY.MUST $BINARY.RES > $BINARY.DIFF && printf "OK\n" || printf "ERROR\n"
+fi

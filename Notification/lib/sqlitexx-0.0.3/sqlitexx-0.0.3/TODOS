@@ -1,0 +1,12 @@
+- recycle internal prepared statements, the question is when?
+  best if the result reaches a final state and instead of resetting
+  the statement we unprepare it
+- sqlite_changes gives back the number of rows affected of the last
+  command (non-query), queries must result 0
+- check types in param defition with bind parameters on invocation
+- sort out interface regarding character set encoding
+- find out whether we have bind parameters or not during execution
+  of a statement and dynamically prepare the statement. but not for
+  things like 'BEGIN' where the result is nodata always.
+- why are strings always bound to the first passed parameter?
+- why is the type always SQLITE_NULL?

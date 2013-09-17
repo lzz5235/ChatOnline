@@ -1,0 +1,12 @@
+{
+   sqlite3 uninitialized write in journal (see http://www.sqlite.org/cvstrac/chngview?cn=5968)
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:sqlite3OsWrite
+   fun:writeJournalHdr
+   fun:pager_open_journal
+   fun:sqlite3BtreeBeginTrans
+   fun:sqlite3VdbeExec
+   fun:sqlite3_step
+}

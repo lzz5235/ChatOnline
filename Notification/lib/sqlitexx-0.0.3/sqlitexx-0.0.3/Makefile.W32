@@ -1,0 +1,8 @@
+TOPDIR = .
+
+SUBDIRS = sqlite-3.6.18 src tests
+
+PACKAGE_NAME = 
+PACKAGE_VERSION = 0.0.3
+
+!INCLUDE $(TOPDIR)\makefiles\nmake\top.mk

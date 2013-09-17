@@ -1,0 +1,32 @@
+TOPDIR = ..
+
+SUBDIRS =
+
+INCLUDE_DIRS = \
+	/I. \
+	/D_WIN32_WINNT=0x400 /I"$(PLATFORM_SDK_DIR)\Include"
+
+BINS =
+
+LIBRARIES = \
+	sqlite3.lib
+
+
+OBJS = \
+	sqlite3.obj
+
+local_all: $(LIBRARIES)
+
+!INCLUDE $(TOPDIR)\makefiles\nmake\sub.mk
+
+sqlite3.lib: $(OBJS)
+	$(LINK) /lib /nologo /out:$@ $(LDFLAGS) $(LIBS) $?
+
+local_all:
+
+local_clean:
+	@-erase $(LIBRARIES) 2>NUL
+
+local_distclean:
+
+local_test:

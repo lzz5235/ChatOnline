@@ -1,0 +1,38 @@
+creating DB..
+starting transaction..
+create table..
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_1' as 'BEGIN TRANSACTION trans_create'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_1'
+TRACE: BEGIN TRANSACTION trans_create ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_2' as 'create table a( b integer )'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_2'
+TRACE: create table a( b integer ) ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_3' as 'COMMIT TRANSACTION trans_create'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_3'
+TRACE: COMMIT TRANSACTION trans_create ()
+insert some data..
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_4' as 'BEGIN TRANSACTION trans_insert'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_4'
+TRACE: BEGIN TRANSACTION trans_insert ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_5' as 'insert into a( b ) values( 5 )'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_5'
+TRACE: insert into a( b ) values( 5 ) ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_6' as 'insert into a( b ) values( 18 )'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_6'
+TRACE: insert into a( b ) values( 18 ) ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_7' as 'insert into a( b ) values( 7 )'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_7'
+TRACE: insert into a( b ) values( 7 ) ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_8' as 'COMMIT TRANSACTION trans_insert'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_8'
+TRACE: COMMIT TRANSACTION trans_insert ()
+querying..
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_9' as 'BEGIN TRANSACTION trans_query'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_9'
+TRACE: BEGIN TRANSACTION trans_query ()
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_10' as 'select * from a'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_10'
+TRACE: prepared 'internal_sqlite3xx::connection(test6.db)_11' as 'COMMIT TRANSACTION trans_query'
+TRACE: exec 'internal_sqlite3xx::connection(test6.db)_11'
+TRACE: COMMIT TRANSACTION trans_query ()
+end.

@@ -1,0 +1,8 @@
+creating DB..
+connection object is sqlite3xx::connection(test4.db)
+starting transaction..
+create table..
+insert some data..
+inserted with proper types 1 rows.
+inserted all as strings 1 rows.
+end.

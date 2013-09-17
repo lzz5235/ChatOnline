@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cat <<EOF
+No way, Jose.
+  
+Use 'make help' to see what you can do.
+
+Use the make of your platform, be it 'make', 'gmake', 'bmake', 'nmake', ...
+...whatever...
+
+EOF

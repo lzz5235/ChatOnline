@@ -1,0 +1,4 @@
+creating DB..
+connection object is sqlite3xx::connection(test5.db)
+execute pragma synchronous=0..
+end.

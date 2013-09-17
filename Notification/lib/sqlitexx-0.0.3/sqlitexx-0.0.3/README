@@ -1,0 +1,23 @@
+This is a C++ wrapper API for sqlite3, strictly following the ideas
+of libpqxx (http://pqxx.org/). This is a learning piece of software
+more for myself learning to do decent C++ libraries than to be
+published code, use at your own risk.
+
+other Sqlite3 C++ wrappers:
+
+- sqlite3x http://wanderinghorse.net/computing/sqlite/
+
+- ADO DB like sqlite3 wrapper http://dev.int64.org/sqlite.html:
+  very simple, main focus is to provide a Windows ADO DB interface
+  for the most simple functions
+
+- http://svn.paglo.com/paglo_open_source/crawler/trunk/src/CppSQLite3.cpp
+
+- libpqmm on SourceForge, announced and registered, but no code yet
+
+- http://blog.earthbrowser.com/2009/05/sqlite-c-wrapper-so-you-dont-have-to.html:
+  with overloaded shift operators instead of functors for parameter binding.
+
+- http://www.alhem.net/project/sqlite/diagram.html: a series of C++
+  APIs for set of databases and also for Sqlite
+

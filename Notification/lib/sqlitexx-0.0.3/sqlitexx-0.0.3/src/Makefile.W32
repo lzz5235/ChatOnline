@@ -1,0 +1,64 @@
+TOPDIR = ..
+
+SUBDIRS =
+
+INCLUDE_DIRS = \
+	/I$(TOPDIR)\include /I. \
+	/I$(TOPDIR)\sqlite-3.6.18 \
+	/D_WIN32_WINNT=0x400 /I"$(PLATFORM_SDK_DIR)\Include"
+
+INCLUDE_LDFLAGS = \
+	/LIBPATH:"$(PLATFORM_SDK_DIR)\Lib"
+
+INCLUDE_LIBS = \
+	$(TOPDIR)\sqlite-3.6.18\sqlite3.lib
+
+BINS =
+
+LIBRARIES = \
+	sqlite3xx.lib \
+	sqlite3xx.dll
+
+PORT_OBJS = \
+	port\string.obj \
+	port\sleep.obj
+
+OBJS = \
+	$(PORT_OBJS) \
+	connection.obj \
+	prepared_statement.obj \
+	transaction.obj \
+	result.obj \
+	except.obj
+
+DLL_PORT_OBJS = \
+	port\string.dllobj \
+	port\sleep.dllobj
+
+DLL_OBJS = \
+	$(DLL_PORT_OBJS) \
+	connection.dllobj \
+	prepared_statement.dllobj \
+	transaction.dllobj \
+	result.dllobj \
+	except.dllobj \
+	port\sqlite3xx.dllobj
+
+local_all: $(LIBRARIES)
+
+!INCLUDE $(TOPDIR)\makefiles\nmake\sub.mk
+
+sqlite3xx.lib: $(OBJS)
+	$(LINK) /lib /nologo /out:$@ $(LDFLAGS) $(LIBS) $?
+
+sqlite3xx.dll: $(DLL_OBJS)
+	$(LINK) /DLL /nologo /out:$@ $(LDFLAGS) $(LIBS) $?
+
+local_all:
+
+local_clean:
+	@-erase $(LIBRARIES) 2>NUL
+
+local_distclean:
+
+local_test:

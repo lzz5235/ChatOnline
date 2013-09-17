@@ -1,0 +1,10 @@
+release 0.0.1
+*************
+
+  * basic functionality on Unix platforms:
+    * simple connections
+    * standard transactions
+    * executing statements
+    * iterate query results
+    * supported are basic types (ints, doubles, text)
+

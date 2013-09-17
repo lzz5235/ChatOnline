@@ -1,0 +1,13 @@
+thread-safe: no
+number of rows changed: 1 (MUST: 1)
+number of rows changed: 0 (MUST: 0)
+b = 8
+s = bla
+b = 4
+s = blu
+b = 1
+s = bli
+number of bind parameters: 2 (MUST: 2)
+nof columns: 2
+b(1) = 4
+s(3) = blu
