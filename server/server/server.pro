@@ -16,7 +16,9 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    cserver.cpp
+    cserver.cpp \
+    cclientsocket.cpp
 
 HEADERS += \
-    cserver.h
+    cserver.h \
+    cclientsocket.h
