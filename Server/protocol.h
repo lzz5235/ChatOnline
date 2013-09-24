@@ -2,6 +2,10 @@
 #define PROTOCOL_H
 
 
+
+
+class CClientSocket;
+
 /**************************************************************
     以下是服务端用到的所有数据结构，包括
     用户信息
@@ -137,7 +141,7 @@ struct saveStruct
 {
         qint32 requestKind;
         qint32 replyKind;
-        ClientSocket *clientSocket;
+        CClientSocket *clientSocket;
 
         QString myAccount;
         QString peerAccount;
