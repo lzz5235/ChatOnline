@@ -4,30 +4,31 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QDebug>
+#include "protocol.h"
 
 
-class CClientSocket : public QObject
+class CClientSocket : public QTcpSocket
 {
     Q_OBJECT
 public:
     explicit CClientSocket(QObject *parent = 0);
-        void SetSocket(int Descriptor);
-    
+    void SetSocket(int Descriptor);
+
 signals:
-        void senderSignal();
-        void userLoginSignal();
-        void deleteSignal();
+        void sendSignal(saveStruct &temper);
+        void userLoginSignal(UserInformation &userinfo);
+        void deleteSignal(QString &account);
     
 public slots:
-        void connected();
+        void clientConnected();
         void clientDisconnected();
         void receiveMessage();
-        void sendMessage();
+        void sendMessage(saveStruct &temper);
         void deleteSocket();
 private:
-        QTcpSocket *socket;
-        int Description; // User ID
-    
+    saveStruct saveinfo;
+    int Description; // User ID
+
 };
 
 #endif // CCLIENTSOCKET_H
