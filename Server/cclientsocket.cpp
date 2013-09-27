@@ -1,43 +1,37 @@
 #include "cclientsocket.h"
 
 CClientSocket::CClientSocket(QObject *parent) :
-    QObject(parent)
+    QTcpSocket(parent)
 {
-
+    saveinfo.clientSocket = this;
+    connect(this,SIGNAL(connected()),this,SLOT(clientConnected()));
+    connect(this,SIGNAL(readyRead()),this,SLOT(receiveMessage()));
+    connect(this,SIGNAL(disconnected()),this,SLOT(clientDisconnected()));
+    connect(this,SIGNAL(disconnected()),this,SLOT(deleteSocket()));
 }
 
 void CClientSocket::SetSocket(int Descriptor)
 {
-    socket = new QTcpSocket(this);
-
-    connect(socket,SIGNAL(connected()),this,SLOT(connected()));
-    connect(socket,SIGNAL(disconnected()),this,SLOT(clientDisconnected()));
-    connect(socket,SIGNAL(readyRead()),this,SLOT(receiveMessage()));
-
-    socket->setSocketDescriptor(Descriptor);
+    this->setSocketDescriptor(Descriptor);
     Description  = Descriptor;
     qDebug() << Description <<"client connected event";
 }
-void CClientSocket::connected()
+void CClientSocket::clientConnected()
 {
     qDebug() << Description <<"client connected event";
 }
 void CClientSocket::clientDisconnected()
 {
+    //delete socket;
     qDebug() << Description <<"client disconnected event";
 }
+
 void CClientSocket::receiveMessage()
 {
-    qDebug() << socket->readAll() ;
 
-    //MyTask *mytask = new MyTask();
-    //mytask->setAutoDelete(true);
-    //connect(mytask,SIGNAL(Result(int)),this,SLOT(TaskResult(int)),Qt::QueuedConnection );
-    //connect(mytask,SIGNAL(Result(int)),this,SLOT(TaskResult(int)));
-    //QThreadPool::globalInstance()->start(mytask);
 }
 
-void CClientSocket::sendMessage()
+void CClientSocket::sendMessage(saveStruct &temper)
 {
 
 }

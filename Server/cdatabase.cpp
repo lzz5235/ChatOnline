@@ -17,8 +17,13 @@ CDatabase::CDatabase(QObject *parent) :
 
 bool CDatabase::init()
 {
+    bool flag = !QFile::exists(PATH);
+    if(flag)
+    {
+        createTable();
+    }
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/lzz/test.db");
+    db.setDatabaseName(PATH);
 
     if(!db.open())
     {
@@ -26,4 +31,9 @@ bool CDatabase::init()
           return false;
     }
     return true;
+}
+
+void CDatabase::createTable()
+{
+
 }

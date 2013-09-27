@@ -5,6 +5,10 @@
 #include <QtSql>
 #include <QDebug>
 
+
+#define PATH "/home/lzz/Notification.db"
+
+
 class CDatabase : public QObject
 {
     Q_OBJECT
@@ -28,7 +32,9 @@ public slots:
 private:
     QSqlDatabase db;
     QSqlQuery query;
-    
+
+
+    void createTable();
 };
 
 #endif // CDATABASE_H

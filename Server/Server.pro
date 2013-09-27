@@ -22,6 +22,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     cserver.h \
     cdatabase.h \
-    cclientsocket.h
+    cclientsocket.h \
+    protocol.h
 
 FORMS    += mainwindow.ui
