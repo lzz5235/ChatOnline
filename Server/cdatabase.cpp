@@ -157,7 +157,7 @@ qint32 CDatabase::checkRequest(const QString &acc, QVector<Message> &messageVec)
     Message mes;
     messageVec.clear();
 
-    query.prepare("select * from tmp where tofriendid=:rec");
+    query.prepare("select * from tmp where tofriend=:rec");
     query.bindValue(":rec", acc);
     query.exec();
     errorSQLOrder(query, "checkRequest1");
@@ -208,14 +208,14 @@ qint32 CDatabase::deleteFriendRequest(const QString &myAcc, const QString &peerA
 
 
     //这里要插入查询语句
-
-    query.prepare("delete from friend where id=:one and friendid=:two");
+    //select * from friend where id in (select id from user where account = "LZZ" )
+    query.prepare("delete from friend where id in(select id from user where  accout = :one) and friendid in (select id from user where account = :two)");
     query.bindValue(":one", myAcc);
     query.bindValue(":two", peerAcc);
     query.exec();
     errorSQLOrder(query, "deleteFriendRequest1");
 
-    query.prepare("delete from friends where id=:one and friendid=:two");
+    query.prepare("delete from friend where id in(select id from user where  accout = :one) and friendid in (select id from user where account = :two)");
     query.bindValue(":one", peerAcc);
     query.bindValue(":two", myAcc);
     query.exec();
@@ -226,7 +226,7 @@ qint32 CDatabase::deleteFriendRequest(const QString &myAcc, const QString &peerA
 qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf)
 {
     QSqlQuery query;
-    query.prepare("select * from users where account=:acc");
+    query.prepare("select * from user where account=:acc");
     query.bindValue(":acc", acc);
     query.exec();
     errorSQLOrder(query, "getUserInfRequest1");
@@ -254,7 +254,7 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
     query.bindValue(":acc", userInf.account);
     query.exec();
     errorSQLOrder(query, "changeInformationRequest1");
-    query.prepare("insert into user values(:name,:acc,:pwd,:description, :status,:mobilephone,"
+    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:description, :status,:mobilephone,"
                   ":officephone,:dormitory,:mail,:location,:lastlogintime,"
                     ":registertime, :birthday)");
     query.bindValue(":name", userInf.nickName);
@@ -323,7 +323,7 @@ void CDatabase::addMessageRequest(const Message &mes)
 {
     QSqlQuery query;
 
-    query.prepare("insert into tmp values(:fromfriend, :fromfriendid, :tofriend, :tofriendid, :message ,:messagetype)");
+    query.prepare("insert into tmp values(NULL,:fromfriend, :fromfriendid, :tofriend, :tofriendid, :message ,:messagetype)");
     query.bindValue(":fromfriend",mes.fromfriend);
     query.bindValue(":fromfriendid",mes.fromfriendid);
     query.bindValue(":tofriend",mes.tofriend);
@@ -338,7 +338,7 @@ void CDatabase::getFriendsAccount(const QString &acc, QVector<QString> &friVec)
 {
     friVec.clear();
     QSqlQuery query;
-    query.prepare("select * from friend where account=:acc");//有问题
+    query.prepare("select account from user where id in(select friendid from friend where id in(select id from user where account=:acc))");
     query.bindValue(":acc", acc);
     query.exec();
     errorSQLOrder(query, "getFriendsAccount1");
@@ -368,7 +368,7 @@ void CDatabase::createTable()
     errorSQLOrder(query, "createTable1");
 
     query.exec("CREATE TABLE friend("
-               "id  INTEGER PRIMARY KEY,"
+               "id  INTEGER ,"
                "friendname  VARCHAR(20) NULL,"
                "friendid  INTEGER NULL)");
     errorSQLOrder(query, "createTable2");
@@ -405,15 +405,14 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
     friendsVec.push_back(fri);
 
 
-    query.prepare("update user set status=:sta where id=:acc");
+    query.prepare("update user set status=:sta where account=:acc");
     query.bindValue(":acc", logInf.account);
     query.bindValue(":sta", QString::number(logInf.status));
     query.exec();
     errorSQLOrder(query, "loginSuccess1");
 
 
-    query.prepare("select * from user left join friend on "
-        "friend.friendid=user.id where friend.id=:acc");
+    query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc))");
     query.bindValue(":acc", logInf.account);
     query.exec();
     errorSQLOrder(query, "loginSuccess2");
@@ -429,7 +428,7 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
         fri.avatarNumber = query.value(AVATAR_NUMBER).toInt();
         fri.status = query.value(STATUS).toInt();
         fri.about = query.value(DESCRIPTION).toString();
-        fri.remark = query.value(13).toString();
+        fri.remark = query.value(DESCRIPTION).toString();
         friendsVec.push_back(fri);
     }
 }
@@ -460,8 +459,8 @@ qint32 CDatabase::requestFriend(const Message &mes)
     query.exec();
     errorSQLOrder(query, "requestFriend3");
     query.prepare("insert into friend values(:one,' ',:two )");
-    query.bindValue(":one", mes.fromfriendid);
-    query.bindValue(":two", mes.tofriendid);
+    query.bindValue(":one", mes.tofriendid);
+    query.bindValue(":two", mes.fromfriendid);
     query.exec();
     errorSQLOrder(query, "requestFriend4");
     return FRIEND_REQUESTED;
@@ -471,14 +470,16 @@ void CDatabase::agreeFriend(const Message &mes)
 {
     QSqlQuery query;
 
-    query.prepare("update friend set friendKind=1 where id=:one and firendid=:two");
+    query.prepare("update friend set friendname=:three where id=:one and firendid=:two");
     query.bindValue(":one", mes.fromfriendid);
     query.bindValue(":two", mes.tofriendid);
+    query.bindValue(":thress",mes.tofriend);
     query.exec();
     errorSQLOrder(query, "agreeFriend1");
-    query.prepare("update friend set friendKind=1 where id=:one and firendid=:two");
+    query.prepare("update friend set friendname=:three where id=:one and firendid=:two");
     query.bindValue(":one", mes.tofriendid);
     query.bindValue(":two", mes.fromfriendid);
+    query.bindValue(":thress",mes.fromfriend);
     query.exec();
     errorSQLOrder(query, "agreeFriend2");
 }
@@ -493,7 +494,7 @@ void CDatabase::disagreeFriend(const Message &mes)
     query.exec();
     errorSQLOrder(query, "disagreeFriend1");
 
-    query.prepare("delete from friends where id=:one and friendid=:two");
+    query.prepare("delete from friend where id=:one and friendid=:two");
     query.bindValue(":one", mes.tofriend);
     query.bindValue(":two", mes.fromfriend);
     query.exec();
