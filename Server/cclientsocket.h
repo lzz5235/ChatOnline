@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QDebug>
 #include "protocol.h"
+#include "xmlparse.h"
 
 
 class CClientSocket : public QTcpSocket
@@ -26,8 +27,9 @@ public slots:
         void sendMessage(saveStruct &temper);
         void deleteSocket();
 private:
-    saveStruct saveinfo;
+    saveStruct save;
     int Description; // User ID
+    qint16 blockSize;
 
 };
 

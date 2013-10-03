@@ -16,8 +16,11 @@ public:
     explicit CServer(QObject *parent = 0);
     ~CServer();
 
-    void changeStatu();
-    void StartServer(int PORT);    
+    void StartServer(int PORT);
+
+    void friendRequest(const saveStruct &save);
+
+    void changeStatu(const QString &acc, qint32 status);
     
 signals:
     

@@ -11,11 +11,6 @@ CServer::~CServer()
 
 }
 
-void CServer::changeStatu()
-{
-
-}
-
 void CServer::StartServer(int PORT)
 {
     if(listen(QHostAddress::Any,PORT ) )
@@ -30,7 +25,9 @@ void CServer::StartServer(int PORT)
 
 void CServer::disconnect(QString &account)
 {
+
     ClientSocketMap.remove(account);
+    data.quitRequest(acc);
 }
 
 void CServer::sendMessage(saveStruct &saveinfo)

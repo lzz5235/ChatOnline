@@ -4,6 +4,7 @@
 #include <QString>
 #include "xmlParse/tinystr.h"
 #include "xmlParse/tinyxml.h"
+#include "protocol.h"
 
 class xmlparse
 {
@@ -30,6 +31,9 @@ public:
     bool Read_TRANS_LOGOUT_XmlFile(QString& szFileName);
     bool Read_TRANS_SEND_XmlFile(QString& szFileName);
 
+public:
+
+    qint32 ReadXMLFromClient(QString string);
 };
 
 

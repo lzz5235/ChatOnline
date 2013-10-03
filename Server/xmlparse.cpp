@@ -2,7 +2,7 @@
 #include <QDebug>
 
 bool xmlparse::Create_Login_XmlFile(QString& szFileName)
-{//创建xml文件,szFilePath为文件保存的路径,若创建成功返回true,否则false
+{
 
     try
     {
@@ -960,4 +960,22 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName)
         return false;
     }
     return true;
+}
+
+qint32 xmlparse::ReadXMLFromClient(QString string)
+{
+    TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
+    myDocument->LoadFile();
+
+    TiXmlElement *RootElement = myDocument->RootElement();
+
+    if("TRANS_ADDRESS" ==RootElement->Value())
+    {
+        TiXmlElement *HEAD = RootElement->FirstChildElement();
+        TiXmlElement *ACTION = HEAD->NextSiblingElement();
+        TiXmlElement *Judge = ACTION->FirstChildElement();
+        if("LOGIN" == Judge->Value())
+            return LOGIN;
+        else if("")
+    }
 }

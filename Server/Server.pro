@@ -17,12 +17,20 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     cserver.cpp \
     cdatabase.cpp \
-    cclientsocket.cpp
+    cclientsocket.cpp \
+    xmlparse.cpp \
+    xmlParse/tinystr.cpp \
+    xmlParse/tinyxml.cpp \
+    xmlParse/tinyxmlerror.cpp \
+    xmlParse/tinyxmlparser.cpp
 
 HEADERS  += mainwindow.h \
     cserver.h \
     cdatabase.h \
     cclientsocket.h \
-    protocol.h
+    protocol.h \
+    xmlparse.h \
+    xmlParse/tinystr.h \
+    xmlParse/tinyxml.h
 
 FORMS    += mainwindow.ui
