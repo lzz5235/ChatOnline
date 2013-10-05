@@ -30,6 +30,7 @@ private:
     saveStruct save;
     int Description; // User ID
     qint16 blockSize;
+    xmlparse Parse;
 
 };
 

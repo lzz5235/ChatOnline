@@ -30,7 +30,6 @@ void CClientSocket::clientDisconnected()
 void CClientSocket::receiveMessage()
 {
     QDataStream in(this);
-    xmlparse Parse;
     in.setVersion(QDataStream::Qt_4_8);
 
     //
@@ -50,50 +49,42 @@ void CClientSocket::receiveMessage()
     quint32 code = Parse.ReadXMLFromClient(string);
 
 
-    if(CHECK_CONNECTION == save.requestKind)
+    if(LOGIN == code)
     {
-        save.replyKind = CHECK_CONNECTION;
-        sendMessage(save);
-        blockSize = 0;
-        return;
-    }
-    else if(LOGIN == code)
-    {
-        //problem
+        Parse.Read_Login_XmlFile(string,save);
+        save.requestKind = LOGIN;
         save.myAccount = save.logInf.account;
     }
-    else if(CHECK_MESSAGE == save.requestKind)
-        in >> save.myAccount;
-    else if(REGISTER == save.requestKind)
-        in >> save.userInf;
-    else if(TALK == save.requestKind)
-        in >> save.message;
-    else if(ADD_FRIEND == save.requestKind)
-        in >> save.message;
-    else if(GET_FRIEND_INFORMATION == save.requestKind)
-        in >> save.peerAccount;
-    else if(DISAGREE_FRIEND == save.requestKind)
-        in >> save.peerAccount;
-    else if(GET_USER_INFORMATION == save.requestKind)
-        in >> save.peerAccount;
-    else if(CHANGE_PASSWORD == save.requestKind)
-        in >> save.tempStr;
-    else if(CHANGE_INFORMATION == save.requestKind)
-        in >> save.userInf;
-    else if(DELETE_FRIEND == save.requestKind)
-        in >> save.peerAccount;
-    else if(CHANGE_REMARK == save.requestKind)
-        in >> save.message;
-    else if(CHANGE_STATUE == save.requestKind)
-        in >> save.status;
+    else if( GET_USER_INFORMATION == code)
+    {
+
+    }
+    else if (HAVE_MESSAGE ==code)
+    {
+        Parse.Read_TRANS_SEND_XmlFile(string,save);
+    }
+    else if(GET_FRIEND_INFORMATION == code)
+    {
+
+    }
+    else// (QUIT == code)
+    {
+        Parse.Read_TRANS_LOGOUT_XmlFile(string,save);
+    }
+
 
     blockSize = 0;
     emit sendSignal(save);
 }
 
-void CClientSocket::sendMessage(saveStruct &temper)
+void CClientSocket::sendMessage(saveStruct &temp)
 {
-
+    QString data;
+    if(LOGIN_SUCCESS == temp.replyKind)
+    {
+        Parse.Create_Login_Back_XmlFile(data,temp);
+        write(data.toAscii());
+    }
 }
 
 void CClientSocket::deleteSocket()
