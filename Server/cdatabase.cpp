@@ -133,7 +133,6 @@ qint32 CDatabase::messageRequest(const Message &mes)
 
 qint32 CDatabase::addFriendRequest(const Message &mes)
 {
-    QSqlQuery query;
     if(REQUEST_FRIEND == mes.kind)
         return requestFriend(mes);
 
