@@ -55,7 +55,7 @@ void CClientSocket::receiveMessage()
         save.requestKind = LOGIN;
         save.myAccount = save.logInf.account;
     }
-    else if( GET_USER_INFORMATION == code)
+    else if( CHANGE_INFORMATION == code)
     {
 
     }
