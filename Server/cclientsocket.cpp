@@ -48,14 +48,13 @@ void CClientSocket::receiveMessage()
 
     quint32 code = Parse.ReadXMLFromClient(string);
 
-
     if(LOGIN == code)
     {
         Parse.Read_Login_XmlFile(string,save);
         save.requestKind = LOGIN;
         save.myAccount = save.logInf.account;
     }
-    else if( CHANGE_INFORMATION == code)
+    else if(CHANGE_INFORMATION == code)
     {
 
     }
@@ -67,7 +66,11 @@ void CClientSocket::receiveMessage()
     {
 
     }
-    else// (QUIT == code)
+    else if(CHECK_CONNECTION ==code)
+    {
+
+    }
+    else
     {
         Parse.Read_TRANS_LOGOUT_XmlFile(string,save);
     }

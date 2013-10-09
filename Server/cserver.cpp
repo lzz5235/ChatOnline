@@ -67,99 +67,99 @@ void CServer::sendMessage(saveStruct &save)
         temp.replyKind = data.loginRequest(temp.logInf, temp.friendsVec);
         QMap<QString, CClientSocket*>::iterator iter;
         save.clientSocket->sendMessage(temp);
-        //if(LOGIN_SUCCESS == temp.replyKind)
-            //changeStatu(temp.logInf.account, temp.logInf.status);
+        if(LOGIN_SUCCESS == temp.replyKind)
+            changeStatu(temp.logInf.account, temp.logInf.status);
     }
-    else if(REGISTER == temp.requestKind)
-    {
-        temp.userInf = save.userInf;
-        temp.replyKind = data.registerRequest(temp.userInf);
-        QMap<QString, CClientSocket*>::iterator iter;
-        save.clientSocket->sendMessage(temp);
-    }
+//    else if(REGISTER == temp.requestKind)
+//    {
+//        temp.userInf = save.userInf;
+//        temp.replyKind = data.registerRequest(temp.userInf);
+//        QMap<QString, CClientSocket*>::iterator iter;
+//        save.clientSocket->sendMessage(temp);
+//    }
 
-    else if(CHECK_MESSAGE == temp.requestKind)
-    {
-        temp.myAccount = save.myAccount;
-        temp.replyKind = data.checkRequest(temp.myAccount, temp.messageVec);
-        temp.clientSocket = save.clientSocket;
-        ClientSocketMap.insert(temp.myAccount, temp.clientSocket);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(TALK == temp.requestKind)
-    {
-        temp.message = save.message;
-        if(TALK_MESSAGE == temp.message.kind)
-        {
-            temp.replyKind = TALK;
-            QMap<QString, CClientSocket*>::iterator iter;
-            iter = ClientSocketMap.find(temp.message.tofriend);
-            if(ClientSocketMap.end() == iter)
-                data.messageRequest(save.message);
-            else
-                iter.value()->sendMessage(temp);
-        }
-    }
-    else if(CHANGE_PASSWORD == temp.requestKind)
-    {
-        temp.tempStr = save.tempStr;
-        temp.replyKind = data.changePasswordRequest(temp.tempStr);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(GET_USER_INFORMATION == temp.requestKind)
-    {
-        temp.peerAccount = save.peerAccount;
-        temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(GET_FRIEND_INFORMATION == temp.requestKind)
-    {
-        temp.peerAccount = save.peerAccount;
-        temp.replyKind = data.getFriendInfRequest(temp.peerAccount, temp.theFriend);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(CHANGE_INFORMATION == temp.requestKind)
-    {
-        temp.userInf = save.userInf;
-        temp.replyKind = data.changeInformationRequest(temp.userInf);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(DELETE_FRIEND == temp.requestKind)
-    {
-        temp.peerAccount = save.peerAccount;
-        temp.myAccount = save.myAccount;
-        temp.replyKind = data.deleteFriendRequest(
-            temp.myAccount, temp.peerAccount);
-        save.clientSocket->sendMessage(temp);
+//    else if(CHECK_MESSAGE == temp.requestKind)
+//    {
+//        temp.myAccount = save.myAccount;
+//        temp.replyKind = data.checkRequest(temp.myAccount, temp.messageVec);
+//        temp.clientSocket = save.clientSocket;
+//        ClientSocketMap.insert(temp.myAccount, temp.clientSocket);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(TALK == temp.requestKind)
+//    {
+//        temp.message = save.message;
+//        if(TALK_MESSAGE == temp.message.kind)
+//        {
+//            temp.replyKind = TALK;
+//            QMap<QString, CClientSocket*>::iterator iter;
+//            iter = ClientSocketMap.find(temp.message.tofriend);
+//            if(ClientSocketMap.end() == iter)
+//                data.messageRequest(save.message);
+//            else
+//                iter.value()->sendMessage(temp);
+//        }
+//    }
+//    else if(CHANGE_PASSWORD == temp.requestKind)
+//    {
+//        temp.tempStr = save.tempStr;
+//        temp.replyKind = data.changePasswordRequest(temp.tempStr);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(GET_USER_INFORMATION == temp.requestKind)
+//    {
+//        temp.peerAccount = save.peerAccount;
+//        temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(GET_FRIEND_INFORMATION == temp.requestKind)
+//    {
+//        temp.peerAccount = save.peerAccount;
+//        temp.replyKind = data.getFriendInfRequest(temp.peerAccount, temp.theFriend);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(CHANGE_INFORMATION == temp.requestKind)
+//    {
+//        temp.userInf = save.userInf;
+//        temp.replyKind = data.changeInformationRequest(temp.userInf);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(DELETE_FRIEND == temp.requestKind)
+//    {
+//        temp.peerAccount = save.peerAccount;
+//        temp.myAccount = save.myAccount;
+//        temp.replyKind = data.deleteFriendRequest(
+//            temp.myAccount, temp.peerAccount);
+//        save.clientSocket->sendMessage(temp);
 
-        QMap<QString, CClientSocket*>::iterator iter;
-        iter = ClientSocketMap.find(temp.peerAccount);
-        if(ClientSocketMap.end() == iter)
-        {
-            Message mes;
-            mes.kind = BE_DELETED;
-            mes.fromfriend = temp.myAccount;
-            mes.tofriend = temp.peerAccount;
-            data.messageRequest(mes);
-        }
-        else
-        {
-            temp.replyKind = BE_DELETED;
-            temp.myAccount = temp.myAccount;
-            iter.value()->sendMessage(temp);
-        }
+//        QMap<QString, CClientSocket*>::iterator iter;
+//        iter = ClientSocketMap.find(temp.peerAccount);
+//        if(ClientSocketMap.end() == iter)
+//        {
+//            Message mes;
+//            mes.kind = BE_DELETED;
+//            mes.fromfriend = temp.myAccount;
+//            mes.tofriend = temp.peerAccount;
+//            data.messageRequest(mes);
+//        }
+//        else
+//        {
+//            temp.replyKind = BE_DELETED;
+//            temp.myAccount = temp.myAccount;
+//            iter.value()->sendMessage(temp);
+//        }
 
-    }
-    else if(CHANGE_REMARK == temp.requestKind)
-    {
-        temp.message = save.message;
-        temp.replyKind = data.changeRemarkRequset(temp.message);
-        save.clientSocket->sendMessage(temp);
-    }
-    else if(ADD_FRIEND == temp.requestKind)
-        friendRequest(save);
-    else if(CHANGE_STATUE == temp.requestKind)
-        changeStatu(save.myAccount, save.status);
+//    }
+//    else if(CHANGE_REMARK == temp.requestKind)
+//    {
+//        temp.message = save.message;
+//        temp.replyKind = data.changeRemarkRequset(temp.message);
+//        save.clientSocket->sendMessage(temp);
+//    }
+//    else if(ADD_FRIEND == temp.requestKind)
+//        friendRequest(save);
+//    else if(CHANGE_STATUE == temp.requestKind)
+//        changeStatu(save.myAccount, save.status);
 }
 
 void CServer::incomingConnection(int handle)
