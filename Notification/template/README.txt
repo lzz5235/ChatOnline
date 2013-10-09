@@ -1,31 +1,31 @@
 约定：
 当client端发送的xml中tag字段为空时。client自动添加none后发送
-<TRANS_ADDRESS>
-    <HEAD>
-        <VERSION>0.1</VERSION>
-        <MESSAGEID>0</MESSAGEID>
-    </HEAD>
-    <ACTION>
-        <LOGIN_BACK>
-            <RESULT>SUCCESS</RESULT>
-            <MEMBERLIST>
-                <MEMBER>
-                    <USERNAME> 鍛ㄥ簡鍥?</USERNAME>
-                    <USERID>1</USERID>
-                    <SEX>male</SEX>
-                    <CONTACT>
-                        <CELLPHONE>18919880252</CELLPHONE>
-                        <OFFICEPHONE>0931-3589039</OFFICEPHONE>
-                        <OTHER_CONTACT>
-                            <TYPE>QQ</TYPE>
-                            <CONTENT>none</CONTENT>
-                        </OTHER_CONTACT>
-                        <MAIL>zhouqg@lzu.edu.cn</MAIL>
-                    </CONTACT>
-                    <OTHER_INFORMATION>none</OTHER_INFORMATION>
-                    <DORMITORY>none</DORMITORY>
-                </MEMBER>
-            </MEMBERLIST>
-        </LOGIN_BACK>
-    </ACTION>
-</TRANS_ADDRESS>
+<TRANS_NOTIFICATION>
+	<HEAD>
+		<VERSION>0.1</VERSION>
+		<MESSAGEID>0</MESSAGEID>
+		<TYPE>ADDRESS</TYPE>
+	</HEAD>
+	<ACTION>
+		<GET_ADDRESS>
+			<MEMBER_LIST>
+				<MEMBER>
+					<USERNAME>周庆国</USERNAME>
+					<USERID>1</USERID>
+					<SEX>male</SEX>
+					<CONTACT>
+						<CELLPHONE>18919880252</CELLPHONE>
+						<OFFICEPHONE>0931-3589039</OFFICEPHONE>
+						<OTHER_CONTACT>
+							<TYPE>QQ</TYPE>
+							<CONTENT>none</CONTENT>
+						</OTHER_CONTACT>
+						<MAIL>zhouqg@lzu.edu.cn</MAIL>
+					</CONTACT>
+					<OTHER_INFORMATION>none</OTHER_INFORMATION>
+					<DORMITORY>none</DORMITORY>
+				</MEMBER>
+			</MEMBER_LIST>
+		</GET_ADDRESS>
+	</ACTION>
+</TRANS_NOTIFICATION>
