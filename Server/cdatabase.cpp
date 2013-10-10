@@ -122,7 +122,7 @@ qint32 CDatabase::quitRequest(const QString &acc)
     query.exec();
     errorSQLOrder(query, "quitRequest1");
     changeStatusRequest(acc, OFFLINE);
-    return 0;
+    return QUIT;
 }
 
 qint32 CDatabase::messageRequest(const Message &mes)
@@ -191,10 +191,11 @@ qint32 CDatabase::getFriendInfRequest(const QString &acc, FriendInformation &fri
     while(query.next())
     {
         fri.account = query.value(ACCOUNT).toString();
-        fri.name = query.value(NICKNAME).toString();
-        fri.avatarNumber = query.value(AVATAR_NUMBER).toInt();
+        fri.nickName = query.value(NICKNAME).toString();
+        fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
+        fri.mobileNumber = query.value(OFFICE_NUMBER).toString();
         fri.status = query.value(STATUS).toInt();
-        fri.about = query.value(DESCRIPTION).toString();
+        fri.mail = query.value(MAIL).toString();
         fri.friendKind = VERIFYING;
         fri.remark.clear();
     }
@@ -397,9 +398,8 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
     FriendInformation fri;
     fri.account = logInf.account;
     fri.status = logInf.status;
-    fri.name = query.value(NICKNAME).toString();
-    fri.avatarNumber = query.value(AVATAR_NUMBER).toInt();
-    fri.about = query.value(DESCRIPTION).toString();
+    fri.nickName = query.value(NICKNAME).toString();
+    fri.remark = query.value(DESCRIPTION).toString();
     fri.friendKind = MYSELF;
     friendsVec.push_back(fri);
 
@@ -423,10 +423,8 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
             continue;
 
         fri.account = query.value(ACCOUNT).toString();
-        fri.name = query.value(NICKNAME).toString();
-        fri.avatarNumber = query.value(AVATAR_NUMBER).toInt();
+        fri.nickName = query.value(NICKNAME).toString();
         fri.status = query.value(STATUS).toInt();
-        fri.about = query.value(DESCRIPTION).toString();
         fri.remark = query.value(DESCRIPTION).toString();
         friendsVec.push_back(fri);
     }

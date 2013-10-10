@@ -1,82 +1,6 @@
 ﻿#include "xmlparse.h"
 #include <QDebug>
 
-bool xmlparse::Create_Login_XmlFile(QString& szFileName)
-{
-
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
-        myDocument->LinkEndChild(RootElement);
-
-        TiXmlElement *HEAD = new TiXmlElement("HEAD");
-        RootElement->LinkEndChild(HEAD);
-
-        //PersonElement->SetAttribute("ID", "1");
-
-        TiXmlElement *VERSION = new TiXmlElement("VERSION");
-        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        HEAD->LinkEndChild(VERSION);
-        HEAD->LinkEndChild(MESSAGEID);
-        HEAD->LinkEndChild(TYPE);
-
-
-        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
-
-        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
-        TiXmlText *LOGINTEXT = new TiXmlText("LOGIN");
-
-        VERSION->LinkEndChild(VERSIONTEXT);
-        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
-        TYPE->LinkEndChild(LOGINTEXT);
-
-        TiXmlElement *ACTION = new TiXmlElement("ACTION");
-        RootElement->LinkEndChild(ACTION);
-
-        TiXmlElement *LOGIN = new TiXmlElement("LOGIN");
-        ACTION->LinkEndChild(LOGIN);
-
-
-        TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
-        TiXmlElement *PASSWORD = new TiXmlElement("PASSWORD");
-        TiXmlElement *SYSTEM = new TiXmlElement("SYSTEM");
-        TiXmlElement *LOGINTIME = new TiXmlElement("LOGINTIME");
-        TiXmlElement *STATUS = new TiXmlElement("STATUS");
-        LOGIN->LinkEndChild(USERNAME);
-        LOGIN->LinkEndChild(PASSWORD);
-        LOGIN->LinkEndChild(SYSTEM);
-        LOGIN->LinkEndChild(LOGINTIME);
-        LOGIN->LinkEndChild(STATUS);
-
-
-        TiXmlText *USERNAMETEXT = new TiXmlText("charles");
-        USERNAME->LinkEndChild(USERNAMETEXT);
-
-        TiXmlText *PASSWORDTEXT = new TiXmlText("wangxuguo");
-        PASSWORD->LinkEndChild(PASSWORDTEXT);
-
-        TiXmlText *SYSTEMTEXT = new TiXmlText("OS_WINDOWS");
-        SYSTEM->LinkEndChild(SYSTEMTEXT);
-
-        TiXmlText *LOGINTIMETEXT = new TiXmlText("2013-9-16 22:18");
-        LOGINTIME->LinkEndChild(LOGINTIMETEXT);
-
-        TiXmlText *STATUSTEXT = new TiXmlText("online");
-        STATUS->LinkEndChild(STATUSTEXT);
-
-
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
 bool xmlparse::Read_Login_XmlFile(QString& szFileName,saveStruct &save)
 {//读取Xml文件，并遍历
     try
@@ -107,194 +31,16 @@ bool xmlparse::Read_Login_XmlFile(QString& szFileName,saveStruct &save)
 
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
-
-
-        save.logInf.account = QString(QLatin1String( USERNAME->FirstChild()->Value() ));
-        save.logInf.password = QString(QLatin1String( PASSWORD->FirstChild()->Value() ));
-        save.logInf.status = QString(QLatin1String( STATUS->FirstChild()->Value() )).toInt();
         qDebug() << USERNAME->FirstChild()->Value() ;
         qDebug() << PASSWORD->FirstChild()->Value() ;
         qDebug() << SYSTEM->FirstChild()->Value() ;
         qDebug() << LOGINTIME->FirstChild()->Value() ;
         qDebug() << STATUS->FirstChild()->Value() ;
 
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
+        save.logInf.account = QString(QLatin1String( USERNAME->FirstChild()->Value() ));
+        save.logInf.password = QString(QLatin1String( PASSWORD->FirstChild()->Value() ));
+        save.logInf.status = QString(QLatin1String( STATUS->FirstChild()->Value() )).toInt();
 
-bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName,saveStruct &save)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
-        myDocument->LinkEndChild(RootElement);
-
-        TiXmlElement *HEAD = new TiXmlElement("HEAD");
-        RootElement->LinkEndChild(HEAD);
-
-        //PersonElement->SetAttribute("ID", "1");
-
-        TiXmlElement *VERSION = new TiXmlElement("VERSION");
-        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
-        TiXmlElement *_TYPE = new TiXmlElement("TYPE");
-        HEAD->LinkEndChild(VERSION);
-        HEAD->LinkEndChild(MESSAGEID);
-        HEAD->LinkEndChild(_TYPE);
-
-
-        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
-
-        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
-
-        TiXmlText *LOGIN_BACKTEXT = new TiXmlText("LOGIN_BACK");
-
-        VERSION->LinkEndChild(VERSIONTEXT);
-        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
-        _TYPE->LinkEndChild(LOGIN_BACKTEXT);
-
-        TiXmlElement *ACTION = new TiXmlElement("ACTION");
-        RootElement->LinkEndChild(ACTION);
-
-        TiXmlElement *LOGIN_BACK = new TiXmlElement("LOGIN_BACK");
-        ACTION->LinkEndChild(LOGIN_BACK);
-
-        TiXmlElement *RESULT = new TiXmlElement("RESULT");
-        LOGIN_BACK->LinkEndChild(RESULT);
-        TiXmlText *RESULTTEXT = new TiXmlText("SUCCESS");
-        RESULT->LinkEndChild(RESULTTEXT);
-
-        TiXmlElement *MEMBERLIST = new TiXmlElement("MEMBERLIST");
-        LOGIN_BACK->LinkEndChild(MEMBERLIST);
-
-        TiXmlElement *MEMBER = new TiXmlElement("MEMBER");
-        MEMBERLIST->LinkEndChild(MEMBER);
-
-        TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
-        MEMBER->LinkEndChild(USERNAME);
-        TiXmlText *USERNAMETEXT = new TiXmlText(save.userInf.nickName.toStdString().data());
-        USERNAME->LinkEndChild(USERNAMETEXT);
-
-
-        TiXmlElement *USERID = new TiXmlElement("USERID");
-        MEMBER->LinkEndChild(USERID);
-        TiXmlText *USERIDTEXT = new TiXmlText(save.userInf.account.toStdString().data());
-        USERID->LinkEndChild(USERIDTEXT);
-
-        TiXmlElement *SEX = new TiXmlElement("SEX");
-        MEMBER->LinkEndChild(SEX);
-        TiXmlText *SEXTEXT = new TiXmlText("male");
-        SEX->LinkEndChild(SEXTEXT);
-
-        TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
-        MEMBER->LinkEndChild(CONTACT);
-
-        TiXmlElement *CELLPHONE = new TiXmlElement("CELLPHONE");
-        CONTACT->LinkEndChild(CELLPHONE);
-        TiXmlText *CELLPHONETEXT = new TiXmlText(save.userInf.mobileNumber.toStdString().data());
-        CELLPHONE->LinkEndChild(CELLPHONETEXT);
-
-        TiXmlElement *OFFICEPHONE = new TiXmlElement("OFFICEPHONE");
-        CONTACT->LinkEndChild(OFFICEPHONE);
-        TiXmlText *OFFICEPHONETEXT = new TiXmlText(save.userInf.officephone.toStdString().data());
-        OFFICEPHONE->LinkEndChild(OFFICEPHONETEXT);
-
-        TiXmlElement *OTHER_CONTACT = new TiXmlElement("OTHER_CONTACT");
-        CONTACT->LinkEndChild(OTHER_CONTACT);
-
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        OTHER_CONTACT->LinkEndChild(TYPE);
-        TiXmlText *TYPETEXT = new TiXmlText("QQ");
-        TYPE->LinkEndChild(TYPETEXT);
-
-        TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
-        OTHER_CONTACT->LinkEndChild(CONTENT);
-        TiXmlText *CONTENTTEXT = new TiXmlText("none");
-        CONTENT->LinkEndChild(CONTENTTEXT);
-
-        TiXmlElement *MAIL = new TiXmlElement("MAIL");
-        CONTACT->LinkEndChild(MAIL);
-        TiXmlText *MAILTEXT = new TiXmlText(save.userInf.mail.toStdString().data());
-        MAIL->LinkEndChild(MAILTEXT);
-
-        TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
-        MEMBER->LinkEndChild(OTHER_INFORMATION);
-        TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("none");
-        OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
-
-        TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
-        MEMBER->LinkEndChild(DORMITORY);
-        TiXmlText *DORMITORYTEXT = new TiXmlText("none");
-        DORMITORY->LinkEndChild(DORMITORYTEXT);
-
-        TiXmlPrinter printer;
-        myDocument->Accept(&printer);
-        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
-{
-    try
-    {
-        //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
-        //获得根元素.
-        TiXmlElement *RootElement = myDocument->RootElement();
-
-        //qDebug() << RootElement->Value() ;
-
-        TiXmlElement *HEAD = RootElement->FirstChildElement();
-
-        TiXmlElement *VERSION = HEAD->FirstChildElement();
-        TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
-        TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
-
-        TiXmlElement *ACTION = HEAD->NextSiblingElement();
-        TiXmlElement *LOGIN_BACK = ACTION->FirstChildElement();
-        TiXmlElement *RESULT = LOGIN_BACK->FirstChildElement();
-
-        TiXmlElement *MEMBERLIST = RESULT->NextSiblingElement();
-        TiXmlElement *MEMBER = MEMBERLIST->FirstChildElement();
-
-        TiXmlElement *USERNAME = MEMBER->FirstChildElement();
-        TiXmlElement *USERID = USERNAME->NextSiblingElement();
-        TiXmlElement *SEX   = USERID->NextSiblingElement();
-        TiXmlElement *CONTACT = SEX->NextSiblingElement();
-        TiXmlElement *CELLPHONE = CONTACT->FirstChildElement();
-        TiXmlElement *OFFICEPHONE = CELLPHONE->NextSiblingElement();
-        TiXmlElement *OTHER_CONTACT = OFFICEPHONE->NextSiblingElement();
-        TiXmlElement *_TYPE = OTHER_CONTACT->FirstChildElement();
-        TiXmlElement *CONTENT = TYPE->NextSiblingElement();
-
-        TiXmlElement *MAIL = OTHER_CONTACT->NextSiblingElement();
-        TiXmlElement *OTHER_INFORMATION = CONTACT->NextSiblingElement();
-        TiXmlElement *DORMITORY = OTHER_INFORMATION->NextSiblingElement();
-
-        qDebug() << VERSION->FirstChild()->Value() ;
-        qDebug() << MESSAGEID->FirstChild()->Value() ;
-        qDebug() << RESULT->FirstChild()->Value() ;
-        qDebug() << USERNAME->FirstChild()->Value() ;
-        qDebug() << USERID->FirstChild()->Value() ;
-        qDebug() << SEX->FirstChild()->Value() ;
-        qDebug() << CELLPHONE->FirstChild()->Value() ;
-        qDebug() << OFFICEPHONE->FirstChild()->Value() ;
-        qDebug() << _TYPE->FirstChild()->Value() ;
-        qDebug() << CONTENT->FirstChild()->Value() ;
-        qDebug() << MAIL->FirstChild()->Value() ;
-        qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
-        qDebug() << DORMITORY->FirstChild()->Value() ;
 
     }
     catch (QString& e)
@@ -304,124 +50,7 @@ bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Create_Member_XmlFile(QString& szFileName,saveStruct &save)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("MEMBER");
-        myDocument->LinkEndChild(RootElement);
-
-        TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
-        RootElement->LinkEndChild(USERNAME);
-        TiXmlText *USERNAMETEXT = new TiXmlText(" 周庆国 ");
-        USERNAME->LinkEndChild(USERNAMETEXT);
-
-
-        TiXmlElement *USERID = new TiXmlElement("USERID");
-        RootElement->LinkEndChild(USERID);
-        TiXmlText *USERIDTEXT = new TiXmlText("1");
-        USERID->LinkEndChild(USERIDTEXT);
-
-        TiXmlElement *SEX = new TiXmlElement("SEX");
-        RootElement->LinkEndChild(SEX);
-        TiXmlText *SEXTEXT = new TiXmlText("male");
-        SEX->LinkEndChild(SEXTEXT);
-
-        TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
-        RootElement->LinkEndChild(CONTACT);
-
-        TiXmlElement *CELLPHONE = new TiXmlElement("CELLPHONE");
-        CONTACT->LinkEndChild(CELLPHONE);
-        TiXmlText *CELLPHONETEXT = new TiXmlText("18919880252");
-        CELLPHONE->LinkEndChild(CELLPHONETEXT);
-
-        TiXmlElement *OFFICEPHONE = new TiXmlElement("OFFICEPHONE");
-        CONTACT->LinkEndChild(OFFICEPHONE);
-        TiXmlText *OFFICEPHONETEXT = new TiXmlText("0931-3589039");
-        OFFICEPHONE->LinkEndChild(OFFICEPHONETEXT);
-
-        TiXmlElement *OTHER_CONTACT = new TiXmlElement("OTHER_CONTACT");
-        CONTACT->LinkEndChild(OTHER_CONTACT);
-
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        OTHER_CONTACT->LinkEndChild(TYPE);
-        TiXmlText *TYPETEXT = new TiXmlText("QQ");
-        TYPE->LinkEndChild(TYPETEXT);
-
-        TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
-        OTHER_CONTACT->LinkEndChild(CONTENT);
-        TiXmlText *CONTENTTEXT = new TiXmlText("");
-        CONTENT->LinkEndChild(CONTENTTEXT);
-
-        TiXmlElement *MAIL = new TiXmlElement("MAIL");
-        CONTACT->LinkEndChild(MAIL);
-        TiXmlText *MAILTEXT = new TiXmlText("zhouqg@lzu.edu.cn");
-        MAIL->LinkEndChild(MAILTEXT);
-
-        TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
-        RootElement->LinkEndChild(OTHER_INFORMATION);
-        TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("");
-        OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
-
-        TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
-        RootElement->LinkEndChild(DORMITORY);
-        TiXmlText *DORMITORYTEXT = new TiXmlText("");
-        DORMITORY->LinkEndChild(DORMITORYTEXT);
-
-
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool xmlparse::Read_Member_XmlFile(QString& szFileName,saveStruct &save)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
-
-        TiXmlElement *MEMBER = myDocument->RootElement();
-        TiXmlElement *USERNAME = MEMBER->FirstChildElement();
-        TiXmlElement *USERID = USERNAME->NextSiblingElement();
-        TiXmlElement *SEX   = USERID->NextSiblingElement();
-        TiXmlElement *CONTACT = SEX->NextSiblingElement();
-        TiXmlElement *CELLPHONE = CONTACT->FirstChildElement();
-        TiXmlElement *OFFICEPHONE = CELLPHONE->NextSiblingElement();
-        TiXmlElement *OTHER_CONTACT = OFFICEPHONE->NextSiblingElement();
-        TiXmlElement *TYPE = OTHER_CONTACT->FirstChildElement();
-        TiXmlElement *CONTENT = TYPE->NextSiblingElement();
-
-        TiXmlElement *MAIL = OTHER_CONTACT->NextSiblingElement();
-        TiXmlElement *OTHER_INFORMATION = CONTACT->NextSiblingElement();
-        TiXmlElement *DORMITORY = OTHER_INFORMATION->NextSiblingElement();
-
-        qDebug() << USERNAME->FirstChild()->Value() ;
-        qDebug() << USERID->FirstChild()->Value() ;
-        qDebug() << SEX->FirstChild()->Value() ;
-        qDebug() << CELLPHONE->FirstChild()->Value() ;
-        qDebug() << OFFICEPHONE->FirstChild()->Value() ;
-        qDebug() << TYPE->FirstChild()->Value() ;
-        qDebug() << CONTENT->FirstChild()->Value() ;
-        qDebug() << MAIL->FirstChild()->Value() ;
-        qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
-        qDebug() << DORMITORY->FirstChild()->Value() ;
-
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
+bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -445,7 +74,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
-        TiXmlText *GET_ADDRESSTEXT = new TiXmlText("GET_ADDRESS");
+        TiXmlText *GET_ADDRESSTEXT = new TiXmlText("ADDRESS");
 
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
@@ -460,181 +89,72 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
         TiXmlElement *MEMBER_LIST = new TiXmlElement("MEMBER_LIST");
         GET_ADDRESS->LinkEndChild(MEMBER_LIST);
 
-        TiXmlElement *MEMBER = new TiXmlElement("MEMBER");
-        MEMBER_LIST->LinkEndChild(MEMBER);
+        QVector<FriendInformation> ::Iterator i = save.friendsVec.begin();
 
-        TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
-        MEMBER->LinkEndChild(USERNAME);
-        TiXmlText *USERNAMETEXT = new TiXmlText(" 周庆国 ");
-        USERNAME->LinkEndChild(USERNAMETEXT);
-
-
-        TiXmlElement *USERID = new TiXmlElement("USERID");
-        MEMBER->LinkEndChild(USERID);
-        TiXmlText *USERIDTEXT = new TiXmlText("1");
-        USERID->LinkEndChild(USERIDTEXT);
-
-        TiXmlElement *SEX = new TiXmlElement("SEX");
-        MEMBER->LinkEndChild(SEX);
-        TiXmlText *SEXTEXT = new TiXmlText("male");
-        SEX->LinkEndChild(SEXTEXT);
-
-        TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
-        MEMBER->LinkEndChild(CONTACT);
-
-        TiXmlElement *CELLPHONE = new TiXmlElement("CELLPHONE");
-        CONTACT->LinkEndChild(CELLPHONE);
-        TiXmlText *CELLPHONETEXT = new TiXmlText("18919880252");
-        CELLPHONE->LinkEndChild(CELLPHONETEXT);
-
-        TiXmlElement *OFFICEPHONE = new TiXmlElement("OFFICEPHONE");
-        CONTACT->LinkEndChild(OFFICEPHONE);
-        TiXmlText *OFFICEPHONETEXT = new TiXmlText("0931-3589039");
-        OFFICEPHONE->LinkEndChild(OFFICEPHONETEXT);
-
-        TiXmlElement *OTHER_CONTACT = new TiXmlElement("OTHER_CONTACT");
-        CONTACT->LinkEndChild(OTHER_CONTACT);
-
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        OTHER_CONTACT->LinkEndChild(TYPE);
-        TiXmlText *TYPETEXT = new TiXmlText("QQ");
-        TYPE->LinkEndChild(TYPETEXT);
-
-        TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
-        OTHER_CONTACT->LinkEndChild(CONTENT);
-        TiXmlText *CONTENTTEXT = new TiXmlText("none");
-        CONTENT->LinkEndChild(CONTENTTEXT);
-
-        TiXmlElement *MAIL = new TiXmlElement("MAIL");
-        CONTACT->LinkEndChild(MAIL);
-        TiXmlText *MAILTEXT = new TiXmlText("zhouqg@lzu.edu.cn");
-        MAIL->LinkEndChild(MAILTEXT);
-
-        TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
-        MEMBER->LinkEndChild(OTHER_INFORMATION);
-        TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("none");
-        OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
-
-        TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
-        MEMBER->LinkEndChild(DORMITORY);
-        TiXmlText *DORMITORYTEXT = new TiXmlText("none");
-        DORMITORY->LinkEndChild(DORMITORYTEXT);
+        while(i!= save.friendsVec.end())
+        {
+            TiXmlElement *MEMBER = new TiXmlElement("MEMBER");
+            MEMBER_LIST->LinkEndChild(MEMBER);
+            TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
+            MEMBER->LinkEndChild(USERNAME);
+            TiXmlText *USERNAMETEXT = new TiXmlText(i->nickName.toStdString().c_str());
+            USERNAME->LinkEndChild(USERNAMETEXT);
 
 
-        //if faild ,put result in this doc <RESULT>NO username</RESULT>
+            TiXmlElement *USERID = new TiXmlElement("USERID");
+            MEMBER->LinkEndChild(USERID);
+            TiXmlText *USERIDTEXT = new TiXmlText(i->account.toStdString().c_str());
+            USERID->LinkEndChild(USERIDTEXT);
 
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
+            TiXmlElement *SEX = new TiXmlElement("SEX");
+            MEMBER->LinkEndChild(SEX);
+            TiXmlText *SEXTEXT = new TiXmlText("male");
+            SEX->LinkEndChild(SEXTEXT);
 
-bool xmlparse::Read_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
-{
-    try
-    {
-        //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
-        //获得根元素.
-        TiXmlElement *RootElement = myDocument->RootElement();
+            TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
+            MEMBER->LinkEndChild(CONTACT);
 
-        //qDebug() << RootElement->Value() ;
+            TiXmlElement *CELLPHONE = new TiXmlElement("CELLPHONE");
+            CONTACT->LinkEndChild(CELLPHONE);
+            TiXmlText *CELLPHONETEXT = new TiXmlText(i->mobileNumber.toStdString().c_str());
+            CELLPHONE->LinkEndChild(CELLPHONETEXT);
 
-        TiXmlElement *HEAD = RootElement->FirstChildElement();
+            TiXmlElement *OFFICEPHONE = new TiXmlElement("OFFICEPHONE");
+            CONTACT->LinkEndChild(OFFICEPHONE);
+            TiXmlText *OFFICEPHONETEXT = new TiXmlText(i->officephone.toStdString().c_str());
+            OFFICEPHONE->LinkEndChild(OFFICEPHONETEXT);
 
-        TiXmlElement *VERSION = HEAD->FirstChildElement();
-        TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
-        TiXmlElement *_TYPE = MESSAGEID->NextSiblingElement();
+            TiXmlElement *OTHER_CONTACT = new TiXmlElement("OTHER_CONTACT");
+            CONTACT->LinkEndChild(OTHER_CONTACT);
 
-        TiXmlElement *ACTION = HEAD->NextSiblingElement();
-        TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
+            TiXmlElement *TYPE = new TiXmlElement("TYPE");
+            OTHER_CONTACT->LinkEndChild(TYPE);
+            TiXmlText *TYPETEXT = new TiXmlText("QQ");
+            TYPE->LinkEndChild(TYPETEXT);
 
+            TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
+            OTHER_CONTACT->LinkEndChild(CONTENT);
+            TiXmlText *CONTENTTEXT = new TiXmlText("none");
+            CONTENT->LinkEndChild(CONTENTTEXT);
 
-        TiXmlElement *MEMBER_LIST = GET_ADDRESS->FirstChildElement();
+            TiXmlElement *MAIL = new TiXmlElement("MAIL");
+            CONTACT->LinkEndChild(MAIL);
+            TiXmlText *MAILTEXT = new TiXmlText(i->mail.toStdString().c_str());
+            MAIL->LinkEndChild(MAILTEXT);
 
-        TiXmlElement *MEMBER = MEMBER_LIST->FirstChildElement();
+            TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
+            MEMBER->LinkEndChild(OTHER_INFORMATION);
+            TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("none");
+            OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
 
-        TiXmlElement *USERNAME = MEMBER->FirstChildElement();
-        TiXmlElement *USERID = USERNAME->NextSiblingElement();
-        TiXmlElement *SEX   = USERID->NextSiblingElement();
-        TiXmlElement *CONTACT = SEX->NextSiblingElement();
-        TiXmlElement *CELLPHONE = CONTACT->FirstChildElement();
-        TiXmlElement *OFFICEPHONE = CELLPHONE->NextSiblingElement();
-        TiXmlElement *OTHER_CONTACT = OFFICEPHONE->NextSiblingElement();
-        TiXmlElement *TYPE = OTHER_CONTACT->FirstChildElement();
-        TiXmlElement *CONTENT = TYPE->NextSiblingElement();
-
-        TiXmlElement *MAIL = OTHER_CONTACT->NextSiblingElement();
-        TiXmlElement *OTHER_INFORMATION = CONTACT->NextSiblingElement();
-        TiXmlElement *DORMITORY = OTHER_INFORMATION->NextSiblingElement();
-
-        qDebug() << VERSION->FirstChild()->Value() ;
-        qDebug() << MESSAGEID->FirstChild()->Value() ;
-
-        qDebug() << USERNAME->FirstChild()->Value() ;
-        qDebug() << USERID->FirstChild()->Value() ;
-        qDebug() << SEX->FirstChild()->Value() ;
-        qDebug() << CELLPHONE->FirstChild()->Value() ;
-        qDebug() << OFFICEPHONE->FirstChild()->Value() ;
-        qDebug() << TYPE->FirstChild()->Value() ;
-        qDebug() << CONTENT->FirstChild()->Value() ;
-        qDebug() << MAIL->FirstChild()->Value() ;
-        qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
-        qDebug() << DORMITORY->FirstChild()->Value() ;
-
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool xmlparse::Create_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
-        myDocument->LinkEndChild(RootElement);
-
-        TiXmlElement *HEAD = new TiXmlElement("HEAD");
-        RootElement->LinkEndChild(HEAD);
-
-        //PersonElement->SetAttribute("ID", "1");
-
-        TiXmlElement *VERSION = new TiXmlElement("VERSION");
-        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        HEAD->LinkEndChild(VERSION);
-        HEAD->LinkEndChild(MESSAGEID);
-        HEAD->LinkEndChild(TYPE);
-
-
-        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
-
-        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
-
-        TiXmlText *GET_ADDRESSTEXT = new TiXmlText("GET_ADDRESS");
-
-        VERSION->LinkEndChild(VERSIONTEXT);
-        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
-        TYPE->LinkEndChild(GET_ADDRESSTEXT);
-
-        TiXmlElement *ACTION = new TiXmlElement("ACTION");
-        RootElement->LinkEndChild(ACTION);
-
-        TiXmlElement *GET_ADDRESS = new TiXmlElement("GET_ADDRESS");
-        ACTION->LinkEndChild(GET_ADDRESS);
-        TiXmlText *ADDRESSTEXT = new TiXmlText("-1");
-        GET_ADDRESS->LinkEndChild(ADDRESSTEXT);
-
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
+            TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
+            MEMBER->LinkEndChild(DORMITORY);
+            TiXmlText *DORMITORYTEXT = new TiXmlText("none");
+            DORMITORY->LinkEndChild(DORMITORYTEXT);
+        }
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
     }
     catch (QString& e)
     {
@@ -645,6 +165,7 @@ bool xmlparse::Create_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
 
 bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
 {
+    QString Name;
     try
     {
         //创建一个XML的文档对象。
@@ -666,8 +187,17 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &sa
 
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
-
+        qDebug() << TYPE->FirstChild()->Value();
         qDebug() << GET_ADDRESS->FirstChild()->Value() ;
+
+        if("-1"==GET_ADDRESS->FirstChild()->Value())
+        {
+            save.requestKind = GET_FRIEND_INFORMATION;
+        }
+        else
+        {
+            save.logInf.account = QString(QLatin1String(GET_ADDRESS->FirstChild()->Value()));
+        }
 
     }
     catch (QString& e)
@@ -754,58 +284,6 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &sa
 //    return true;
 //}
 
-bool xmlparse::Create_TRANS_LOGOUT_XmlFile(QString& szFileName)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
-        myDocument->LinkEndChild(RootElement);
-
-        TiXmlElement *HEAD = new TiXmlElement("HEAD");
-        RootElement->LinkEndChild(HEAD);
-
-        //PersonElement->SetAttribute("ID", "1");
-
-        TiXmlElement *VERSION = new TiXmlElement("VERSION");
-        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
-        TiXmlElement *TYPE = new TiXmlElement("TYPE");
-        HEAD->LinkEndChild(VERSION);
-        HEAD->LinkEndChild(MESSAGEID);
-        HEAD->LinkEndChild(TYPE);
-
-
-        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
-
-        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
-        TiXmlText *LOGOUTTEXT = new TiXmlText("LOGOUT");
-
-        VERSION->LinkEndChild(VERSIONTEXT);
-        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
-        TYPE->LinkEndChild(LOGOUTTEXT);
-
-        TiXmlElement *ACTION = new TiXmlElement("ACTION");
-        RootElement->LinkEndChild(ACTION);
-
-        TiXmlElement *LOGOUT = new TiXmlElement("LOGOUT");
-        ACTION->LinkEndChild(LOGOUT);
-
-        TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
-        LOGOUT->LinkEndChild(USERNAME);
-
-        TiXmlText *USERNAMETEXT = new TiXmlText("Charles");
-        USERNAME->LinkEndChild(USERNAMETEXT);
-
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
-
 
 bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName,saveStruct &save)
 {
@@ -829,13 +307,9 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName,saveStruct &save)
         TiXmlElement *LOGOUT = ACTION->FirstChildElement();
         TiXmlElement *USERNAME = LOGOUT->FirstChildElement();
 
-        qDebug() << VERSION->FirstChild()->Value() ;
-        qDebug() << MESSAGEID->FirstChild()->Value() ;
-
-        save.status = OFFLINE;
-
         qDebug() << USERNAME->FirstChild()->Value() ;
-
+        save.status = OFFLINE;
+        save.logInf.account = QString(QLatin1String(USERNAME->FirstChild()->Value()));
     }
     catch (QString& e)
     {
@@ -1088,7 +562,12 @@ qint32 xmlparse::ReadXMLFromClient(const QString string)
     }
     else if("GET_ADDRESS" == QString(QLatin1String(TYPE->Value())))
     {
-        return GET_FRIEND_INFORMATION;
+        TiXmlElement *ACTION = HEAD->NextSiblingElement();
+        TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
+        if("-1" == GET_ADDRESS->Value())
+            return GET_FRIEND_INFORMATION;
+        else
+            return GET_USER_INFORMATION;
     }
     else if("LOGOUT" == QString(QLatin1String(TYPE->Value())))
     {

@@ -70,6 +70,30 @@ void CServer::sendMessage(saveStruct &save)
         if(LOGIN_SUCCESS == temp.replyKind)
             changeStatu(temp.logInf.account, temp.logInf.status);
     }
+    else if(QUIT ==temp.requestKind)
+    {
+        temp.logInf = save.logInf;
+        temp.clientSocket = save.clientSocket;
+        temp.replyKind = data.quitRequest(temp.logInf.account);
+        save.clientSocket->sendMessage(temp);
+        if(0 == temp.replyKind)
+            changeStatu(temp.logInf.account, temp.logInf.status);
+    }
+    else if(GET_FRIEND_INFORMATION == temp.requestKind)
+    {
+        temp.peerAccount = save.peerAccount;
+        temp.clientSocket = save.clientSocket;
+        data.loginRequest(temp.logInf, temp.friendsVec);
+        temp.replyKind = GET_FRIEND_INFORMATION;
+        save.clientSocket->sendMessage(temp);
+    }
+    else if(GET_USER_INFORMATION == temp.requestKind)
+    {
+        temp.peerAccount = save.peerAccount;
+        temp.clientSocket = save.clientSocket;
+        temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
+        save.clientSocket->sendMessage(temp);
+    }
 //    else if(REGISTER == temp.requestKind)
 //    {
 //        temp.userInf = save.userInf;
@@ -106,18 +130,8 @@ void CServer::sendMessage(saveStruct &save)
 //        temp.replyKind = data.changePasswordRequest(temp.tempStr);
 //        save.clientSocket->sendMessage(temp);
 //    }
-//    else if(GET_USER_INFORMATION == temp.requestKind)
-//    {
-//        temp.peerAccount = save.peerAccount;
-//        temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
-//        save.clientSocket->sendMessage(temp);
-//    }
-//    else if(GET_FRIEND_INFORMATION == temp.requestKind)
-//    {
-//        temp.peerAccount = save.peerAccount;
-//        temp.replyKind = data.getFriendInfRequest(temp.peerAccount, temp.theFriend);
-//        save.clientSocket->sendMessage(temp);
-//    }
+
+
 //    else if(CHANGE_INFORMATION == temp.requestKind)
 //    {
 //        temp.userInf = save.userInf;

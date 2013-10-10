@@ -3,7 +3,7 @@
 
 
 #include <QString>
-
+#include <QVector>
 class CServer;
 class CClientSocket;
 
@@ -40,16 +40,6 @@ struct TempStrings
         QString oldpwd;
         QString newpwd;
         QString account;
-        friend QDataStream & operator<< (QDataStream &qos, const TempStrings &ti)
-        {
-                qos << ti.oldpwd << ti.newpwd << ti.account;
-                return qos;
-        }
-        friend QDataStream & operator>> (QDataStream &qis, TempStrings &ti)
-        {
-                qis >> ti.oldpwd >> ti.newpwd >> ti.account;
-                return qis;
-        }
 };
 
 struct LoginInformation
@@ -57,30 +47,21 @@ struct LoginInformation
         QString account;
         QString password;
         int status;
-
-        LoginInformation()
-        {	status = 0;	}
-        friend QDataStream & operator<< (QDataStream &qos, const LoginInformation &li)
-        {
-                qos << li.account << li.password << li.status;
-                return qos;
-        }
-        friend QDataStream & operator>> (QDataStream &qis, LoginInformation &li)
-        {
-                qis >> li.account >> li.password >> li.status;
-                return qis;
-        }
 };
 
 struct FriendInformation
 {
-        QString account;
-        QString name;
-        int avatarNumber;
-        int status;
-        QString about;
-        int friendKind;
-        QString remark;
+    QString nickName;
+    QString account;
+    QString SEX;
+    QString mobileNumber;
+    QString officephone;
+    QString Others;
+    QString mail;
+    QString dormitory;
+    int status;
+    int friendKind;
+    QString remark;
 };
 
 struct Message
@@ -88,9 +69,12 @@ struct Message
     int kind;
     int fromfriendid;
     int tofriendid;
+    bool BROADCAST;
     QString fromfriend;
     QString tofriend;
     QString text;
+    QString DateRec;
+    QString DateSend;
 };
 
 struct saveStruct
@@ -106,6 +90,7 @@ struct saveStruct
         FriendInformation theFriend;
         Message message;
         qint32 status;
+
         TempStrings tempStr;
         QVector<Message> messageVec;
         QVector<FriendInformation> friendsVec;
@@ -167,7 +152,12 @@ enum
         INLINE = 1
 };
 
-//（数据库）用户表中的字段
+enum
+{
+    MALE = 0,
+    FEMALE = 1
+};
+
 enum
 {
         NICKNAME = 0,
@@ -186,7 +176,6 @@ enum
         AVATAR_NUMBER = 13
 };
 
-//（数据库）临时信息表中的字段
 enum
 {
         KIND = 0,
@@ -197,7 +186,6 @@ enum
         TEXT = 5
 };
 
-//（数据库）好友表中的字段
 enum
 {
         VERIFYING = 0,

@@ -32,7 +32,6 @@ void CClientSocket::receiveMessage()
     QDataStream in(this);
     in.setVersion(QDataStream::Qt_4_8);
 
-    //
     if (blockSize == 0)
     {
         if (bytesAvailable() < (int)sizeof(quint16))
@@ -60,11 +59,19 @@ void CClientSocket::receiveMessage()
     }
     else if (HAVE_MESSAGE ==code)
     {
-        Parse.Read_TRANS_SEND_XmlFile(string,save);
+        //Parse.Read_TRANS_SEND_XmlFile(string,save);
     }
     else if(GET_FRIEND_INFORMATION == code)
     {
-
+        Parse.Read_TRANS_GET_ADDRESS_XmlFile(string,save);
+        save.requestKind = GET_FRIEND_INFORMATION;
+    }
+    else if(GET_USER_INFORMATION ==code)
+    {
+        Parse.Read_TRANS_GET_ADDRESS_XmlFile(string,save);
+        save.requestKind = GET_USER_INFORMATION;
+        save.myAccount = save.logInf.account;
+        save.peerAccount = save.logInf.account;
     }
     else if(CHECK_CONNECTION ==code)
     {
@@ -73,6 +80,8 @@ void CClientSocket::receiveMessage()
     else
     {
         Parse.Read_TRANS_LOGOUT_XmlFile(string,save);
+        save.replyKind = QUIT;
+        save.myAccount = save.logInf.account;
     }
 
 
@@ -85,9 +94,28 @@ void CClientSocket::sendMessage(saveStruct &temp)
     QString data;
     if(LOGIN_SUCCESS == temp.replyKind)
     {
-        Parse.Create_Login_Back_XmlFile(data,temp);
+        Parse.Create_RESULT_XmlFile(data);
+        write(data.toAscii());
+        data.clear();
+        Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
         write(data.toAscii());
     }
+    else if(QUIT == temp.replyKind)
+    {
+        Parse.Create_RESULT_XmlFile(data);
+        write(data.toAscii());
+    }
+    else if(GET_FRIEND_INFORMATION == temp.replyKind)
+    {
+        Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        write(data.toAscii());
+    }
+    else if(GET_USER_INFORMATION == temp.replyKind)
+    {
+        Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        write(data.toAscii());
+    }
+    data.clear();
 }
 
 void CClientSocket::deleteSocket()
