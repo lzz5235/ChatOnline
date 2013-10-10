@@ -1,4 +1,4 @@
-#include "xmlparse.h"
+﻿#include "xmlparse.h"
 #include <QDebug>
 
 bool xmlparse::Create_Login_XmlFile(QString& szFileName)
@@ -8,7 +8,7 @@ bool xmlparse::Create_Login_XmlFile(QString& szFileName)
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -18,16 +18,20 @@ bool xmlparse::Create_Login_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
 
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *LOGINTEXT = new TiXmlText("LOGIN");
 
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(LOGINTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -73,7 +77,7 @@ bool xmlparse::Create_Login_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_Login_XmlFile(QString& szFileName)
+bool xmlparse::Read_Login_XmlFile(QString& szFileName,saveStruct &save)
 {//读取Xml文件，并遍历
     try
     {
@@ -89,6 +93,7 @@ bool xmlparse::Read_Login_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+        TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *LOGIN = ACTION->FirstChildElement();
@@ -104,6 +109,9 @@ bool xmlparse::Read_Login_XmlFile(QString& szFileName)
         qDebug() << MESSAGEID->FirstChild()->Value() ;
 
 
+        save.logInf.account = QString(QLatin1String( USERNAME->FirstChild()->Value() ));
+        save.logInf.password = QString(QLatin1String( PASSWORD->FirstChild()->Value() ));
+        save.logInf.status = QString(QLatin1String( STATUS->FirstChild()->Value() )).toInt();
         qDebug() << USERNAME->FirstChild()->Value() ;
         qDebug() << PASSWORD->FirstChild()->Value() ;
         qDebug() << SYSTEM->FirstChild()->Value() ;
@@ -118,13 +126,13 @@ bool xmlparse::Read_Login_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName)
+bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -134,16 +142,21 @@ bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *_TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(_TYPE);
 
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
 
+        TiXmlText *LOGIN_BACKTEXT = new TiXmlText("LOGIN_BACK");
+
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        _TYPE->LinkEndChild(LOGIN_BACKTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -164,13 +177,13 @@ bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName)
 
         TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
         MEMBER->LinkEndChild(USERNAME);
-        TiXmlText *USERNAMETEXT = new TiXmlText(" 周庆国 ");
+        TiXmlText *USERNAMETEXT = new TiXmlText(save.userInf.nickName.toStdString().data());
         USERNAME->LinkEndChild(USERNAMETEXT);
 
 
         TiXmlElement *USERID = new TiXmlElement("USERID");
         MEMBER->LinkEndChild(USERID);
-        TiXmlText *USERIDTEXT = new TiXmlText("1");
+        TiXmlText *USERIDTEXT = new TiXmlText(save.userInf.account.toStdString().data());
         USERID->LinkEndChild(USERIDTEXT);
 
         TiXmlElement *SEX = new TiXmlElement("SEX");
@@ -183,12 +196,12 @@ bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName)
 
         TiXmlElement *CELLPHONE = new TiXmlElement("CELLPHONE");
         CONTACT->LinkEndChild(CELLPHONE);
-        TiXmlText *CELLPHONETEXT = new TiXmlText("18919880252");
+        TiXmlText *CELLPHONETEXT = new TiXmlText(save.userInf.mobileNumber.toStdString().data());
         CELLPHONE->LinkEndChild(CELLPHONETEXT);
 
         TiXmlElement *OFFICEPHONE = new TiXmlElement("OFFICEPHONE");
         CONTACT->LinkEndChild(OFFICEPHONE);
-        TiXmlText *OFFICEPHONETEXT = new TiXmlText("0931-3589039");
+        TiXmlText *OFFICEPHONETEXT = new TiXmlText(save.userInf.officephone.toStdString().data());
         OFFICEPHONE->LinkEndChild(OFFICEPHONETEXT);
 
         TiXmlElement *OTHER_CONTACT = new TiXmlElement("OTHER_CONTACT");
@@ -201,28 +214,27 @@ bool xmlparse::Create_Login_Back_XmlFile(QString& szFileName)
 
         TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
         OTHER_CONTACT->LinkEndChild(CONTENT);
-        TiXmlText *CONTENTTEXT = new TiXmlText("");
+        TiXmlText *CONTENTTEXT = new TiXmlText("none");
         CONTENT->LinkEndChild(CONTENTTEXT);
 
         TiXmlElement *MAIL = new TiXmlElement("MAIL");
         CONTACT->LinkEndChild(MAIL);
-        TiXmlText *MAILTEXT = new TiXmlText("zhouqg@lzu.edu.cn");
+        TiXmlText *MAILTEXT = new TiXmlText(save.userInf.mail.toStdString().data());
         MAIL->LinkEndChild(MAILTEXT);
 
         TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
         MEMBER->LinkEndChild(OTHER_INFORMATION);
-        TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("");
+        TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("none");
         OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
 
         TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
         MEMBER->LinkEndChild(DORMITORY);
-        TiXmlText *DORMITORYTEXT = new TiXmlText("");
+        TiXmlText *DORMITORYTEXT = new TiXmlText("none");
         DORMITORY->LinkEndChild(DORMITORYTEXT);
 
-
-        //if faild ,put result in this doc <RESULT>NO username</RESULT>
-
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
     }
     catch (QString& e)
     {
@@ -247,6 +259,7 @@ bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+        TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *LOGIN_BACK = ACTION->FirstChildElement();
@@ -262,7 +275,7 @@ bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
         TiXmlElement *CELLPHONE = CONTACT->FirstChildElement();
         TiXmlElement *OFFICEPHONE = CELLPHONE->NextSiblingElement();
         TiXmlElement *OTHER_CONTACT = OFFICEPHONE->NextSiblingElement();
-        TiXmlElement *TYPE = OTHER_CONTACT->FirstChildElement();
+        TiXmlElement *_TYPE = OTHER_CONTACT->FirstChildElement();
         TiXmlElement *CONTENT = TYPE->NextSiblingElement();
 
         TiXmlElement *MAIL = OTHER_CONTACT->NextSiblingElement();
@@ -277,7 +290,7 @@ bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
         qDebug() << SEX->FirstChild()->Value() ;
         qDebug() << CELLPHONE->FirstChild()->Value() ;
         qDebug() << OFFICEPHONE->FirstChild()->Value() ;
-        qDebug() << TYPE->FirstChild()->Value() ;
+        qDebug() << _TYPE->FirstChild()->Value() ;
         qDebug() << CONTENT->FirstChild()->Value() ;
         qDebug() << MAIL->FirstChild()->Value() ;
         qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
@@ -291,7 +304,7 @@ bool xmlparse::Read_Login_Back_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Create_Member_XmlFile(QString& szFileName)
+bool xmlparse::Create_Member_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -367,7 +380,7 @@ bool xmlparse::Create_Member_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_Member_XmlFile(QString& szFileName)
+bool xmlparse::Read_Member_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -414,7 +427,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -424,16 +437,19 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *_TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
-
+        HEAD->LinkEndChild(_TYPE);
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *GET_ADDRESSTEXT = new TiXmlText("GET_ADDRESS");
 
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        _TYPE->LinkEndChild(GET_ADDRESSTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -516,7 +532,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_TRANS_ADDRESS_XmlFile(QString& szFileName)
+bool xmlparse::Read_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -532,6 +548,7 @@ bool xmlparse::Read_TRANS_ADDRESS_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+        TiXmlElement *_TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
@@ -583,7 +600,7 @@ bool xmlparse::Create_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -593,16 +610,21 @@ bool xmlparse::Create_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
 
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
 
+        TiXmlText *GET_ADDRESSTEXT = new TiXmlText("GET_ADDRESS");
+
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(GET_ADDRESSTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -621,7 +643,7 @@ bool xmlparse::Create_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
+bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -637,6 +659,7 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+        TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
@@ -654,82 +677,82 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Create_TRANS_GET_MEMBER_XmlFile(QString& szFileName)
-{
-    try
-    {
-        TiXmlDocument *myDocument = new TiXmlDocument();
-        //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
-        myDocument->LinkEndChild(RootElement);
+//bool xmlparse::Create_TRANS_GET_MEMBER_XmlFile(QString& szFileName)
+//{
+//    try
+//    {
+//        TiXmlDocument *myDocument = new TiXmlDocument();
+//        //创建一个根元素并连接。
+//        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+//        myDocument->LinkEndChild(RootElement);
 
-        TiXmlElement *HEAD = new TiXmlElement("HEAD");
-        RootElement->LinkEndChild(HEAD);
+//        TiXmlElement *HEAD = new TiXmlElement("HEAD");
+//        RootElement->LinkEndChild(HEAD);
 
-        //PersonElement->SetAttribute("ID", "1");
+//        //PersonElement->SetAttribute("ID", "1");
 
-        TiXmlElement *VERSION = new TiXmlElement("VERSION");
-        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
-        HEAD->LinkEndChild(VERSION);
-        HEAD->LinkEndChild(MESSAGEID);
+//        TiXmlElement *VERSION = new TiXmlElement("VERSION");
+//        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+//        HEAD->LinkEndChild(VERSION);
+//        HEAD->LinkEndChild(MESSAGEID);
 
 
-        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
+//        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
-        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+//        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
 
-        VERSION->LinkEndChild(VERSIONTEXT);
-        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+//        VERSION->LinkEndChild(VERSIONTEXT);
+//        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
 
-        TiXmlElement *ACTION = new TiXmlElement("ACTION");
-        RootElement->LinkEndChild(ACTION);
+//        TiXmlElement *ACTION = new TiXmlElement("ACTION");
+//        RootElement->LinkEndChild(ACTION);
 
-        TiXmlElement *GET_MEMBER = new TiXmlElement("GET_MEMBER");
-        ACTION->LinkEndChild(GET_MEMBER);
-        TiXmlText *MEMBERTEXT = new TiXmlText("-1");
-        GET_MEMBER->LinkEndChild(MEMBERTEXT);
+//        TiXmlElement *GET_MEMBER = new TiXmlElement("GET_MEMBER");
+//        ACTION->LinkEndChild(GET_MEMBER);
+//        TiXmlText *MEMBERTEXT = new TiXmlText("-1");
+//        GET_MEMBER->LinkEndChild(MEMBERTEXT);
 
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
+//        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
+//    }
+//    catch (QString& e)
+//    {
+//        return false;
+//    }
+//    return true;
+//}
 
-bool xmlparse::Read_TRANS_GET_MEMBER_XmlFile(QString& szFileName)
-{
-    try
-    {
-        //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
-        //获得根元素.
-        TiXmlElement *RootElement = myDocument->RootElement();
+//bool xmlparse::Read_TRANS_GET_MEMBER_XmlFile(QString& szFileName)
+//{
+//    try
+//    {
+//        //创建一个XML的文档对象。
+//        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
+//        myDocument->LoadFile();
+//        //获得根元素.
+//        TiXmlElement *RootElement = myDocument->RootElement();
 
-        //qDebug() << RootElement->Value() ;
+//        //qDebug() << RootElement->Value() ;
 
-        TiXmlElement *HEAD = RootElement->FirstChildElement();
+//        TiXmlElement *HEAD = RootElement->FirstChildElement();
 
-        TiXmlElement *VERSION = HEAD->FirstChildElement();
-        TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+//        TiXmlElement *VERSION = HEAD->FirstChildElement();
+//        TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
 
-        TiXmlElement *ACTION = HEAD->NextSiblingElement();
-        TiXmlElement *GET_MEMBER = ACTION->FirstChildElement();
+//        TiXmlElement *ACTION = HEAD->NextSiblingElement();
+//        TiXmlElement *GET_MEMBER = ACTION->FirstChildElement();
 
-        qDebug() << VERSION->FirstChild()->Value() ;
-        qDebug() << MESSAGEID->FirstChild()->Value() ;
+//        qDebug() << VERSION->FirstChild()->Value() ;
+//        qDebug() << MESSAGEID->FirstChild()->Value() ;
 
-        qDebug() << GET_MEMBER->FirstChild()->Value() ;
+//        qDebug() << GET_MEMBER->FirstChild()->Value() ;
 
-    }
-    catch (QString& e)
-    {
-        return false;
-    }
-    return true;
-}
+//    }
+//    catch (QString& e)
+//    {
+//        return false;
+//    }
+//    return true;
+//}
 
 bool xmlparse::Create_TRANS_LOGOUT_XmlFile(QString& szFileName)
 {
@@ -737,7 +760,7 @@ bool xmlparse::Create_TRANS_LOGOUT_XmlFile(QString& szFileName)
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_ADDRESS");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -747,16 +770,20 @@ bool xmlparse::Create_TRANS_LOGOUT_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
 
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *LOGOUTTEXT = new TiXmlText("LOGOUT");
 
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(LOGOUTTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -779,7 +806,8 @@ bool xmlparse::Create_TRANS_LOGOUT_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName)
+
+bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -795,6 +823,7 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+        TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *LOGOUT = ACTION->FirstChildElement();
@@ -802,6 +831,8 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName)
 
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
+
+        save.status = OFFLINE;
 
         qDebug() << USERNAME->FirstChild()->Value() ;
 
@@ -813,13 +844,14 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName)
     return true;
 }
 
+
 bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName)
 {
     try
     {
         TiXmlDocument *myDocument = new TiXmlDocument();
         //创建一个根元素并连接。
-        TiXmlElement *RootElement = new TiXmlElement("TRANS_MESSAGE");
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
         myDocument->LinkEndChild(RootElement);
 
         TiXmlElement *HEAD = new TiXmlElement("HEAD");
@@ -829,16 +861,20 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = new TiXmlElement("VERSION");
         TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
         HEAD->LinkEndChild(VERSION);
         HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
 
 
         TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
 
         TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *SENDTEXT = new TiXmlText("SEND");
 
         VERSION->LinkEndChild(VERSIONTEXT);
         MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(SENDTEXT);
 
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
@@ -906,7 +942,64 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName)
     return true;
 }
 
-bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName)
+bool xmlparse::Create_RESULT_XmlFile(QString &szFileName)
+{
+    try
+    {
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        //创建一个根元素并连接。
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
+        myDocument->LinkEndChild(RootElement);
+
+        TiXmlElement *HEAD = new TiXmlElement("HEAD");
+        RootElement->LinkEndChild(HEAD);
+
+        //PersonElement->SetAttribute("ID", "1");
+
+        TiXmlElement *VERSION = new TiXmlElement("VERSION");
+        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
+        HEAD->LinkEndChild(VERSION);
+        HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
+
+
+        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
+
+        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *RESULTTEXT = new TiXmlText("RESULT");
+
+        VERSION->LinkEndChild(VERSIONTEXT);
+        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(RESULTTEXT);
+
+        TiXmlElement *ACTION = new TiXmlElement("ACTION");
+        RootElement->LinkEndChild(ACTION);
+
+        TiXmlElement *ACK = new TiXmlElement("ACK");
+        ACTION->LinkEndChild(ACK);
+        TiXmlElement *RESULT = new TiXmlElement("RESULT");
+        ACTION->LinkEndChild(RESULT);
+
+        TiXmlText *ACKTEXT = new TiXmlText("200");
+        ACK->LinkEndChild(ACKTEXT);
+
+        TiXmlText *RESTEXT = new TiXmlText("null");
+        RESULT->LinkEndChild(RESTEXT);
+
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
+    }
+    catch (QString& e)
+    {
+        return false;
+    }
+    return true;
+}
+
+
+bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
 {
     try
     {
@@ -922,6 +1015,7 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName)
 
         TiXmlElement *VERSION = HEAD->FirstChildElement();
         TiXmlElement *MESSAGEID = VERSION->NextSiblingElement();
+         TiXmlElement *TYPE = MESSAGEID->NextSiblingElement();
 
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *SEND = ACTION->FirstChildElement();
@@ -943,14 +1037,22 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName)
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
 
+        save.message.fromfriendid = QString(QLatin1String(USERID1->FirstChild()->Value())).toInt();
+        save.message.fromfriend = QString(QLatin1String(NICKNAME1->FirstChild()->Value()));
+        save.message.DateSend = QString(QLatin1String(MESSAGEARRIVETIME1->FirstChild()->Value()));
         qDebug() << USERID1->FirstChild()->Value() ;
         qDebug() << NICKNAME1->FirstChild()->Value() ;
         qDebug() << MESSAGEARRIVETIME1->FirstChild()->Value() ;
 
+        save.message.tofriendid = QString(QLatin1String(USERID2->FirstChild()->Value())).toInt();
+        save.message.tofriend = QString(QLatin1String(NICKNAME2->FirstChild()->Value()));
+        save.message.DateRec = QString(QLatin1String(MESSAGEARRIVETIME2->FirstChild()->Value()));
         qDebug() << USERID2->FirstChild()->Value() ;
         qDebug() << NICKNAME2->FirstChild()->Value() ;
         qDebug() << MESSAGEARRIVETIME2->FirstChild()->Value() ;
 
+        save.message.BROADCAST = QString(QLatin1String(BROADCAST->FirstChild()->Value())).toInt();
+        save.message.text = QString(QLatin1String(CONTENT->FirstChild()->Value()));
         qDebug() << BROADCAST->FirstChild()->Value() ;
         qDebug() << CONTENT->FirstChild()->Value() ;
 
@@ -962,20 +1064,42 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName)
     return true;
 }
 
-qint32 xmlparse::ReadXMLFromClient(QString string)
+
+qint32 xmlparse::ReadXMLFromClient(const QString string)
 {
-    TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
+    TiXmlDocument *myDocument = new TiXmlDocument(string.toStdString().c_str());
     myDocument->LoadFile();
 
     TiXmlElement *RootElement = myDocument->RootElement();
+    TiXmlElement *HEAD = RootElement->FirstChildElement();
+    TiXmlElement *TYPE = HEAD->FirstChildElement()->NextSiblingElement()->NextSiblingElement();
 
-    if("TRANS_ADDRESS" ==RootElement->Value())
+    if("LOGIN" ==QString(QLatin1String(TYPE->Value())))
     {
-        TiXmlElement *HEAD = RootElement->FirstChildElement();
-        TiXmlElement *ACTION = HEAD->NextSiblingElement();
-        TiXmlElement *Judge = ACTION->FirstChildElement();
-        if("LOGIN" == Judge->Value())
-            return LOGIN;
-        else if("")
+        return LOGIN;
+    }
+    else if ("UPDATE" == QString(QLatin1String(TYPE->Value())))
+    {
+        return CHANGE_INFORMATION;
+    }
+    else if("SEND" == QString(QLatin1String(TYPE->Value())))
+    {
+            return HAVE_MESSAGE;
+    }
+    else if("GET_ADDRESS" == QString(QLatin1String(TYPE->Value())))
+    {
+        return GET_FRIEND_INFORMATION;
+    }
+    else if("LOGOUT" == QString(QLatin1String(TYPE->Value())))
+    {
+        return QUIT;
+    }
+    else if("TEST"==QString(QLatin1String(TYPE->Value())))
+    {
+        return CHECK_CONNECTION;
+    }
+    else
+    {
+        return QUIT;
     }
 }
