@@ -34,3 +34,5 @@ HEADERS  += mainwindow.h \
     xmlParse/tinyxml.h
 
 FORMS    += mainwindow.ui
+
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x000000
