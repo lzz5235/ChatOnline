@@ -18,18 +18,23 @@ CDatabase::CDatabase(QObject *parent) :
 
 bool CDatabase::init()
 {
-    bool flag = !QFile::exists(PATH);
-    if(flag)
-    {
-        createTable();
+    if (!QFile::exists(PATH)) {
+
+        qDebug() << "No Such Database File";
+        return false;
     }
+
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(PATH);
 
     if(!db.open())
     {
-          qDebug()<< "错误","无法打开数据库！";
+          qDebug()<< "Open Database File Error!";
           return false;
+    } else {
+
+        createTable();
+        qDebug()<< "Create Tables If Not Exists";
     }
     return true;
 }
@@ -353,7 +358,7 @@ void CDatabase::getFriendsAccount(const QString &acc, QVector<QString> &friVec)
 void CDatabase::createTable()
 {
     QSqlQuery query;
-    query.exec("CREATE TABLE user(id  INTEGER PRIMARY KEY,nickname  CHAR(18) NULL,account  CHAR NULL,"
+    query.exec("CREATE TABLE IF NOT EXISTS user(id  INTEGER PRIMARY KEY,nickname  CHAR(18) NULL,account  CHAR NULL,"
                "password  CHAR(18) NULL,"
                "description  LONG VARCHAR NULL,"
                "status  INTEGER NULL,"
@@ -367,13 +372,13 @@ void CDatabase::createTable()
                "birthday  INTEGER NULL)");
     errorSQLOrder(query, "createTable1");
 
-    query.exec("CREATE TABLE friend("
+    query.exec("CREATE TABLE IF NOT EXISTS friend("
                "id  INTEGER ,"
                "friendname  VARCHAR(20) NULL,"
                "friendid  INTEGER NULL)");
     errorSQLOrder(query, "createTable2");
 
-    query.exec("CREATE TABLE tmp(id  INTEGER PRIMARY KEY,fromfriend  VARCHAR(20) NULL,fromfriendid  INTEGER NULL,tofriend  VARCHAR(20) NULL,"
+    query.exec("CREATE TABLE IF NOT EXISTS tmp(id  INTEGER PRIMARY KEY,fromfriend  VARCHAR(20) NULL,fromfriendid  INTEGER NULL,tofriend  VARCHAR(20) NULL,"
                    "tofriendid  INTEGER NULL,"
                    "message  VARCHAR(20) NULL,"
                    "messagetype  INTEGER NULL)");

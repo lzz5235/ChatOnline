@@ -19,4 +19,6 @@ qrc_*.cpp
 Makefile
 *-build-*
 
+.DS_Store
 build-Server-Desktop_Qt_5_1_1_GCC_64bit-Debug
+build-Server-Desktop_Qt_5_1_1_clang_64bit-Debug
