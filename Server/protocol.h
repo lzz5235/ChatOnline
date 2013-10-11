@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <QVector>
+
 class CServer;
 class CClientSocket;
 
@@ -21,6 +22,7 @@ struct UserInformation
     QString nickName;
     QString account;
     QString password;
+    QString sex;
     QString description;
     QString mobileNumber;
     QString officephone;
@@ -30,9 +32,43 @@ struct UserInformation
     QString lastlogintime;
     QString registertime;
     QString birthday;
-    int avatarNumber;
     int status;
 
+};
+
+enum
+{
+        NICKNAME = 0,
+        ACCOUNT = 1,
+        PASSWORD = 2,
+        SEX = 3,
+        DESCRIPTION = 4,
+        MOBILE_NUMBER = 5,
+        OFFICE_NUMBER = 6,
+        DORMITORY = 7,
+        MAIL = 8,
+        LOCATION = 9,
+        LASTLOGINTIME = 10,
+        REGISTERTIME  = 11,
+        BIRTHDAY = 12,
+        STATUS = 13
+};
+
+struct FriendInformation
+{
+    QString nickName;
+    QString account;
+    QString SEX;
+    QString description;
+    QString mobileNumber;
+    QString officephone;
+    QString dormitory;
+    QString mail;
+    QString location;
+    QString birthday;
+    int status;
+    int friendKind;
+    QString remark;
 };
 
 struct TempStrings
@@ -42,6 +78,7 @@ struct TempStrings
         QString account;
 };
 
+
 struct LoginInformation
 {
         QString account;
@@ -49,20 +86,6 @@ struct LoginInformation
         int status;
 };
 
-struct FriendInformation
-{
-    QString nickName;
-    QString account;
-    QString SEX;
-    QString mobileNumber;
-    QString officephone;
-    QString Others;
-    QString mail;
-    QString dormitory;
-    int status;
-    int friendKind;
-    QString remark;
-};
 
 struct Message
 {
@@ -97,6 +120,7 @@ struct saveStruct
         QVector<QString> accountVec;
 
 };
+
 
 enum
 {
@@ -158,23 +182,6 @@ enum
     FEMALE = 1
 };
 
-enum
-{
-        NICKNAME = 0,
-        ACCOUNT = 1,
-        PASSWORD = 2,
-        DESCRIPTION = 3,
-        STATUS = 4,
-        MOBILE_NUMBER = 5,
-        OFFICE_NUMBER = 6,
-        DORMITORY = 7,
-        MAIL = 8,
-        LOCATION = 9,
-        LASTLOGINTIME = 10,
-        REGISTERTIME  = 11,
-        BIRTHDAY = 12,
-        AVATAR_NUMBER = 13
-};
 
 enum
 {
