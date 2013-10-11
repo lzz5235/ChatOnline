@@ -92,11 +92,11 @@ void CClientSocket::receiveMessage()
 void CClientSocket::sendMessage(saveStruct &temp)
 {
     QString data;
+    Parse.Create_RESULT_XmlFile(data);
+    write(data.toAscii());
+    data.clear();
     if(LOGIN_SUCCESS == temp.replyKind)
     {
-        Parse.Create_RESULT_XmlFile(data);
-        write(data.toAscii());
-        data.clear();
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
         write(data.toAscii());
     }

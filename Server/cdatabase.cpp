@@ -71,32 +71,14 @@ qint32 CDatabase::registerRequest(const UserInformation &userInf)
         replyKind = REGISTER_EXIST;
         return replyKind;
     }
-    //添加用户
 
-    /*
-     *CREATE TABLE user
-(
-    id  INTEGER NULL,
-    nickname  CHAR(18) NULL,
-    account  CHAR NULL,
-    password  CHAR(18) NULL,
-    description  LONG VARCHAR NULL,
-    status  INTEGER NULL,
-    mobilephone  INTEGER NULL,
-    officephone  INTEGER NULL,
-    dormitory  VARCHAR(20) NULL,
-    mail  VARCHAR(20) NULL,
-    location  VARCHAR(20) NULL,
-    lastlogintime  DATE NULL,
-    registertime  CHAR(18) NULL,
-    birthday  INTEGER NULL
-)*/
-    query.prepare("insert into user values(:name,:acc,:pwd,:description, :status,:mobilephone,"
+    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
                   ":officephone,:dormitory,:mail,:location,:lastlogintime,"
                     ":registertime, :birthday)");
     query.bindValue(":name", userInf.nickName);
     query.bindValue(":acc", userInf.account);
     query.bindValue(":pwd", userInf.password);
+    query.bindValue(":sex",userInf.sex);
     query.bindValue(":description", userInf.description);
     query.bindValue(":mobilephone", userInf.mobileNumber);
     query.bindValue(":officephone", userInf.officephone);
@@ -192,10 +174,15 @@ qint32 CDatabase::getFriendInfRequest(const QString &acc, FriendInformation &fri
     {
         fri.account = query.value(ACCOUNT).toString();
         fri.nickName = query.value(NICKNAME).toString();
+        fri.SEX = query.value(SEX).toString();
+        fri.description = query.value(DESCRIPTION).toString();
         fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
-        fri.mobileNumber = query.value(OFFICE_NUMBER).toString();
-        fri.status = query.value(STATUS).toInt();
+        fri.officephone = query.value(OFFICE_NUMBER).toString();
+        fri.dormitory = query.value(DORMITORY).toString();
         fri.mail = query.value(MAIL).toString();
+        fri.location = query.value(LOCATION).toString();
+        fri.birthday = query.value(BIRTHDAY).toString();
+        fri.status = query.value(STATUS).toInt();        
         fri.friendKind = VERIFYING;
         fri.remark.clear();
     }
@@ -222,7 +209,24 @@ qint32 CDatabase::deleteFriendRequest(const QString &myAcc, const QString &peerA
     errorSQLOrder(query, "deleteFriendRequest2");
     return DELETE_FRIEND_SUCCESS;
 }
+//struct UserInformation
+//{
+//    QString nickName;
+//    QString account;
+//    QString password;
+//    QString sex;
+//    QString description;
+//    QString mobileNumber;
+//    QString officephone;
+//    QString dormitory;
+//    QString mail;
+//    QString location;
+//    QString lastlogintime;
+//    QString registertime;
+//    QString birthday;
+//    int status;
 
+//};
 qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf)
 {
     QSqlQuery query;
@@ -232,16 +236,18 @@ qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf
     errorSQLOrder(query, "getUserInfRequest1");
     while(query.next())
     {
-        userInf.account = query.value(ACCOUNT).toString();
-        userInf.password = query.value(PASSWORD).toString();
         userInf.nickName = query.value(NICKNAME).toString();
-        userInf.avatarNumber = query.value(AVATAR_NUMBER).toInt();
-        userInf.status = query.value(STATUS).toInt();
+        userInf.account = query.value(ACCOUNT).toString();
+        userInf.password = query.value(PASSWORD).toString();        
+        userInf.sex = query.value(SEX).toString();
+        userInf.description = query.value(DESCRIPTION).toString();
         userInf.mobileNumber = query.value(MOBILE_NUMBER).toString();
         userInf.officephone = query.value(OFFICE_NUMBER).toString();
-        userInf.birthday = query.value(BIRTHDAY).toString();
+        userInf.dormitory = query.value(DORMITORY).toString();
+        userInf.mail = query.value(MAIL).toString();
         userInf.location = query.value(LOCATION).toString();
-        userInf.description = query.value(DESCRIPTION).toString();
+        userInf.birthday = query.value(BIRTHDAY).toString();
+        userInf.status = query.value(STATUS).toInt();
     }
     return GET_USER_INF_SUCCESS;
 }
@@ -254,12 +260,13 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
     query.bindValue(":acc", userInf.account);
     query.exec();
     errorSQLOrder(query, "changeInformationRequest1");
-    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:description, :status,:mobilephone,"
+    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
                   ":officephone,:dormitory,:mail,:location,:lastlogintime,"
                     ":registertime, :birthday)");
     query.bindValue(":name", userInf.nickName);
     query.bindValue(":acc", userInf.account);
     query.bindValue(":pwd", userInf.password);
+    query.bindValue(":sex",userInf.sex);
     query.bindValue(":description", userInf.description);
     query.bindValue(":mobilephone", userInf.mobileNumber);
     query.bindValue(":officephone", userInf.officephone);
@@ -353,8 +360,9 @@ void CDatabase::getFriendsAccount(const QString &acc, QVector<QString> &friVec)
 void CDatabase::createTable()
 {
     QSqlQuery query;
-    query.exec("CREATE TABLE user(id  INTEGER PRIMARY KEY,nickname  CHAR(18) NULL,account  CHAR NULL,"
+    query.exec("CREATE TABLE user(id  INTEGER PRIMARY KEY,nickname  CHAR(18) NULL,account  CHAR(18) NULL,"
                "password  CHAR(18) NULL,"
+               "sex CHAR(7) NULL"
                "description  LONG VARCHAR NULL,"
                "status  INTEGER NULL,"
                "mobilephone  INTEGER NULL,"
@@ -391,16 +399,40 @@ void CDatabase::errorSQLOrder(QSqlQuery query, QString mark)
     }
 }
 
+//struct FriendInformation
+//{
+//    QString nickName;
+//    QString account;
+//    QString SEX;
+//    QString description;
+//    QString mobileNumber;
+//    QString officephone;
+//    QString dormitory;
+//    QString mail;
+//    QString location;
+//    QString birthday;
+//    int status;
+//    int friendKind;
+//    QString remark;
+//};
 void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, QVector<FriendInformation> &friendsVec)
 {
     friendsVec.clear();
 
     FriendInformation fri;
-    fri.account = logInf.account;
-    fri.status = logInf.status;
     fri.nickName = query.value(NICKNAME).toString();
-    fri.remark = query.value(DESCRIPTION).toString();
+    fri.account = logInf.account;    
+    fri.SEX = query.value(SEX).toString();
+    fri.description = query.value(DESCRIPTION).toString();
+    fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
+    fri.officephone = query.value(OFFICE_NUMBER).toString();
+    fri.dormitory = query.value(DORMITORY).toString();
+    fri.mail = query.value(MAIL).toString();
+    fri.location = query.value(LOCATION).toString();
+    fri.birthday = query.value(BIRTHDAY).toString();
+    fri.status = logInf.status;
     fri.friendKind = MYSELF;
+    fri.remark = query.value(DESCRIPTION).toString();    
     friendsVec.push_back(fri);
 
 
@@ -422,10 +454,17 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
         if(0 == fri.friendKind)
             continue;
 
-        fri.account = query.value(ACCOUNT).toString();
         fri.nickName = query.value(NICKNAME).toString();
+        fri.account = query.value(ACCOUNT).toString();
+        fri.SEX = query.value(SEX).toString();
+        fri.description = query.value(DESCRIPTION).toString();
+        fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
+        fri.officephone = query.value(OFFICE_NUMBER).toString();
+        fri.dormitory = query.value(DORMITORY).toString();
+        fri.mail = query.value(MAIL).toString();
+        fri.location = query.value(LOCATION).toString();
+        fri.birthday = query.value(BIRTHDAY).toString();
         fri.status = query.value(STATUS).toInt();
-        fri.remark = query.value(DESCRIPTION).toString();
         friendsVec.push_back(fri);
     }
 }
