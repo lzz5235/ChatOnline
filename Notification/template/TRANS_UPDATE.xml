@@ -26,7 +26,8 @@
 		</UPDATE>
 	</ACTION>
 </TRANS_NOTIFICATION>
-
+**********************************************
+使用 0 or 1表示online offline
 enum
 {
         OFFLINE = 0,
