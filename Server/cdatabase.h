@@ -5,8 +5,8 @@
 #include <QtSql>
 #include "protocol.h"
 
-
-#define PATH "/home/lzz/Notification.db"
+//#define PATH "/home/lzz/Notification.db"
+#define PATH "/Users/PJW/Desktop/Notification.db"
 
 
 class CDatabase : public QObject
