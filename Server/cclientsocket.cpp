@@ -55,11 +55,13 @@ void CClientSocket::receiveMessage()
     }
     else if(CHANGE_INFORMATION == code)
     {
-
+        Parse.Read_TRANS_UPDATE_XmlFile(string,save);
+        save.requestKind = CHANGE_INFORMATION;
     }
     else if (HAVE_MESSAGE ==code)
     {
-        //Parse.Read_TRANS_SEND_XmlFile(string,save);
+        Parse.Read_TRANS_SEND_XmlFile(string,save);
+        save.requestKind = TALK;
     }
     else if(GET_FRIEND_INFORMATION == code)
     {
@@ -92,12 +94,17 @@ void CClientSocket::receiveMessage()
 void CClientSocket::sendMessage(saveStruct &temp)
 {
     QString data;
+    Parse.Create_RESULT_XmlFile(data);
+    write(data.toAscii());
+    data.clear();
     if(LOGIN_SUCCESS == temp.replyKind)
     {
-        Parse.Create_RESULT_XmlFile(data);
-        write(data.toAscii());
-        data.clear();
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        write(data.toAscii());
+    }
+    else if(TALK == temp.replyKind)
+    {
+        Parse.Create_TRANS_SEND_XmlFile(data,temp);
         write(data.toAscii());
     }
     else if(QUIT == temp.replyKind)
@@ -113,6 +120,11 @@ void CClientSocket::sendMessage(saveStruct &temp)
     else if(GET_USER_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        write(data.toAscii());
+    }
+    else if(CHANGE_INFORMATION == temp.replyKind)
+    {
+        Parse.Create_TRANS_UPDATE_XmlFile(data,temp);
         write(data.toAscii());
     }
     data.clear();

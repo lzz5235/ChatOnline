@@ -9,7 +9,6 @@
 			<USERNAME>周庆国</USERNAME>
 			<USERID>1</USERID>
 			<SEX>male</SEX>
-			<AGE>20</AGE>
 			<CONTACT>
 				<CELLPHONE>18919880252</CELLPHONE>
 				<OFFICEPHONE>0931-3589039</OFFICEPHONE>
@@ -22,8 +21,15 @@
 			<OTHER_INFORMATION></OTHER_INFORMATION>
 			<DORMITORY></DORMITORY>
 			<DESCRIPTION></DESCRIPTION>
-			<STATUS>online</STATUS>
+			<STATUS>1</STATUS>
 			<BIRTHDAY></BIRTHDAY>
 		</UPDATE>
 	</ACTION>
 </TRANS_NOTIFICATION>
+**********************************************
+使用 0 or 1表示online offline
+enum
+{
+        OFFLINE = 0,
+        INLINE = 1
+};
