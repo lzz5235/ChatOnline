@@ -92,7 +92,7 @@ struct Message
     int kind;
     int fromfriendid;
     int tofriendid;
-    bool BROADCAST;
+    QString BROADCAST;
     QString fromfriend;
     QString tofriend;
     QString text;
