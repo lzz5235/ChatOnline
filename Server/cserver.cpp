@@ -3,7 +3,9 @@
 CServer::CServer(QObject *parent) :
     QTcpServer(parent)
 {
-    data.init();
+    //Should not call init() here,
+    //Already called in CServer's Construction.
+    //data.init();
 }
 
 CServer::~CServer()

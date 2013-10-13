@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QDebug>
+#include <QDataStream>
 #include "protocol.h"
 #include "xmlparse.h"
 
