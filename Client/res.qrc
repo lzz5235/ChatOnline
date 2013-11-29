@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resource/pic/username.png</file>
+        <file>resource/pic/password.png</file>
+        <file>resource/pic/DSlab-02.png</file>
+        <file>resource/pic/about.png</file>
+        <file>resource/pic/close.png</file>
+        <file>resource/pic/confirm.png</file>
+        <file>resource/pic/top_bar.png</file>
+        <file>resource/pic/config.png</file>
+        <file>resource/pic/DSlab-01.png</file>
+        <file>resource/pic/back_world.jpg</file>
+        <file>resource/pic/back.png</file>
+        <file>resource/pic/back_set.png</file>
+        <file>template/MEMBER.xml</file>
+        <file>template/TRANS_ADDRESS.xml</file>
+        <file>template/TRANS_GET_ADDRESS.xml</file>
+        <file>template/TRANS_GET_MEMBER.xml</file>
+        <file>template/TRANS_LOGIN_BACK.xml</file>
+        <file>template/TRANS_LOGIN.xml</file>
+        <file>template/TRANS_LOGOUT.xml</file>
+        <file>template/TRANS_RESULT.xml</file>
+        <file>template/TRANS_SEND.xml</file>
+        <file>template/TRANS_TEST.xml</file>
+        <file>template/TRANS_UPDATE.xml</file>
+        <file>resource/pic/main_back.png</file>
+    </qresource>
+</RCC>
