@@ -21,7 +21,7 @@ bool CDatabase::init()
     if (!QFile::exists(PATH))
     {
         qDebug() << "No Such Database File";
-        return false;
+        //return false;
     }
 
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -369,7 +369,7 @@ void CDatabase::createTable()
                     "nickname  CHAR(18) NULL,"
                     "account  CHAR NULL,"
                     "password  CHAR(18) NULL,"
-                    "sex CHAR(7) NULL"
+                    "sex CHAR(7) NULL,"
                     "description  LONG VARCHAR NULL,"
                     "status  INTEGER NULL,"
                     "mobilephone  INTEGER NULL,"
