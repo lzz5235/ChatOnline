@@ -166,7 +166,9 @@ bool CClientSocket::sendData(QString strData)
     out << QString(strData.toStdString().c_str());
 
     out.device()->seek(0);
+
     out << (qint16)(block.size() - sizeof(qint16));
+    qDebug()<<(qint16)(block.size() - sizeof(qint16));
     int sended = write(block);
     if(sended == block.size())
         return true;
