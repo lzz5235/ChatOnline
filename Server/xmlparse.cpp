@@ -6,8 +6,10 @@ bool xmlparse::Read_Login_XmlFile(QString& szFileName,saveStruct &save)
     try
     {
         //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
+//        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
+//        myDocument->LoadFile();
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        myDocument->Parse(string.toStdString().c_str());
         //获得根元素.
         TiXmlElement *RootElement = myDocument->RootElement();
 
@@ -290,8 +292,8 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &sa
     try
     {
         //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        myDocument->Parse(string.toStdString().c_str());
         //获得根元素.
         TiXmlElement *RootElement = myDocument->RootElement();
 
@@ -332,8 +334,8 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save)
 {
     try
     {
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        myDocument->Parse(string.toStdString().c_str());
         TiXmlElement *RootElement = myDocument->RootElement();
 
 
@@ -462,8 +464,8 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName,saveStruct &save)
     try
     {
         //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        myDocument->Parse(string.toStdString().c_str());
         //获得根元素.
         TiXmlElement *RootElement = myDocument->RootElement();
 
@@ -651,8 +653,8 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
     try
     {
         //创建一个XML的文档对象。
-        TiXmlDocument *myDocument = new TiXmlDocument(szFileName.toStdString().c_str());
-        myDocument->LoadFile();
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        myDocument->Parse(string.toStdString().c_str());
         //获得根元素.
         TiXmlElement *RootElement = myDocument->RootElement();
 

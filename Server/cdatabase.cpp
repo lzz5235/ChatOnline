@@ -13,7 +13,6 @@ CDatabase::CDatabase(QObject *parent) :
     {
         qDebug() << "Database start Success!";
     }
-
 }
 
 bool CDatabase::init()
