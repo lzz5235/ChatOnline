@@ -1,7 +1,7 @@
 ﻿#include "xmlparse.h"
 #include <QDebug>
 
-bool xmlparse::Read_Login_XmlFile(QString& szFileName,saveStruct &save)
+bool xmlparse::Read_Login_XmlFile(QString& string,saveStruct &save)
 {//读取Xml文件，并遍历
     try
     {
@@ -286,7 +286,7 @@ bool xmlparse::Create_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save
         return true;
 }
 
-bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
+bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& string,saveStruct &save)
 {
     QString Name;
     try
@@ -330,7 +330,7 @@ bool xmlparse::Read_TRANS_GET_ADDRESS_XmlFile(QString& szFileName,saveStruct &sa
     return true;
 }
 
-bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save)
+bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
 {
     try
     {
@@ -459,7 +459,7 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save)
 //}
 
 
-bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& szFileName,saveStruct &save)
+bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& string,saveStruct &save)
 {
     try
     {
@@ -648,7 +648,7 @@ bool xmlparse::Create_RESULT_XmlFile(QString &szFileName)
 }
 
 
-bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
+bool xmlparse::Read_TRANS_SEND_XmlFile(QString& string,saveStruct &save)
 {
     try
     {
@@ -657,6 +657,11 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
         myDocument->Parse(string.toStdString().c_str());
         //获得根元素.
         TiXmlElement *RootElement = myDocument->RootElement();
+        if(RootElement==NULL)
+        {
+            qDebug()<<"!!!!!!!";
+            return false;
+        }
 
         //qDebug() << RootElement->Value() ;
 
