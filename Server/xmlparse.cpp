@@ -631,7 +631,7 @@ bool xmlparse::Create_RESULT_XmlFile(QString &szFileName)
         TiXmlText *ACKTEXT = new TiXmlText("200");
         ACK->LinkEndChild(ACKTEXT);
 
-        TiXmlText *RESTEXT = new TiXmlText("null");
+        TiXmlText *RESTEXT = new TiXmlText("1");
         RESULT->LinkEndChild(RESTEXT);
 
         TiXmlPrinter printer;
@@ -715,26 +715,27 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
 
 qint32 xmlparse::ReadXMLFromClient(const QString string)
 {
-    TiXmlDocument *myDocument = new TiXmlDocument(string.toStdString().c_str());
-    myDocument->LoadFile();
+    TiXmlDocument *myDocument = new TiXmlDocument();
+    myDocument->Parse(string.toStdString().c_str());
 
     TiXmlElement *RootElement = myDocument->RootElement();
+
     TiXmlElement *HEAD = RootElement->FirstChildElement();
     TiXmlElement *TYPE = HEAD->FirstChildElement()->NextSiblingElement()->NextSiblingElement();
 
-    if("LOGIN" ==QString(QLatin1String(TYPE->Value())))
+    if("LOGIN" ==QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
         return LOGIN;
     }
-    else if ("UPDATE" == QString(QLatin1String(TYPE->Value())))
+    else if ("UPDATE" == QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
         return CHANGE_INFORMATION;
     }
-    else if("SEND" == QString(QLatin1String(TYPE->Value())))
+    else if("SEND" == QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
             return HAVE_MESSAGE;
     }
-    else if("GET_ADDRESS" == QString(QLatin1String(TYPE->Value())))
+    else if("GET_ADDRESS" == QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
@@ -743,11 +744,11 @@ qint32 xmlparse::ReadXMLFromClient(const QString string)
         else
             return GET_USER_INFORMATION;
     }
-    else if("LOGOUT" == QString(QLatin1String(TYPE->Value())))
+    else if("LOGOUT" == QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
         return QUIT;
     }
-    else if("TEST"==QString(QLatin1String(TYPE->Value())))
+    else if("TEST"==QString(QLatin1String(TYPE->FirstChild()->Value())))
     {
         return CHECK_CONNECTION;
     }

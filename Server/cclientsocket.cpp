@@ -4,6 +4,7 @@
 CClientSocket::CClientSocket(QObject *parent) :
     QTcpSocket(parent)
 {
+    //QThreadPool::globalInstance()->setMaxThreadCount(20);
     save.clientSocket = this;
     connect(this,SIGNAL(connected()),this,SLOT(clientConnected()));
     connect(this,SIGNAL(readyRead()),this,SLOT(receiveMessage()));
@@ -40,48 +41,57 @@ void CClientSocket::receiveMessage()
     }
     if (bytesAvailable() < blockSize)
         return;
-    QByteArray buffer(blockSize, Qt::Uninitialized);
+    in >>m_data;
 
-    in.readRawData(buffer.data(), blockSize);
-    QString string(buffer);
+    qDebug()<< blockSize;
+    qDebug()<<m_data;
 
-    quint32 code = Parse.ReadXMLFromClient(string);
+    //QByteArray buffer(blockSize, Qt::Uninitialized);
+
+    //qDebug() << buffer.data();
+
+    //in.readRawData(buffer.data(), blockSize);
+    //QString string(buffer);
+
+   // qDebug() << "xml is %s \n" << string;
+
+    quint32 code = Parse.ReadXMLFromClient(m_data);
 
     if(LOGIN == code)
     {
-        Parse.Read_Login_XmlFile(string,save);
+        Parse.Read_Login_XmlFile(m_data,save);
         save.requestKind = LOGIN;
         save.myAccount = save.logInf.account;
     }
     else if(CHANGE_INFORMATION == code)
     {
-        Parse.Read_TRANS_UPDATE_XmlFile(string,save);
+        Parse.Read_TRANS_UPDATE_XmlFile(m_data,save);
         save.requestKind = CHANGE_INFORMATION;
     }
     else if (HAVE_MESSAGE ==code)
     {
-        Parse.Read_TRANS_SEND_XmlFile(string,save);
+        Parse.Read_TRANS_SEND_XmlFile(m_data,save);
         save.requestKind = TALK;
     }
     else if(GET_FRIEND_INFORMATION == code)
     {
-        Parse.Read_TRANS_GET_ADDRESS_XmlFile(string,save);
+        Parse.Read_TRANS_GET_ADDRESS_XmlFile(m_data,save);
         save.requestKind = GET_FRIEND_INFORMATION;
     }
     else if(GET_USER_INFORMATION ==code)
     {
-        Parse.Read_TRANS_GET_ADDRESS_XmlFile(string,save);
+        Parse.Read_TRANS_GET_ADDRESS_XmlFile(m_data,save);
         save.requestKind = GET_USER_INFORMATION;
         save.myAccount = save.logInf.account;
         save.peerAccount = save.logInf.account;
     }
     else if(CHECK_CONNECTION ==code)
     {
-
+        save.requestKind = CHECK_CONNECTION;
     }
     else
     {
-        Parse.Read_TRANS_LOGOUT_XmlFile(string,save);
+        Parse.Read_TRANS_LOGOUT_XmlFile(m_data,save);
         save.replyKind = QUIT;
         save.myAccount = save.logInf.account;
     }
@@ -95,37 +105,46 @@ void CClientSocket::sendMessage(saveStruct &temp)
 {
     QString data;
     Parse.Create_RESULT_XmlFile(data);
-    write(data.toAscii());
-    data.clear();
+
+    qDebug() << "Result :"<<data;
+//    write(data);
+//    qDebug()<<data.toAscii();
+
+//    data.clear();
+    qDebug()<<sendData(data);
     if(LOGIN_SUCCESS == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
-        write(data.toAscii());
+        sendData(data);
     }
     else if(TALK == temp.replyKind)
     {
         Parse.Create_TRANS_SEND_XmlFile(data,temp);
-        write(data.toAscii());
+        sendData(data);
     }
     else if(QUIT == temp.replyKind)
     {
         Parse.Create_RESULT_XmlFile(data);
-        write(data.toAscii());
+        sendData(data);
     }
     else if(GET_FRIEND_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
-        write(data.toAscii());
+        sendData(data);
     }
     else if(GET_USER_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
-        write(data.toAscii());
+        sendData(data);
     }
     else if(CHANGE_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_UPDATE_XmlFile(data,temp);
-        write(data.toAscii());
+        sendData(data);
+    }
+    else if(CHECK_CONNECTION == temp.replyKind)
+    {
+
     }
     data.clear();
 }
@@ -135,4 +154,22 @@ void CClientSocket::deleteSocket()
     if(!save.myAccount.isEmpty())
         emit deleteSignal(save.myAccount);
     deleteLater();
+}
+
+bool CClientSocket::sendData(QString strData)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+
+    out << (qint16)0;
+    out << QString(strData.toStdString().c_str());
+
+    out.device()->seek(0);
+    out << (qint16)(block.size() - sizeof(qint16));
+    int sended = write(block);
+    if(sended == block.size())
+        return true;
+    else
+        return false;
 }

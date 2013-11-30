@@ -28,10 +28,12 @@ public slots:
         void sendMessage(saveStruct &temper);
         void deleteSocket();
 private:
-    saveStruct save;
-    int Description; // User ID
-    qint16 blockSize;
-    xmlparse Parse;
+        bool sendData(QString strData);
+        saveStruct save;
+        int Description; // User ID
+        qint16 blockSize;
+        xmlparse Parse;
+        QString m_data;
 
 };
 

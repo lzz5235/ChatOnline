@@ -106,7 +106,6 @@ void CServer::sendMessage(saveStruct &save)
             data.messageRequest(save.message);
         else
             iter.value()->sendMessage(temp);
-
     }
     else if(CHANGE_INFORMATION == temp.requestKind)
     {
@@ -118,6 +117,11 @@ void CServer::sendMessage(saveStruct &save)
         {
            iter.value()->sendMessage(temp);
         }
+    }
+    else if(CHECK_CONNECTION == temp.requestKind)
+    {
+        temp.replyKind =temp.requestKind;
+        save.clientSocket->sendMessage(temp);
     }
 //    else if(REGISTER == temp.requestKind)
 //    {
@@ -182,8 +186,8 @@ void CServer::sendMessage(saveStruct &save)
 
 void CServer::incomingConnection(int handle)
 {
+    qDebug()<<"Test";
     CClientSocket *client = new CClientSocket();
-    //client->SetSocket(handle);
     client->SetSocket(handle);
 
     connect(client,SIGNAL(sendSignal(saveStruct&)),this,SLOT(sendMessage(saveStruct&)));

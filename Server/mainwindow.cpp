@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->textEdit_2->setText("50");
+    ui->textEdit->setText("5050");
 }
 
 MainWindow::~MainWindow()
@@ -20,15 +22,17 @@ void MainWindow::on_pushButton_clicked()
 {
     if(! ui->textEdit->toPlainText().isEmpty() || ! ui->textEdit_2->toPlainText().isEmpty())
     {
-        MAXCONNECTION = ui->textEdit_2->toPlainText().toInt();
-        QThreadPool::globalInstance()->setMaxThreadCount(MAXCONNECTION);
+        //MAXCONNECTION = ui->textEdit_2->toPlainText().toInt();
+        //QThreadPool::globalInstance()->setMaxThreadCount(MAXCONNECTION);
+
         ui->textEdit_2->setEnabled(false);
 
         PORT = ui->textEdit->toPlainText().toInt();
         ui->textEdit->setEnabled(false);
 
         Myserver = new CServer(this);
-        Myserver->StartServer(PORT);
+        //Myserver->StartServer(PORT);        
+        Myserver->StartServer(5050);
     }
     else
     {
