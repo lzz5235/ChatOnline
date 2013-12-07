@@ -2,7 +2,8 @@
 
 
 CClientSocket::CClientSocket(QObject *parent) :
-    QTcpSocket(parent)
+    QTcpSocket(parent),
+    blockSize(0)
 {
     //QThreadPool::globalInstance()->setMaxThreadCount(20);
     save.clientSocket = this;
@@ -160,7 +161,7 @@ bool CClientSocket::sendData(QString strData)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_8);
+    out.setVersion(QDataStream::Qt_5_0);
 
     out << (qint16)0;
     out << QString(strData.toStdString().c_str());

@@ -29,7 +29,7 @@ public slots:
     void sendMessage(saveStruct &saveinfo);
 
 protected:
-        void incomingConnection(int handle);
+        void incomingConnection(qintptr socketDescriptor);
 private:
     QMap<QString,CClientSocket *> ClientSocketMap;
     int description; //socket fd

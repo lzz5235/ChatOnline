@@ -184,11 +184,11 @@ void CServer::sendMessage(saveStruct &save)
 //        changeStatu(save.myAccount, save.status);
 }
 
-void CServer::incomingConnection(int handle)
+void CServer::incomingConnection(qintptr socketDescriptor)
 {
     qDebug()<<"Test";
     CClientSocket *client = new CClientSocket();
-    client->SetSocket(handle);
+    client->SetSocket(socketDescriptor);
 
     connect(client,SIGNAL(sendSignal(saveStruct&)),this,SLOT(sendMessage(saveStruct&)));
     connect(client,SIGNAL(deleteSignal(QString&)),this,SLOT(disconnect(QString&)));
