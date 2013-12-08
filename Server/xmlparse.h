@@ -14,6 +14,7 @@ public:
     bool Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_TRANS_UPDATE_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save);
+    bool Create_TRANS_LOGIN_BACK_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_RESULT_XmlFile(QString &szFileName);
 
 
