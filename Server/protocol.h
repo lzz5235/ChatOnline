@@ -38,25 +38,21 @@ struct UserInformation
 
 enum
 {
-<<<<<<< HEAD
-        ID = 0,
-=======
-        ID =0,
->>>>>>> 93e070400f6ad0cad1900bf789afd657714a2bff
-        NICKNAME = 1,
-        ACCOUNT = 2,
-        PASSWORD = 3,
-        SEX = 4,
-        DESCRIPTION = 5,
-        STATUS = 6,
-        MOBILE_NUMBER = 7,
-        OFFICE_NUMBER = 8,
-        DORMITORY = 9,
-        MAIL = 10,
-        LOCATION = 11,
-        LASTLOGINTIME = 12,
-        REGISTERTIME  = 13,
-        BIRTHDAY = 14
+	ID = 0,
+	NICKNAME = 1,
+	ACCOUNT = 2,
+	PASSWORD = 3,
+	SEX = 4,
+	DESCRIPTION = 5,
+	STATUS = 6,
+	MOBILE_NUMBER = 7,
+	OFFICE_NUMBER = 8,
+	DORMITORY = 9,
+	MAIL = 10,
+	LOCATION = 11,
+	LASTLOGINTIME = 12,
+	REGISTERTIME  = 13,
+	BIRTHDAY = 14
 };
 
 struct FriendInformation
