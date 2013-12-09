@@ -11,19 +11,19 @@
 #define UI_CTALKDLG_H
 
 #include <QtCore/QVariant>
-#include <QAction>
-#include <QApplication>
-#include <QButtonGroup>
-#include <QDialog>
-#include <QFrame>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QHeaderView>
-#include <QLabel>
-#include <QPushButton>
-#include <QSpacerItem>
-#include <QTextEdit>
-#include <QVBoxLayout>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QVBoxLayout>
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -52,6 +52,9 @@ public:
     QPushButton *pb_setfont;
     QSpacerItem *horizontalSpacer;
     QPushButton *pb_record;
+    QPushButton *pb_topclose;
+    QPushButton *pb_min;
+    QLabel      *lb_top;
 
     void setupUi(QDialog *CTalkDlg)
     {
@@ -105,6 +108,16 @@ public:
 
         pb_close = new QPushButton(widget);
         pb_close->setObjectName(QString::fromUtf8("pb_close"));
+        lb_top = new QLabel(CTalkDlg);
+        lb_top->setObjectName(QString::fromUtf8("lb_top"));
+        lb_top->setGeometry(QRect(0, 0, 447, 10));
+        pb_min = new QPushButton(CTalkDlg);
+        pb_min->setObjectName(QString::fromUtf8("pb_min"));
+        pb_min->setGeometry(QRect(400, 2, 20, 20));
+        pb_topclose = new QPushButton(CTalkDlg);
+        pb_topclose->setObjectName(QString::fromUtf8("pb_topclose"));
+        pb_topclose->setGeometry(QRect(421, 2, 20, 20));
+
 
         gridLayout->addWidget(pb_close, 0, 1, 1, 1);
 
@@ -142,14 +155,6 @@ public:
     void retranslateUi(QDialog *CTalkDlg)
     {
         CTalkDlg->setWindowTitle(QApplication::translate("CTalkDlg", "Dialog", 0));
-        label->setText(QApplication::translate("CTalkDlg", "\346\217\220\347\244\272\357\274\232\n"
-"\346\214\211\344\270\213Ctrl+Enter\n"
-"\345\217\257\344\273\245\347\233\264\346\216\245\345\217\221\351\200\201\344\277\241\346\201\257", 0));
-        lb_othersidedes->setText(QString());
-        pb_close->setText(QApplication::translate("CTalkDlg", "close", 0));
-        pb_send->setText(QApplication::translate("CTalkDlg", "send", 0));
-        pb_setfont->setText(QApplication::translate("CTalkDlg", "setFont", 0));
-        pb_record->setText(QApplication::translate("CTalkDlg", "chatHistory", 0));
     } // retranslateUi
 
 };

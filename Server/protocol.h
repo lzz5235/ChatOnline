@@ -38,7 +38,11 @@ struct UserInformation
 
 enum
 {
+<<<<<<< HEAD
         ID = 0,
+=======
+        ID =0,
+>>>>>>> 93e070400f6ad0cad1900bf789afd657714a2bff
         NICKNAME = 1,
         ACCOUNT = 2,
         PASSWORD = 3,

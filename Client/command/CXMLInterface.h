@@ -17,7 +17,7 @@ protected:
     virtual string xmlTest() = 0;
 
 protected:
-    virtual int parseRspXml(string strRsp, XMLPARA &back) = 0;
+    virtual int parseRsp(string strRsp, XMLPARA &back) = 0;
     virtual void RspXmlLogin(string strRsp, XMLPARA &back) = 0;
     virtual void RspXmlGetAddress(string strRsp, XMLPARA &back) = 0;
     virtual void RspXmlUpdate(string strRsp, XMLPARA &back) = 0;

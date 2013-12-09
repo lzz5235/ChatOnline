@@ -45,7 +45,7 @@ string CCommand::parseCmd2Xml(XMLPARA &para)
     return string("");
 }
 
-int CCommand::parseRsp2Xml(string strRsp, XMLPARA &back)
+int CCommand::parseRspType(string strRsp)
 {
     CEasyXml xml;
     xml.Open(strRsp);
@@ -59,12 +59,13 @@ int CCommand::parseRsp2Xml(string strRsp, XMLPARA &back)
         xml.Query("TRANS_NOTIFICATION/ACTION/ACK", ack);
         if("200" == ack)
         {
-            back.xmlBack ;
-        }
-        else
-            return -1;
-    }
 
+        }
+    }
+}
+
+int CCommand::parseRsp(string strRsp, XMLPARA &back)
+{
     switch(back.iCmdType)
     {
     case LOGIN:
@@ -106,7 +107,10 @@ string CCommand::getVersion()
 
 string CCommand::xmlLogin(XMLPARA &xmlLogin)
 {
-
+    string username = getElement(xmlLogin.mapCmdPara, USERNAME);
+    string password = getElement(xmlLogin.mapCmdPara, PASSWORD);
+    string status = getElement(xmlLogin.mapCmdPara, STATUS);
+    return m_xml.TRANS_LOGIN(username, password, atoi(status.c_str()), OS_SYSTEM);
 }
 
 string CCommand::xmlUpdate(XMLPARA &xmlUpdate)

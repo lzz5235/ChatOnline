@@ -23,9 +23,12 @@ SOURCES += main.cpp \
     csettingdlg.cpp \
     cgv.cpp \
     cmaindlg.cpp \
-    talkdlg.cpp \
     command/XMLBuild.cpp \
-    connect/connect.cpp
+    connect/connect.cpp \
+    frienditem.cpp \
+    cchatroom.cpp \
+    caboutdlg.cpp \
+    cprivateinfo.cpp
 HEADERS += mainwindow.h \
     connect/connect.h \
     xml/McuMakeXMLInterface.h \
@@ -44,19 +47,26 @@ HEADERS += mainwindow.h \
     cgv.h \
     extern.h \
     cmaindlg.h \
-    talkdlg.h \
     command/CXMLInterface.h \
     command/XMLBuild.h \
     structure.h \
-    xml/rscCMD.h
+    xml/rscCMD.h \
+    frienditem.h \
+    cchatroom.h \
+    caboutdlg.h \
+    cprivateinfo.h
 FORMS += \
     clogin.ui \
     csettingdlg.ui \
     cmaindlg.ui \
-    ctalkdlg.ui
+    cchatroom.ui \
+    caboutdlg.ui \
+    cprivateinfo.ui
 
 RESOURCES += \
     res.qrc
+
+OTHER_FILES +=
 
 
 

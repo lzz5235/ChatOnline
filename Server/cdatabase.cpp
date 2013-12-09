@@ -47,12 +47,20 @@ qint32 CDatabase::loginRequest(const LoginInformation &logInf, QVector<FriendInf
     query.exec();
     errorSQLOrder(query, "loginRequest1");
 
+
     if(!query.next())
         return LOGIN_NO_ACCOUNT ;
     else if(query.value(PASSWORD).toString()!=logInf.password)
         return LOGIN_WRONG_PWD ;
     else if(query.value(STATUS) != OFFLINE)
+    {
+        qDebug()<<query.value(NICKNAME).toString();
+        qDebug()<<query.value(ACCOUNT).toString();
+        qDebug()<<query.value(PASSWORD).toString();
+        qDebug()<<query.value(SEX).toString();
+        qDebug()<<query.value(STATUS).toString();
         return HAVE_LOGINED;
+    }
     else
     {
         loginSuccess(query, logInf, friendsVec);
@@ -446,23 +454,30 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
     friendsVec.push_back(fri);
 
 
-    query.prepare("update user set status=:sta where account=:acc");
+    query.prepare("update user set status=:sta where account=':acc' ");
     query.bindValue(":acc", logInf.account);
     query.bindValue(":sta", QString::number(logInf.status));
     query.exec();
     errorSQLOrder(query, "loginSuccess1");
 
 
-    query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc))");
+    query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc ))");
     query.bindValue(":acc", logInf.account);
     query.exec();
     errorSQLOrder(query, "loginSuccess2");
 
+
     while(query.next())
     {
-        fri.friendKind = query.value(12).toInt();
-        if(0 == fri.friendKind)
-            continue;
+        qDebug()<<query.value(NICKNAME).toString();
+        qDebug()<<query.value(ACCOUNT).toString();
+        qDebug()<<query.value(PASSWORD).toString();
+        qDebug()<<query.value(SEX).toString();
+        qDebug()<<query.value(STATUS).toString();
+
+//        fri.friendKind = query.value(12).toInt();
+//        if(0 == fri.friendKind)
+//            continue;
 
         fri.nickName = query.value(NICKNAME).toString();
         fri.account = query.value(ACCOUNT).toString();

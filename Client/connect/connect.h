@@ -35,13 +35,13 @@ private:
     CONSTATUS   m_status;
     ServerNode  m_server;
     QString     m_data;
-    int         m_blockSize;
+    qint16      m_blockSize;
     QString     m_error;
 
 private slots:
     void readData();
     void linkConnected();
-    void serverDisconnected();
+    void ServerDisconnected();
     void displayError(QAbstractSocket::SocketError socketError);
 
 signals:

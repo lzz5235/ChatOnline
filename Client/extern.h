@@ -2,6 +2,9 @@
 #define EXTERN_H
 #include <map>
 #include <string>
+#include <QString>
+#include <QPixmap>
+#include <QMatrix>
 #include "command/data.h"
 
 using namespace std;
@@ -13,6 +16,7 @@ inline LoginInformation *createLoginInfo()
 }
 
 static LoginInformation *g_loginInfo = NULL;
+
 
 
 #endif // EXTERN_H

@@ -32,7 +32,7 @@ void CClientSocket::clientDisconnected()
 void CClientSocket::receiveMessage()
 {
     QDataStream in(this);
-    in.setVersion(QDataStream::Qt_4_8);
+    in.setVersion(QDataStream::Qt_5_0);
 
     if (blockSize == 0)
     {
@@ -113,9 +113,12 @@ void CClientSocket::sendMessage(saveStruct &temp)
 
 //    data.clear();
     qDebug()<<sendData(data);
+    data.clear();
     if(LOGIN_SUCCESS == temp.replyKind)
     {
-        Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        //Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        Parse.Create_TRANS_LOGIN_BACK_XmlFile(data,temp);
+        qDebug()<<data;
         sendData(data);
     }
     else if(TALK == temp.replyKind)

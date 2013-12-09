@@ -3,10 +3,12 @@
 #include "global.h"
 #include "extern.h"
 #include "cmaindlg.h"
+#include "utilities/FuncTools.h"
 #include "cgv.h"
 #include <QDir>
 #include <QPicture>
 #include <QTime>
+#include <QMessageBox>
 
 CLogin::CLogin(CConnect *link, IMakeXml *xml, QWidget *parent) :
     QDialog(parent),
@@ -95,6 +97,9 @@ void  CLogin::initAction()
     connect(ui->pb_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->pb_set, SIGNAL(clicked()), this, SLOT(toSettingDlg()));
     connect(ui->pb_login, SIGNAL(clicked()), this, SLOT(submit()));
+    connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
 }
 
 void CLogin::close()
@@ -114,11 +119,54 @@ void CLogin::toSettingDlg()
 
 void CLogin::submit()
 {
-    this->hide();
-    m_maindlg = new CMainDlg(m_link, m_MXml);
-    m_maindlg->setWindowFlags(Qt::FramelessWindowHint);
-    m_maindlg->show();
-    m_maindlg->exec();
+//    this->hide();
+//    QVector<FriendInformation> vcFrnd;
+
+//    UserInformation *lzz1 = new UserInformation;
+//    lzz1->nickName = "王绪国";
+//    lzz1->other = "lzz";
+//    lzz1->status = 1;
+//    lzz1->avatarNumber = 8;
+
+//    FriendInformation lzz;
+//    lzz.name = "lizhaozhong";
+//    lzz.remark = "lzz";
+//    lzz.status = 1;
+//    lzz.avatarNumber = 10;
+//    vcFrnd.push_back(lzz);
+
+//    m_maindlg = new CMainDlg(m_link, m_MXml, lzz1);
+//    m_maindlg->initFriends(vcFrnd);
+//    m_maindlg->setWindowFlags(Qt::FramelessWindowHint);
+//    m_maindlg->show();
+//    m_maindlg->exec();
+
+    if(m_link->getStatus() != CONNECTED)
+    {
+        ServerNode ser;
+        CGV gv;
+        string ip = gv.getIp();
+        string port = gv.getPort();
+        ser.Ip = ip;
+        ser.Port = port;
+        m_link->setServer(ser);
+        if(!m_link->conct2Server())
+        {
+            qDebug() << m_link->getError();
+            return;
+        }
+    }
+
+    XMLPARA xmlLogin;
+    xmlLogin.iCmdType = LOGIN;
+    xmlLogin.mapCmdPara.insert(pair<string, string>(USERNAME, ui->le_username->text().toStdString()));
+    xmlLogin.mapCmdPara.insert(pair<string, string>(PASSWORD, ui->le_userpassword->text().toStdString()));
+    xmlLogin.mapCmdPara.insert(pair<string, string>(LOGINTIME, ui->lb_curtime->text().toStdString()));
+    char szStatus[16] = "";
+    itoa(ui->cb_status->currentIndex(), szStatus);
+    xmlLogin.mapCmdPara.insert(pair<string, string>(STATUS, szStatus));
+    string strLogin = m_MXml->parseCmd2Xml(xmlLogin);
+    m_link->sendData(strLogin);
 }
 
 void CLogin::settingClosed()
@@ -126,4 +174,25 @@ void CLogin::settingClosed()
     this->show();
     if(m_settingDlg)
         delete m_settingDlg;
+}
+
+void CLogin::connected2server()
+{
+    qDebug() << "connected successful!" << endl;
+}
+
+void CLogin::connect2serverFaild()
+{
+    qDebug() << "connected faild" << endl;
+}
+
+void CLogin::readBack(string data)
+{
+#ifdef DEBUG
+    QMessageBox::information(NULL, ("check"),
+        ("Test to connecte to server successful, and return is %s.", data.c_str()));
+#endif
+
+
+    //m_MXml->parseRsp(data, )
 }

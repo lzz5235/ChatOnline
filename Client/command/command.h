@@ -1,6 +1,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 #include "data.h"
+#include "utilities/FuncTools.h"
 #include "IMakeXml.h"
 #include "CXMLInterface.h"
 #include "XMLBuild.h"
@@ -11,7 +12,8 @@ public:
     CCommand(float version);
     int init(float version);
     string parseCmd2Xml(XMLPARA &para);
-    int parseRsp2Xml(string strRsp, XMLPARA &back);
+    int parseRspType(string strRsp);
+    int parseRsp(string strRsp, XMLPARA &back);
     string getLastError();
 
 protected:

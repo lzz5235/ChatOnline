@@ -39,7 +39,7 @@ void CSettingDlg::initWnd()
 
     ui->lb_topbar->setStyleSheet("#lb_topbar{border-image:url(:resource/pic/top_bar.png);}");
     ui->pb_cancel->setStyleSheet("#pb_cancel{border-image:url(:resource/pic/confirm.png);color: white;border-radius: 10px;  border: 2px groove gray;border-style: outset;}"
-                                "#pb_cancel:hover{color: green;}");
+                                "#pb_cancel:hover{color: green;}; pressed{coloe :red}");
     ui->pb_confirm->setStyleSheet("#pb_confirm{border-image:url(:resource/pic/confirm.png);color: white;border-radius: 10px;  border: 2px groove gray;border-style: outset;}"
                                 "#pb_confirm:hover{color: green;}");
     ui->pb_test->setStyleSheet("#pb_test{border-image:url(:resource/pic/confirm.png);color: white;border-radius: 10px;  border: 2px groove gray;border-style: outset;}"
@@ -68,7 +68,7 @@ void  CSettingDlg::initAction()
     connect(ui->pb_close, SIGNAL(clicked()), this, SLOT(dlgClose()));
     connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
     connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
-    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(QString)));
+    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
 }
 
 bool CSettingDlg::checkServer()
@@ -85,6 +85,11 @@ bool CSettingDlg::checkServer()
             return false;
         }
     }
+
+    XMLPARA xml;
+    xml.iCmdType = TEST;
+    string test = m_MXml->parseCmd2Xml(xml);
+    m_link->sendData(test);
     return true;
 }
 
@@ -111,11 +116,6 @@ void CSettingDlg::submit()
 void CSettingDlg::connected2server()
 {
     qDebug() << "connected successful!" << endl;
-    XMLPARA xml;
-    xml.iCmdType = TEST;
-    string xmlLogin = m_MXml->parseCmd2Xml(xml);
-    qDebug() << "xmlLogin will be send " << xmlLogin.c_str() << "\n";
-    m_link->sendData(xmlLogin);
 }
 
 void CSettingDlg::connect2serverFaild()
@@ -125,6 +125,8 @@ void CSettingDlg::connect2serverFaild()
 
 void CSettingDlg::readBack(string data)
 {
+#ifdef DEBUG
     QMessageBox::information(NULL, ("check"),
         ("Test to connecte to server successful, and return is %s.", data.c_str()));
+#endif
 }

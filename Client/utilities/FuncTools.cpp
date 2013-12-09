@@ -667,6 +667,22 @@ void itoa(int i, char a[])
     }
 }
 
+string getElement(map<string, string> &from, string key)
+{
+    map<string, string>::iterator it = from.begin();
+    if(it == from.end())
+        return "";
+
+    it = from.find(key);
+    if(it != from.end())
+    {
+        qDebug() << " element is " << it->second.c_str();
+        return it->second;
+    }
+    else
+        return "";
+}
+
 
 
 

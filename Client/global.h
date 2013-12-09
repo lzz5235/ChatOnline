@@ -27,6 +27,10 @@ typedef char* LPSTR;
 #define MAINWNDWIDTH 230
 #define MAINWNDHEIGH 692
 
+//avatar
+#define AVATAR_SIZE 70
+
+
 struct ServerNode
 {
     string Ip;
@@ -41,7 +45,29 @@ enum CONSTATUS
     CLOSED
 };
 
+enum FRIENDSTATUS
+{
+    OFFLINE = 0,			//离线
+    ONLINE = 1,				//在线
+    FREE = 2,               //Q我吧
+    BUSY = 3,				//忙碌
+    LEAVE = 4,				//离开
+    DISTURB = 5,			//请勿打扰
+    STEALTH = 6,				//隐身
+    QUIT                    //quit
+};
+
+enum FUTURE
+{
+    ABOUT = 1               //future buttons
+};
+
+
 //this is very important release must emit
 #define DEBUG 1
+
+#define ANIMATIONTIME 1000*0.5
+
+#define allAvatar   34
 
 #endif // GLOBAL_H

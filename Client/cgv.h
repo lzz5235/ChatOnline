@@ -34,6 +34,7 @@ public:
 
     KVRt getValue(string value);
     bool setValue(KVList &kv);
+
 private:
     string m_version;
     string m_curFilePath;

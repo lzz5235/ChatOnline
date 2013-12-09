@@ -61,7 +61,7 @@ bool CConnect::sendData(string strData)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
+    out.setVersion(QDataStream::Qt_4_8);
 
     out << (qint16)0;
     out << QString(strData.c_str());
@@ -73,6 +73,8 @@ bool CConnect::sendData(string strData)
         return true;
     else
         return false;
+
+    qDebug() << "send data is " << block << endl;
 }
 
 string CConnect::parseData(string strData)
@@ -83,21 +85,25 @@ string CConnect::parseData(string strData)
 void CConnect::readData()
 {
     QDataStream in(m_link);
-    in.setVersion(QDataStream::Qt_4_0);
+    in.setVersion(QDataStream::Qt_5_0);
 
     if (m_blockSize == 0)
     {
         if (m_link->bytesAvailable() < (int)sizeof(qint16))
             return;
         in >> m_blockSize;
+        qDebug() << "out message is " << m_blockSize << endl;
     }
 
     if (m_link->bytesAvailable() < m_blockSize)
+    {
+        m_blockSize = 0;
         return;
+    }
 
     in >> m_data;
-
     m_blockSize = 0;
+    qDebug() << "out message is " << m_data << endl;
     emit dataIsReady(m_data.toStdString());
 }
 
@@ -110,7 +116,7 @@ void CConnect::linkConnected()
     }
 }
 
-void CConnect::serverDisconnected()
+void CConnect::ServerDisconnected()
 {
     emit disconnectedSignal();
 }

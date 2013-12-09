@@ -31,6 +31,8 @@ inline QString UTF82GBK(const QString &inStr)
 	return utf2gbk;
 }
 
+string getElement(map<string, string> &from, string key);
+
 inline std::string gbk2utf8(const QString &inStr)
 {
 	return GBK2UTF8(inStr).toStdString();

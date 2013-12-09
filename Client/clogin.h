@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QMessageBox>
 #include "command/data.h"
 #include "csettingdlg.h"
 #include "command/command.h"
@@ -27,15 +28,7 @@ protected:
 
 private:
     Ui::CLogin *ui;
-    QLabel              *m_lb_username ;
-    QLabel              *m_lb_userpassword;
-    QLabel              *m_lb_curtime;
-    QLineEdit           *m_le_username;
-    QLineEdit           *m_le_userpassword;
-    QComboBox           *m_lt_status;
-    QPushButton         *m_pb_Login;
-    QPushButton         *m_pb_set;
-    UserInformation     *m_userinfo;
+    UserInformation     m_userinfo;
     IMakeXml            *m_MXml;
     CConnect            *m_link;
     CMainDlg            *m_maindlg;
@@ -51,6 +44,9 @@ private slots:
     void toSettingDlg();
     void submit();
     void settingClosed();
+    void connected2server();
+    void connect2serverFaild();
+    void readBack(string data);
 };
 
 #endif // CLOGIN_H
