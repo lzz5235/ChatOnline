@@ -174,7 +174,12 @@ enum
 enum
 {
         OFFLINE = 0,
-        INLINE = 1
+        INLINE = 1,
+        BUSY = 2,
+        DISTURB = 3,
+        IDLE = 4,
+        LEAVE = 5,
+        STEALTH = 6
 };
 
 enum
