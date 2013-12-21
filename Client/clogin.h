@@ -25,6 +25,8 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
 private:
     Ui::CLogin *ui;
@@ -33,11 +35,15 @@ private:
     CConnect            *m_link;
     CMainDlg            *m_maindlg;
     CSettingDlg         *m_settingDlg;
+    bool                m_bActive;
 
 private:
     void initWnd();
     void initWidget();
     void initAction();
+    void disAction();
+    bool inputCheck();
+    void loginBack(string &data);
 
 private slots:
     void close();

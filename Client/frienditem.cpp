@@ -15,6 +15,7 @@ CFriendItem::CFriendItem(CConnect *tLink,
     initWnd();
     initWidget();
     initAction();
+    QWidget::installEventFilter(this);
 }
 
 void CFriendItem::initWnd()
@@ -51,6 +52,37 @@ void CFriendItem::initAction()
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(clickedRightButton(const QPoint &)));
 }
 
+void CFriendItem::disAction()
+{
+    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+    disconnect(m_room, SIGNAL(closeWnd()), this, SLOT(chatRoomQuit()));
+    disconnect(this, SIGNAL(clicked()), this, SLOT(clickedFriendButton()));
+    disconnect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(clickedRightButton(const QPoint &)));
+
+}
+
+bool CFriendItem::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type())
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          return true ;
+      }
+      else
+      {
+          initAction();
+          return false ;
+      }
+  }
+  return false ;
+}
+
 CFriendItem::~CFriendItem()
 {
     closeChatRoom();
@@ -74,7 +106,8 @@ void CFriendItem::creatMenu()
 
 void CFriendItem::clickedShowInformation()
 {
-
+    if(m_room)
+        m_room->friendInfo();
 }
 
 void CFriendItem::clickedChangeRemark()
@@ -176,7 +209,7 @@ void CFriendItem::readBack(string data)
 {
 #ifdef DEBUG
     QMessageBox::information(NULL, ("check"),
-        ("Test to connecte to server successful, and return is %s.", data.c_str()));
+        ("CFriendItem to connecte to server successful, and return is %s.", data.c_str()));
 #endif
 }
 

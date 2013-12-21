@@ -22,11 +22,12 @@
         <file>template/TRANS_RESULT.xml</file>
         <file>template/TRANS_SEND.xml</file>
         <file>template/TRANS_TEST.xml</file>
-        <file>template/TRANS_UPDATE.xml</file>
         <file>resource/pic/main_back.png</file>
         <file>resource/pic/fresh_cycle.png</file>
         <file>resource/pic/min.png</file>
         <file>resource/pic/DSBtn.png</file>
+        <file>template/TRANS_UPDATE.xml</file>
+        <file>resource/pic/bar.png</file>
     </qresource>
     <qresource prefix="/head">
         <file>resource/head/0.jpg</file>

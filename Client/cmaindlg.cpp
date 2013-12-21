@@ -2,6 +2,7 @@
 #include "ui_cmaindlg.h"
 #include <QDir>
 #include <QMouseEvent>
+#include <QCryptographicHash>
 
 CMainDlg::CMainDlg(CConnect *link, IMakeXml *xml,  UserInformation *myself, QWidget *parent):
     QDialog(parent),
@@ -16,6 +17,8 @@ CMainDlg::CMainDlg(CConnect *link, IMakeXml *xml,  UserInformation *myself, QWid
     initWnd();
     initWidget();
     initAction();
+    //主窗口需要接受所有消息,所以不用disconnect
+    //QWidget::installEventFilter(this);
 }
 
 CMainDlg::~CMainDlg()
@@ -52,8 +55,28 @@ void CMainDlg::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.5);
+        sleep(0.5);
     }
+}
+
+bool CMainDlg::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type())
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          return true ;
+      }
+      else
+      {
+          initAction();
+          return false ;
+      }
+  }
+  return false ;
 }
 
 void CMainDlg::initWnd()
@@ -73,6 +96,8 @@ void CMainDlg::initWnd()
     ui->pb_setting->setStyleSheet("#pb_setting{border-image:url(:resource/pic/DSBtn.png);}");
     ui->pb_addfriend->setHidden(true);
     ui->pb_min->setStyleSheet("#pb_min{border-image:url(:resource/pic/min.png);}");
+    ui->lb_topbar->setStyleSheet("#lb_topbar{border-image:url(:/resource/pic/bar.png);}");
+    ui->lb_buttonbar->setStyleSheet("#lb_buttonbar{border-image:url(:/resource/pic/bar.png);}");
 }
 
 void CMainDlg::initWidget()
@@ -83,7 +108,7 @@ void CMainDlg::initWidget()
     ui->tb_friend->addItem(groupBox, "您的好友");
 
     //设置当前所布局的组件与四周的边界
-    layout->setContentsMargins(10, 10, 10, 10);
+    layout->setContentsMargins(MARGINTOOLBUTTON, MARGINTOOLBUTTON, MARGINTOOLBUTTON, MARGINTOOLBUTTON);
 
     //居中对齐
     layout->setAlignment(Qt::AlignTop);
@@ -96,6 +121,8 @@ void CMainDlg::initWidget()
     trayIcon->show();
     createFutureMenu();
     m_animation = new QTimer(this);
+    initMyself();
+    initMyDataDir();
 }
 
 void CMainDlg::initAction()
@@ -117,23 +144,80 @@ void CMainDlg::initAction()
     connect(ui->lb_myselfinfo, SIGNAL(editingFinished()), this, SLOT(editFinished()));
     connect(m_acAbout, SIGNAL(triggered()), this, SLOT(furuteAbout()));
     connect(ui->pb_setting, SIGNAL(clicked()), this, SLOT(showFutureWnd()));
+    connect(ui->pb_fresh, SIGNAL(clicked()), this, SLOT(initFriends()));
 }
 
-void CMainDlg::initFriends(QVector<FriendInformation> &vcFriends)
+void CMainDlg::disAction()
 {
-    m_vcFriends.clear();
-    QVector<FriendInformation>::Iterator it = vcFriends.begin();
-    while(it != vcFriends.end())
+    disconnect(ui->pb_close, SIGNAL(clicked()), this, SLOT(close()));
+    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+    disconnect(trayMap, SIGNAL(mapped(int)), this, SLOT(changeState(int)));
+    disconnect(onlineAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(talkAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(busyAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(leaveAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(disturbAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(stealthAction, SIGNAL(triggered()), trayMap, SLOT(map()));
+    disconnect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
+    disconnect(ui->pb_min, SIGNAL(clicked()), this, SLOT(hide()));
+    disconnect(trayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(ontrayIconactivated(QSystemTrayIcon::ActivationReason)));
+    disconnect(ui->lb_myselfinfo, SIGNAL(editingFinished()), this, SLOT(editFinished()));
+    disconnect(m_acAbout, SIGNAL(triggered()), this, SLOT(furuteAbout()));
+    disconnect(ui->pb_setting, SIGNAL(clicked()), this, SLOT(showFutureWnd()));
+}
+
+void CMainDlg::initFriends()
+{
+    XMLPARA xmlGetAddress;
+    xmlGetAddress.iCmdType = GETADDRESS;
+    xmlGetAddress.mapCmdPara.insert(pair<string, string>(USERGETWHO, "-1"));
+    string strGetAddress = m_MXml->parseCmd2Xml(xmlGetAddress);
+
+    if(m_link->getStatus() != CONNECTED)
     {
-        m_vcFriends.push_back(*it);
-        it++;
+        ServerNode ser;
+        CGV gv;
+        string ip = gv.getIp();
+        string port = gv.getPort();
+        ser.Ip = ip;
+        ser.Port = port;
+        m_link->setServer(ser);
+        if(!m_link->conct2Server())
+        {
+            qDebug() << m_link->getError();
+            return;
+        }
     }
 
-    updateFriends();
+    ServerNode ser;
+    CGV gv;
+    string ip = gv.getIp();
+    string port = gv.getPort();
+    ser.Ip = ip;
+    ser.Port = port;
+    m_link->setServer(ser);
+    if(!m_link->conct2Server())
+    {
+        qDebug() << m_link->getError();
+        return;
+    }
+
+    qDebug() << "send to get address " << strGetAddress.c_str() << endl;
+    m_link->sendData(strGetAddress);
 }
 
 void CMainDlg::updateFriends()
 {
+    m_frndMap.clear();
+    int itemCount = layout->count();
+    while(itemCount)
+    {
+        delete layout->itemAt(0)->widget();
+        itemCount--;
+    }
+    layout->update();
     QVector<FriendInformation>::Iterator it = m_vcFriends.begin();
     while(it != m_vcFriends.end())
     {
@@ -141,21 +225,31 @@ void CMainDlg::updateFriends()
         it++;
     }
 
-    initMyself();
 }
 
 void CMainDlg::insertItem(FriendInformation &frd)
 {
     CFriendItem *item = new CFriendItem(m_link, m_MXml, frd, *m_myself, this);
+    item->setStyleSheet("QToolButton{border-style: flat;}");
     QString strHead = QString(":/head/resource/head/%1.jpg").arg(frd.avatarNumber);
-    item->setIcon(QPixmap(strHead));
+    if(frd.status == OFFLINE)
+    {
+        QImage oldPic(strHead);
+        QImage newPic = convert2Gray(strHead, oldPic.size());
+        item->setIcon(QPixmap::fromImage(newPic));
+    }
+    else
+    {
+        item->setIcon(QPixmap(strHead));
+    }
     QSize size;
     size.setHeight(AVATAR_SIZE - 10);
     size.setWidth(AVATAR_SIZE);
     item->setIconSize(size);
-    item->setAutoRaise(true);
+    item->setAutoRaise(false);
     item->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    item->setText(frd.name);
+    item->setText(frd.nickName);
+    item->setFixedSize(FRDWIDTH - 30, FRDHEIGH);
     layout->addWidget(item);
     m_frndMap.insert(frd.account, item);
 }
@@ -204,7 +298,7 @@ void CMainDlg::createTrayIcon()
     stealthAction->setIcon(QIcon(":/status/resource/status/stealth.bmp"));
     trayMap->setMapping(stealthAction, STEALTH);
 
-    quitAction = new QAction("quit", this);
+    quitAction = new QAction("appQuit", this);
 
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(onlineAction);
@@ -280,6 +374,42 @@ void CMainDlg::readBack(string data)
     QMessageBox::information(NULL, ("check"),
         ("Test to connecte to server successful, and return is %s.", data.c_str()));
 #endif
+
+    int rtCmd = m_MXml->parseRspType(data);
+    qDebug() << "maindlg back is " << rtCmd << endl;
+    switch(rtCmd)
+    {
+        case GETMESSAGE:
+        {
+            qDebug() << "getmessage " << endl;
+            break;
+        }
+
+        case GETADDRESS:
+        {
+            qDebug() << "getmessage " << endl;
+            getAddress(data);
+            break;
+        }
+
+        case RESULT:
+        {
+            qDebug() << "getmessage " << endl;
+            break;
+        }
+
+        case LOGIN:
+        {
+            qDebug() << "getmessage " << endl;
+            break;
+        }
+
+        case UPDATEINFO:
+        {
+            qDebug() << "getmessage " << endl;
+            break;
+        }
+    }
 }
 
 void CMainDlg::initMyself()
@@ -306,6 +436,43 @@ void CMainDlg::initMyself()
     ui->lb_myNickName->setText(m_myself->nickName);
 }
 
+void CMainDlg::initMyDataDir()
+{
+    QDir curDataDic(m_myself->account);
+    if(curDataDic.exists())
+    {
+        QString filePath = "./" + m_myself->account + "/" + HISTORY;
+        QFile infoFile(filePath);
+        if(!infoFile.exists())
+        {
+            infoFile.open( QIODevice::Text | QIODevice::ReadWrite);
+
+            infoFile.close();
+        }
+    }
+    else
+    {
+        if(QDir::current().mkdir(m_myself->account))
+        {
+            qDebug() << "create directory successful" << endl;
+        }
+        else
+        {
+            qDebug() << "create directory faild" << endl;
+            return;
+        }
+
+        QString filePath = "./" + m_myself->account + "/" + HISTORY;
+        QFile infoFile(filePath);
+        if(!infoFile.exists())
+        {
+            infoFile.open( QIODevice::Text | QIODevice::ReadWrite);
+
+            infoFile.close();
+        }
+    }
+}
+
 void CMainDlg::ontrayIconactivated(QSystemTrayIcon::ActivationReason reason)
 {
      switch(reason)
@@ -313,7 +480,11 @@ void CMainDlg::ontrayIconactivated(QSystemTrayIcon::ActivationReason reason)
         case QSystemTrayIcon::Trigger:
             if(this->isHidden())
             {
-                setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+                Qt::WindowFlags flags = Qt::Widget;
+                flags |= Qt::WindowStaysOnTopHint;
+
+                setWindowFlags(flags | Qt::FramelessWindowHint);
+                flags &= ~(Qt::WindowStaysOnTopHint);
                 this->showNormal();
             }
             break;
@@ -391,4 +562,59 @@ void CMainDlg::animationShake()
     QString strHead = QString(":/head/resource/head/28.jpg");
     rotateWidget(m_frndMap.begin().value(), -10, strHead);
     qDebug() << "start animation" << endl;
+}
+
+void CMainDlg::getMessage(string &data)
+{
+
+}
+
+void CMainDlg::getAddress(string &data)
+{
+    XMLPARA back;
+    back.iCmdType = GETADDRESS;
+    m_MXml->parseRsp(data, back);
+
+    if(GETADDRESSSUCCESSFUL == back.xmlBack.mapBackPara[GETADDRESSRESULT])
+    {
+        list<map<string, string> >::iterator it = back.lstCmdPara.begin();
+        while(it != back.lstCmdPara.end())
+        {
+            FriendInformation frd;
+            frd.userID = atoi((*it)[USERID].c_str());
+            frd.nickName = QString("    %1").arg((*it)[USERNICKNAME].c_str());
+            frd.age = atoi((*it)[USERAGE].c_str());
+            frd.avatarNumber = atoi((*it)[USERAVATARNUM].c_str());
+            frd.other = QString((*it)[USERDESCRIPTION].c_str());
+            frd.status = atoi((*it)[USERSTATUS].c_str());
+            QVector<FriendInformation>::Iterator it_alexist = m_vcFriends.begin();
+            while(it_alexist != m_vcFriends.end())
+            {
+                if(it_alexist->userID == frd.userID)
+                {
+                    m_vcFriends.erase(it_alexist);
+                    break;
+                }
+                it_alexist++;
+            }
+            m_vcFriends.push_back(frd);
+            it++;
+        }
+        updateFriends();
+    }
+}
+
+void CMainDlg::getNewLogin(string &data)
+{
+
+}
+
+void CMainDlg::getNewUpdage(string &data)
+{
+
+}
+
+void CMainDlg::getResult(string &data)
+{
+
 }

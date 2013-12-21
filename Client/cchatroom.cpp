@@ -6,12 +6,14 @@ CChatRoom::CChatRoom(CConnect *link, IMakeXml *xml, UserInformation myself, Frie
     m_link(link),
     m_MXml(xml),
     m_myself(myself),
-    m_friend(frd)
+    m_friend(frd),
+    m_myfriendinfo(NULL)
 {
     ui->setupUi(this);
     initWnd();
     initWidget();
     initAction();
+    QWidget::installEventFilter(this);
 }
 
 CChatRoom::~CChatRoom()
@@ -30,6 +32,26 @@ void CChatRoom::mousePressEvent(QMouseEvent * ev)
             m_Ptbefore = mv->globalPos();
             m_Ptcur = mv->pos();
         }
+
+        QRect frnpic = QRect(ui->f_otherside->pos() + this->pos(), ui->f_otherside->size());
+        if(frnpic.contains(mv->globalPos()))
+        {
+            friendInfo();
+        }
+    }
+}
+
+
+void CChatRoom::mouseReleaseEvent(QMouseEvent * ev)
+{
+    QMouseEvent *mv = (QMouseEvent*) ev;
+    if(mv->buttons() & Qt::LeftButton)
+    {
+        QRect frnpic = QRect(ui->f_otherside->pos() + this->pos(), ui->f_otherside->size());
+        if(frnpic.contains(mv->globalPos()))
+        {
+            friendInfo();
+        }
     }
 }
 
@@ -41,9 +63,28 @@ void CChatRoom::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.5);
+        sleep(0.1);
     }
+}
 
+bool CChatRoom::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type())
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          return true ;
+      }
+      else
+      {
+          initAction();
+          return false ;
+      }
+  }
+  return false ;
 }
 
 void CChatRoom::initWnd()
@@ -79,16 +120,27 @@ void CChatRoom::initWidget()
 
     QString strIcon = QString("#f_otherside{border-image:url(:head/resource/head/%1.jpg)}").arg(m_friend.avatarNumber);
     ui->f_otherside->setStyleSheet(strIcon);
-    ui->lb_friendInfo->setText(m_friend.name);
+    ui->lb_friendInfo->setText(m_friend.nickName);
     ui->lb_friendInfo->setAlignment(Qt::AlignHCenter);
 }
 
 void CChatRoom::initAction()
 {
     connect(ui->pb_close, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
+
+    //because qt showminimize() function is not work
+    connect(ui->pb_min, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
     connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
     connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
-    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+    //connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+}
+
+void CChatRoom::disAction()
+{
+    disconnect(ui->pb_close, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
+    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    //disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
 }
 
 void CChatRoom::connected2server()
@@ -103,5 +155,27 @@ void CChatRoom::connect2serverFaild()
 
 void CChatRoom::readBack(string data)
 {
+#ifdef DEBUG
+    QMessageBox::information(NULL, ("check"),
+        ("CChatRoom Test to connecte to server successful, and return is %s.", data.c_str()));
+#endif
+}
 
+void CChatRoom::friendInfo()
+{
+    if(NULL == m_myfriendinfo)
+    {
+        m_myfriendinfo = new CFriendDlg(m_friend);
+        m_myfriendinfo->setWindowFlags(Qt::FramelessWindowHint);
+        m_myfriendinfo->show();
+    }
+
+    if(m_myfriendinfo->isActiveWindow())
+    {
+        return;
+    }
+    else
+    {
+        m_myfriendinfo->show();
+    }
 }

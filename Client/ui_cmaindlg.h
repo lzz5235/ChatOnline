@@ -43,6 +43,8 @@ public:
     QPushButton     *pb_min;
     QLabel          *lb_status;
     QLabel          *lb_myNickName;
+    QLabel          *lb_topbar;
+    QLabel          *lb_buttonbar;
 
     void setupUi(QDialog *CMainDlg)
     {
@@ -70,6 +72,12 @@ public:
         lb_myNickName = new QLabel(CMainDlg);
         lb_myNickName->setObjectName(QString::fromUtf8("lb_myNickName"));
         lb_myNickName->setGeometry(QRect(120, 60, 90, 20));
+        lb_topbar = new QLabel(CMainDlg);
+        lb_topbar->setObjectName(QString::fromUtf8("lb_topbar"));
+        lb_topbar->setGeometry(QRect(0, 130, 250, 2));
+        lb_buttonbar = new QLabel(CMainDlg);
+        lb_buttonbar->setObjectName(QString::fromUtf8("lb_buttonbar"));
+        lb_buttonbar->setGeometry(QRect(0, 635, 250, 2));
         pb_addfriend = new QPushButton(CMainDlg);
         pb_addfriend->setObjectName(QString::fromUtf8("pb_addfriend"));
         pb_addfriend->setGeometry(QRect(120, 650, 23, 23));

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>460</width>
-    <height>626</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>20</x>
      <y>40</y>
      <width>417</width>
-     <height>571</height>
+     <height>617</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -47,12 +47,22 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>输入密码：</string>
+           <string>旧密码：</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="passwordLineEdit"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>输入密码：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="passwordLineEdit_2"/>
         </item>
         <item>
          <widget class="QLabel" name="label_3">

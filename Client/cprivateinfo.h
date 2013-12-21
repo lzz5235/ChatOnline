@@ -33,11 +33,13 @@ private:
 protected:
     void mousePressEvent(QMouseEvent * ev);
     void mouseMoveEvent(QMouseEvent *ev);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     void initWnd();
     void initWidget();
     void initAction();
+    void disAction();
     bool informationRestrain();
     bool passwordRestrain();
 
@@ -45,6 +47,9 @@ public slots:
     void clickedPastButton();
     void clickedNextButton();
     void clickedConfirm();
+    void connected2server();
+    void connect2serverFaild();
+    void readBack(string data);
 };
 
 #endif // CPRIVATEINFO_H

@@ -74,6 +74,10 @@ string CXMLBuild::TRANS_LOGIN(string username, string password, int status, stri
     nodeinfo.strData = system;
     lstNodeInfo.push_back(nodeinfo);
 
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/LOGIN/LOGINTIME";
+    nodeinfo.strData = ConvertTimeFormat(GetCurrTime());
+    lstNodeInfo.push_back(nodeinfo);
+
     CSimpleXml xml;
     xml.OpenXml(strxml);
     xml.ModifyXml(lstNodeInfo);
@@ -115,7 +119,7 @@ string CXMLBuild::TRANS_GET_ADDRESS(string who)
     return strxml;
 }
 
-string CXMLBuild::TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, bool broadcast)
+string CXMLBuild::TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, string broadcast)
 {
     string strxml(xmlFind("TRANS_GET_ADDRESS.xml"));
 
@@ -166,6 +170,10 @@ string CXMLBuild::TRANS_UPDATE(UserInformation user)
     nodeinfo.strData = user.userID;
     lstNodeInfo.push_back(nodeinfo);
 
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/PASSWORD";
+    nodeinfo.strData = user.password.toStdString();
+    lstNodeInfo.push_back(nodeinfo);
+
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/SEX";
     nodeinfo.strData = user.sex.toStdString();
     lstNodeInfo.push_back(nodeinfo);
@@ -188,10 +196,6 @@ string CXMLBuild::TRANS_UPDATE(UserInformation user)
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/OTHER_INFORMATION";
     nodeinfo.strData = user.other.toStdString();
-    lstNodeInfo.push_back(nodeinfo);
-
-    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/DORMITORY";
-    nodeinfo.strData = user.dormitory.toStdString();
     lstNodeInfo.push_back(nodeinfo);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/DORMITORY";

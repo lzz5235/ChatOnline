@@ -38,14 +38,17 @@ void CAboutDlg::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.1);
+        sleep(0.1);
     }
 }
 
 void CAboutDlg::initWnd()
 {
     //drop frame
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    Qt::WindowFlags flags = Qt::Widget;
+    flags |= Qt::WindowStaysOnTopHint;
+
+    setWindowFlags(flags | Qt::FramelessWindowHint);
     //setFixedSize(MAINWNDWIDTH, MAINWNDHEIGH);
 
     QPalette pal;

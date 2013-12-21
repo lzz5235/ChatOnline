@@ -17,7 +17,7 @@ public:
     string TRANS_LOGIN(string username, string password, int status, string system = "OS_WINDOWS");
     string TRANS_LOGOUT(string username);
     string TRANS_GET_ADDRESS(string who);
-    string TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, bool broadcast = false);
+    string TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, string broadcast = "false");
     string TRANS_UPDATE(UserInformation user);
     string TRANS_TEST();
 

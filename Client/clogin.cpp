@@ -14,12 +14,14 @@ CLogin::CLogin(CConnect *link, IMakeXml *xml, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CLogin),
     m_link(link),
-    m_MXml(xml)
+    m_MXml(xml),
+    m_bActive(true)
 {
     ui->setupUi(this);
     initWnd();
     initWidget();
     initAction();
+    //QWidget::installEventFilter(this);//为这个窗口安装过滤器
 }
 
 CLogin::~CLogin()
@@ -43,7 +45,7 @@ void CLogin::changeEvent(QEvent *e)
 void CLogin::initWnd()
 {
     //drop frame
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    setWindowFlags(/*Qt::WindowStaysOnTopHint |*/ Qt::FramelessWindowHint);
     setFixedSize(wndSizeWidth, wndSizeHeight);
 
     QPalette pal;
@@ -99,7 +101,64 @@ void  CLogin::initAction()
     connect(ui->pb_login, SIGNAL(clicked()), this, SLOT(submit()));
     connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
     connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
-    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+    connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));    
+}
+
+void CLogin::disAction()
+{
+    disconnect(ui->pb_close, SIGNAL(clicked()), this, SLOT(close()));
+    disconnect(ui->pb_set, SIGNAL(clicked()), this, SLOT(toSettingDlg()));
+    disconnect(ui->pb_login, SIGNAL(clicked()), this, SLOT(submit()));
+    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+}
+
+bool CLogin::inputCheck()
+{
+    if(ui->le_username->text().isEmpty())
+    {
+        QMessageBox::information(NULL, ("Username"),
+            ("Username must not empty."));
+        return false;
+    }
+    else if(ui->le_userpassword->text().isEmpty())
+    {
+        QMessageBox::information(NULL, ("Password"),
+            ("Password must not empty."));
+        return false;
+    }
+    return true;
+}
+
+void CLogin::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Enter)
+    {
+        submit();
+    }
+}
+
+bool CLogin::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type() && m_bActive == true)
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          m_bActive = false;
+          return true ;
+      }
+      else if(QEvent::WindowActivate == event->type() && m_bActive == false)
+      {
+          initAction();
+          m_bActive = true;
+          return false ;
+      }
+  }
+  return false ;
 }
 
 void CLogin::close()
@@ -141,6 +200,11 @@ void CLogin::submit()
 //    m_maindlg->show();
 //    m_maindlg->exec();
 
+    if(!inputCheck())
+    {
+        return;
+    }
+
     if(m_link->getStatus() != CONNECTED)
     {
         ServerNode ser;
@@ -178,21 +242,53 @@ void CLogin::settingClosed()
 
 void CLogin::connected2server()
 {
-    qDebug() << "connected successful!" << endl;
+    qDebug() << "login connected successful!" << endl;
 }
 
 void CLogin::connect2serverFaild()
 {
-    qDebug() << "connected faild" << endl;
+    qDebug() << "login connected faild" << endl;
 }
 
 void CLogin::readBack(string data)
 {
 #ifdef DEBUG
     QMessageBox::information(NULL, ("check"),
-        ("Test to connecte to server successful, and return is %s.", data.c_str()));
+        ("login Test to connecte to server successful, and return is %s.", data.c_str()));
 #endif
 
+    int rtCmd = m_MXml->parseRspType(data);
+    qDebug() << "login back is " << rtCmd << endl;
+    if(rtCmd == LOGIN_BACK)
+    {
+        loginBack(data);
+    }
+}
 
-    //m_MXml->parseRsp(data, )
+void CLogin::loginBack(string &data)
+{
+    XMLPARA back;
+    back.iCmdType = LOGIN_BACK;
+    m_MXml->parseRsp(data, back);
+
+    if(LOGINSUCCESS == back.xmlBack.mapBackPara[LOGINRESULT])
+    {
+        list<map<string, string> >::iterator it = back.lstCmdPara.begin();
+        if(it == back.lstCmdPara.end())
+        {
+            return;
+        }
+
+        m_userinfo.userID = atoi((*it)[USERID].c_str());
+        m_userinfo.nickName = QString((*it)[USERNICKNAME].c_str());
+        m_userinfo.age = atoi((*it)[USERAGE].c_str());
+        m_userinfo.avatarNumber = atoi((*it)[USERAVATARNUM].c_str());
+        m_userinfo.other = QString((*it)[USERDESCRIPTION].c_str());
+        m_userinfo.account = ui->le_username->text();
+        m_maindlg = new CMainDlg(m_link, m_MXml, &m_userinfo);
+        m_maindlg->setWindowFlags(Qt::FramelessWindowHint);
+        this->hide();
+        m_maindlg->show();
+        disAction();;
+    }
 }

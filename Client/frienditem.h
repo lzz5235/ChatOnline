@@ -39,7 +39,7 @@ public:
     }
 
 protected:
-
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     QString             m_Account;
@@ -64,6 +64,7 @@ private:
     void initWnd();
     void initWidget();
     void initAction();
+    void disAction();
 
 signals:
     //void deleteFriendSignal(const QString &peerAccount);

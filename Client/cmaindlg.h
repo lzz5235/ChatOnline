@@ -26,12 +26,12 @@ class CMainDlg : public QDialog
 
 public:
     explicit CMainDlg(CConnect *link, IMakeXml *xml, UserInformation *myself, QWidget *parent = 0);
-    void initFriends(QVector<FriendInformation> &vcFriends);
     ~CMainDlg();
 
 protected:
     void mousePressEvent(QMouseEvent * ev);
     void mouseMoveEvent(QMouseEvent *ev);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Ui::CMainDlg    *ui;
@@ -69,10 +69,17 @@ private:
     void initWnd();
     void initWidget();
     void initAction();
+    void disAction();
     void updateFriends();
     void insertItem(FriendInformation &frd);
     void initMyself();
+    void initMyDataDir();
     void privateSet();
+    void getMessage(string &data);
+    void getAddress(string &data);
+    void getNewLogin(string &data);
+    void getNewUpdage(string &data);
+    void getResult(string &data);
 
     template <typename T>
     void rotateWidget(T *t, float angle, QString &img)
@@ -94,6 +101,7 @@ private slots:
     void showFutureWnd();
     void animationStop();
     void animationShake();
+    void initFriends();
 
 private:
     IMakeXml                            *m_MXml;

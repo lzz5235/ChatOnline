@@ -11,13 +11,15 @@ CSettingDlg::CSettingDlg(CConnect *link, IMakeXml *xml, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CSettingDlg),
     m_link(link),
-    m_MXml(xml)
+    m_MXml(xml),
+    m_bActive(true)
 {
     //QTextCodec::setCodecForLocale(QTextCodec::codecForName("GB2312"));
     ui->setupUi(this);
     initWnd();
     loadSetting();
     initAction();
+    //QWidget::installEventFilter(this);
 }
 
 CSettingDlg::~CSettingDlg()
@@ -69,6 +71,39 @@ void  CSettingDlg::initAction()
     connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
     connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
     connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+}
+
+void CSettingDlg::disAction()
+{
+    disconnect(ui->pb_cancel, SIGNAL(clicked()), this, SLOT(dlgClose()));
+    disconnect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(submit()));
+    disconnect(ui->pb_test, SIGNAL(clicked()), this, SLOT(checkServer()));
+    disconnect(ui->pb_close, SIGNAL(clicked()), this, SLOT(dlgClose()));
+    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
+    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
+    disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+}
+
+bool CSettingDlg::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type() && m_bActive == true)
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          m_bActive = false;
+          return true ;
+      }
+      else if(QEvent::WindowActivate == event->type() && m_bActive == false)
+      {
+          initAction();
+          m_bActive = true;
+          return false ;
+      }
+  }
+  return false ;
 }
 
 bool CSettingDlg::checkServer()
@@ -127,6 +162,8 @@ void CSettingDlg::readBack(string data)
 {
 #ifdef DEBUG
     QMessageBox::information(NULL, ("check"),
-        ("Test to connecte to server successful, and return is %s.", data.c_str()));
+        ("CSettingDlg to connecte to server successful, and return is %s.", data.c_str()));
 #endif
+    int type = m_MXml->parseRspType(data);
+    qDebug() << "type is " << type << endl;
 }

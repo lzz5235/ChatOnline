@@ -5,6 +5,8 @@
 #include "IMakeXml.h"
 #include "CXMLInterface.h"
 #include "XMLBuild.h"
+#include "xml/SimpleXml.h"
+#include <QDebug>
 
 class CCommand : public CXMLInterface
 {
@@ -32,6 +34,7 @@ protected:
     virtual void RspXmlLogout(string strRsp, XMLPARA &back);
     virtual void RspXmlSend(string strRsp, XMLPARA &back);
     virtual void RspXmlTest(string strRsp, XMLPARA &back);
+    virtual void RspXmlResult(string strRsp, XMLPARA &back);
 
 private:
     string getVersion();

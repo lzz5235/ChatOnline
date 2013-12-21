@@ -21,16 +21,21 @@ public:
     explicit CSettingDlg(CConnect *link, IMakeXml *xml, QWidget *parent = 0);
     ~CSettingDlg();
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 private:
     Ui::CSettingDlg *ui;
     QSettings       *m_sets;
     IMakeXml        *m_MXml;
     CConnect        *m_link;
     QLabel          *m_logo;
+    bool            m_bActive;
 
 private:
     void initWnd();
-    void  initAction();
+    void initAction();
+    void disAction();
     bool loadSetting();
 
 signals:

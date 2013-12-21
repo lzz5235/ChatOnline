@@ -7,6 +7,7 @@
 #include "frienditem.h"
 #include "command/data.h"
 #include "connect/connect.h"
+#include "cfrienddlg.h"
 
 namespace Ui {
 class CChatRoom;
@@ -30,15 +31,22 @@ private:
     QPoint                              m_Ptbefore;
     QPoint                              m_Ptcur;
     bool                                m_bAtClose;
+    CFriendDlg                          *m_myfriendinfo;
 
 protected:
     void mousePressEvent(QMouseEvent * ev);
     void mouseMoveEvent(QMouseEvent *ev);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void mouseReleaseEvent(QMouseEvent *);
 
 private:
     void initWnd();
     void initWidget();
     void initAction();
+    void disAction();
+
+public:
+    void friendInfo();
 
 private slots:
     void connected2server();

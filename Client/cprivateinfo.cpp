@@ -12,6 +12,7 @@ CPrivateInfo::CPrivateInfo(CConnect *link, IMakeXml *xml, UserInformation myself
     initWnd();
     initWidget();
     initAction();
+    //QWidget::installEventFilter(this);
 }
 
 CPrivateInfo::~CPrivateInfo()
@@ -41,8 +42,28 @@ void CPrivateInfo::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //qwait(0.1);
+        sleep(0.1);
     }
+}
+
+bool CPrivateInfo::eventFilter(QObject *watched, QEvent *event)
+{
+  if( watched == this )
+  {
+      //窗口停用，变为不活动的窗口
+      if(QEvent::WindowDeactivate == event->type())
+      {
+          qDebug() << "deactive status " << endl;
+          disAction();
+          return true ;
+      }
+      else
+      {
+          initAction();
+          return false ;
+      }
+  }
+  return false ;
 }
 
 void CPrivateInfo::initWnd()
@@ -87,6 +108,16 @@ void CPrivateInfo::initAction()
     connect(ui->pastButton, SIGNAL(clicked()), this, SLOT(clickedPastButton()));
     connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(clickedNextButton()));
     connect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(clickedConfirm()));
+
+}
+
+void CPrivateInfo::disAction()
+{
+    disconnect(ui->pb_close, SIGNAL(clicked()), this, SLOT(close()));
+    disconnect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(close()));
+    disconnect(ui->pastButton, SIGNAL(clicked()), this, SLOT(clickedPastButton()));
+    disconnect(ui->nextButton, SIGNAL(clicked()), this, SLOT(clickedNextButton()));
+    disconnect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(clickedConfirm()));
 }
 
 void CPrivateInfo::clickedPastButton()
@@ -202,4 +233,25 @@ void CPrivateInfo::clickedConfirm()
 {
     if(informationRestrain())
         passwordRestrain();
+}
+
+void CPrivateInfo::connected2server()
+{
+    qDebug() << "login connected successful!" << endl;
+}
+
+void CPrivateInfo::connect2serverFaild()
+{
+    qDebug() << "login connected faild" << endl;
+}
+
+void CPrivateInfo::readBack(string data)
+{
+#ifdef DEBUG
+    QMessageBox::information(NULL, ("check"),
+        ("CPrivateInfo Test to connecte to server successful, and return is %s.", data.c_str()));
+#endif
+
+
+    //m_MXml->parseRsp(data, )
 }

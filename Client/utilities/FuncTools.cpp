@@ -683,7 +683,45 @@ string getElement(map<string, string> &from, string key)
         return "";
 }
 
+int getElement(map<string, int> &from, string key)
+{
+    map<string, int>::iterator it = from.begin();
+    if(it == from.end())
+        return -1;
 
+    it = from.find(key);
+    if(it != from.end())
+    {
+        qDebug() << "element is " << it->second << "type is " << it->first.c_str();
+        return it->second;
+    }
+    else
+        return -1;
+}
+
+QImage convert2Gray(const QString img, QSize size)
+{
+    QImage  image;
+    image = QImage(img).scaled(size.width(), size.height());
+
+    int w,h;
+    w = image.width();
+    h = image.height();
+    QImage iGray(w,h,QImage::Format_RGB32);
+
+    for(int i=0; i < size.width(); i++)
+    {
+        for(int j=0; j < size.height(); j++)
+        {
+            QRgb pixel = image.pixel(i, j);
+            int gray = qGray(pixel);
+            QRgb grayPixel = qRgb(gray,gray,gray);
+            iGray.setPixel(i,j,grayPixel);
+        }
+    }
+
+    return iGray;
+}
 
 
 

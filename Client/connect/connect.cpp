@@ -50,6 +50,7 @@ bool CConnect::conct2Server()
     if(m_status == CLOSED || m_status == IDLE)
     {
         m_link->abort();
+        qDebug() << "abort link" << endl;
         QString qstrIP = QString(m_server.Ip.c_str());
         qint16 port = std::atoi(m_server.Port.c_str());
         m_link->connectToHost(qstrIP, port);
@@ -69,12 +70,11 @@ bool CConnect::sendData(string strData)
     out.device()->seek(0);
     out << (qint16)(block.size() - sizeof(qint16));
     int sended = m_link->write(block);
+    qDebug() << "size is " << sended << "send data is " << block << endl;
     if(sended == block.size())
         return true;
     else
         return false;
-
-    qDebug() << "send data is " << block << endl;
 }
 
 string CConnect::parseData(string strData)
@@ -85,7 +85,7 @@ string CConnect::parseData(string strData)
 void CConnect::readData()
 {
     QDataStream in(m_link);
-    in.setVersion(QDataStream::Qt_5_0);
+    in.setVersion(QDataStream::Qt_4_8);
 
     if (m_blockSize == 0)
     {

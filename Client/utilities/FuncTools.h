@@ -9,6 +9,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <QImage>
 #include "global.h"
 #include <QTextCodec>
 using namespace std;
@@ -31,7 +32,8 @@ inline QString UTF82GBK(const QString &inStr)
 	return utf2gbk;
 }
 
-string getElement(map<string, string> &from, string key);
+string  getElement(map<string, string> &from, string key);
+int     getElement(map<string, int>&from, string key);
 
 inline std::string gbk2utf8(const QString &inStr)
 {
@@ -89,6 +91,8 @@ string GenCompleteCPID(C_STR strCPID, int nOwnMcuID, C_STR strConfID);
 bool RplUnRecToken2TransfToken(string &token, const map<string, string> &rplMap);
 
 void itoa(int, char a[]);
+
+QImage convert2Gray(const QString img, QSize size);
 
 #endif //__FUNCTOOLS_H_
 

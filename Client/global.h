@@ -30,6 +30,13 @@ typedef char* LPSTR;
 //avatar
 #define AVATAR_SIZE 70
 
+//friends size
+#define FRDWIDTH    145
+#define FRDHEIGH    70
+
+//toolbutton margin
+#define MARGINTOOLBUTTON    20
+
 
 struct ServerNode
 {
@@ -57,6 +64,12 @@ enum FRIENDSTATUS
     QUIT                    //quit
 };
 
+enum GENDER                 //性别
+{
+    MALE = 0,
+    FEMAIL
+};
+
 enum FUTURE
 {
     ABOUT = 1               //future buttons
@@ -69,5 +82,8 @@ enum FUTURE
 #define ANIMATIONTIME 1000*0.5
 
 #define allAvatar   34
+
+//self info file
+#define HISTORY    "history"
 
 #endif // GLOBAL_H

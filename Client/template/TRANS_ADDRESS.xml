@@ -5,12 +5,16 @@
 		<TYPE>ADDRESS</TYPE>
 	</HEAD>
 	<ACTION>
+        <ACK>200</ACK>
 		<GET_ADDRESS>
 			<MEMBER_LIST>
 				<MEMBER>
-					<USERNAME>周庆国</USERNAME>
+					<NICKNAME>周庆国</NICKNAME>
 					<USERID>1</USERID>
 					<SEX>male</SEX>
+                    <AGE>20</AGE>
+                    <AVATARNUMBER>2</AVATARNUMBER>
+                    <STATUS>1</STATUS>
 					<CONTACT>
 						<CELLPHONE>18919880252</CELLPHONE>
 						<OFFICEPHONE>0931-3589039</OFFICEPHONE>

@@ -24,7 +24,9 @@ typedef struct xml_Para
 
 enum cmdtype
 {
-    LOGIN = 1,
+    RESULT = 1,
+    LOGIN,
+    LOGIN_BACK,
     LOGOUT,
     SENDMESSAGE,
     GETMESSAGE,
@@ -32,6 +34,19 @@ enum cmdtype
     UPDATEINFO,
     TEST
 };
+
+//this para is used at send back data;
+//in send back data, i must fetch the back data type
+static map<string, int> mpstr2enm;
+inline void initstrCMD2enumCMD()
+{
+    mpstr2enm.insert(pair<string, int>("RESULT", RESULT));
+    mpstr2enm.insert(pair<string, int>("LOGIN_BACK", LOGIN_BACK));
+    mpstr2enm.insert(pair<string, int>("SEND", GETMESSAGE));
+    mpstr2enm.insert(pair<string, int>("ADDRESS", GETADDRESS));
+    mpstr2enm.insert(pair<string, int>("LOGINEDINFO", LOGIN));
+    mpstr2enm.insert(pair<string, int>("NEWUPDATE", UPDATEINFO));
+}
 
 typedef cmdtype require;
 typedef float version;
@@ -49,6 +64,7 @@ struct UserInformation
 {
     int         userID;                             //用户id，主要用来传输中
     QString     account;                            //account
+    QString     password;                           //password
     QString     nickName;                           //呢称
     int         avatarNumber;                       //headIcon
     int         status;                             //登录状态
@@ -97,7 +113,7 @@ struct FriendInformation
     QString about;
     int     friendKind;                         //好友类型
     QString remark;                             //好友备注
-    
+    int     userID;                             //用户id，主要用来传输中
     QString nickName;                           //呢称
     QString cellphone;                          //手机号码
     QString officephone;                        //电话号码
@@ -137,9 +153,48 @@ enum
 
 #define OS_SYSTEM   "MAC"
 
+//LOGIN
 #define USERNAME    "username"
 #define PASSWORD    "password"
 #define STATUS      "status"
 #define LOGINTIME   "logintime"
+
+//UPDATE
+#define USERNAME        "username"
+#define USERNICKNAME    "nickname"
+#define USERID          "userid"
+#define USERPASSWORD    "userpassword"
+#define USERSEX         "usersex"
+#define USERAGE         "userage"
+#define USERCELLPHONE   "usercellphone"
+#define USEROFFICEPHONE "userofficephone"
+#define USERMAIL        "usermail"
+#define USEROTHER       "userother"
+#define USERDORMITORY   "userdormitory"
+#define USERDESCRIPTION "userdescription"
+#define USERSTATUS      "userstatus"
+#define USERBIRTHDAY    "userbirthday"
+#define USERAVATARNUM   "useravatarnumber"
+#define USERCITY        "usercity"
+#define USERPASSWORD    "userpassword"
+
+//SEND
+#define USERCONTENT     "usercontent"
+#define USERSENDERID    "usersendid"
+#define USERRECVERID    "userrecvid"
+#define USERSENDERNAME  "usersendername"
+#define USERRECVERNAME  "userrecvername"
+#define USERBROADCAST   "userbroadcast"
+
+//GetAddress
+#define USERGETWHO      "usergetwho"
+
+//LOGIN BACK
+#define LOGINRESULT     "loginresult"
+#define LOGINSUCCESS    "200"
+
+//GETADDRESS BACK
+#define GETADDRESSRESULT    "getaddressresult"
+#define GETADDRESSSUCCESSFUL    "200"
 
 #endif // DATA_H
