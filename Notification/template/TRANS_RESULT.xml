@@ -6,6 +6,9 @@
 	</HEAD>
 	<ACTION>
 		<ACK>200</ACK>
-		<RESULT>null</RESULT>
+		<RESULT>1</RESULT>
 	</ACTION>
 </TRANS_NOTIFICATION>
+
+
+//发送消息失败，更新info是否成功，logout是否成功，Test是否成功
