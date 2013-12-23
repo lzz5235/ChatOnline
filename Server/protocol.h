@@ -32,6 +32,7 @@ struct UserInformation
     QString lastlogintime;
     QString registertime;
     QString birthday;
+    QString avatarunmber;
     int status;
 
 };
@@ -52,7 +53,8 @@ enum
 	LOCATION = 11,
 	LASTLOGINTIME = 12,
 	REGISTERTIME  = 13,
-	BIRTHDAY = 14
+    BIRTHDAY = 14,
+    AVATARNUMBER = 15
 };
 
 struct FriendInformation
@@ -67,6 +69,7 @@ struct FriendInformation
     QString mail;
     QString location;
     QString birthday;
+    QString avatarunmber;
     int status;
     int friendKind;
     QString remark;
