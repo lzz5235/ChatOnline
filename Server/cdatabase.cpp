@@ -85,7 +85,7 @@ qint32 CDatabase::registerRequest(const UserInformation &userInf)
 
     query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
                   ":officephone,:dormitory,:mail,:location,:lastlogintime,"
-                    ":registertime, :birthday)");
+                    ":registertime, :birthday,:avatarunmber)");
     query.bindValue(":name", userInf.nickName);
     query.bindValue(":acc", userInf.account);
     query.bindValue(":pwd", userInf.password);
@@ -99,6 +99,8 @@ qint32 CDatabase::registerRequest(const UserInformation &userInf)
     query.bindValue(":lastlogintime", userInf.lastlogintime);
     query.bindValue(":registertime", userInf.registertime);
     query.bindValue(":birthday", userInf.birthday);
+    query.bindValue(":avatarunmber", userInf.avatarunmber);
+
 
     query.exec();
     errorSQLOrder(query, "registerRequest2");
@@ -193,6 +195,7 @@ qint32 CDatabase::getFriendInfRequest(const QString &acc, FriendInformation &fri
         fri.mail = query.value(MAIL).toString();
         fri.location = query.value(LOCATION).toString();
         fri.birthday = query.value(BIRTHDAY).toString();
+        fri.avatarunmber = query.value(AVATARNUMBER).toString();
         fri.status = query.value(STATUS).toInt();        
         fri.friendKind = VERIFYING;
         fri.remark.clear();
@@ -258,6 +261,7 @@ qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf
         userInf.mail = query.value(MAIL).toString();
         userInf.location = query.value(LOCATION).toString();
         userInf.birthday = query.value(BIRTHDAY).toString();
+        userInf.avatarunmber = query.value(AVATARNUMBER).toString();
         userInf.status = query.value(STATUS).toInt();
     }
     return GET_USER_INF_SUCCESS;
@@ -273,7 +277,7 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
     errorSQLOrder(query, "changeInformationRequest1");
     query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
                   ":officephone,:dormitory,:mail,:location,:lastlogintime,"
-                    ":registertime, :birthday)");
+                    ":registertime, :birthday,:avatarunmber )");
     query.bindValue(":name", userInf.nickName);
     query.bindValue(":acc", userInf.account);
     query.bindValue(":pwd", userInf.password);
@@ -287,6 +291,7 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
     query.bindValue(":lastlogintime", userInf.lastlogintime);
     query.bindValue(":registertime", userInf.registertime);
     query.bindValue(":birthday", userInf.birthday);
+    query.bindValue(":avatarunmber", userInf.avatarunmber);
     query.exec();
     errorSQLOrder(query, "changeInformationRequest2");
     return CHANGE_INFORMATION_SUCCESS;
@@ -386,7 +391,8 @@ void CDatabase::createTable()
                     "location  VARCHAR(20) NULL,"
                     "lastlogintime  DATE NULL,"
                     "registertime  CHAR(18) NULL,"
-                    "birthday  INTEGER NULL)");
+                    "birthday  INTEGER NULL,"
+                    "avatarunmber INTEGER NULL)");
     errorSQLOrder(query, "createTable1");
 
     query.exec("CREATE TABLE IF NOT EXISTS friend("
@@ -450,7 +456,8 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
     fri.birthday = query.value(BIRTHDAY).toString();
     fri.status = logInf.status;
     fri.friendKind = MYSELF;
-    fri.remark = query.value(DESCRIPTION).toString();    
+    fri.remark = query.value(DESCRIPTION).toString();
+    fri.avatarunmber = query.value(AVATARNUMBER).toString();
     friendsVec.push_back(fri);
 
 
@@ -489,6 +496,7 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
         fri.mail = query.value(MAIL).toString();
         fri.location = query.value(LOCATION).toString();
         fri.birthday = query.value(BIRTHDAY).toString();
+        fri.avatarunmber = query.value(AVATARNUMBER).toString();
         fri.status = query.value(STATUS).toInt();
         friendsVec.push_back(fri);
     }
