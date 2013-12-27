@@ -101,7 +101,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
         ACK->LinkEndChild(ACKTEXT);
 
         TiXmlElement *GET_ADDRESS = new TiXmlElement("GET_ADDRESS");
-        ACK->LinkEndChild(GET_ADDRESS);
+        ACTION->LinkEndChild(GET_ADDRESS);
 
         TiXmlElement *MEMBER_LIST = new TiXmlElement("MEMBER_LIST");
         GET_ADDRESS->LinkEndChild(MEMBER_LIST);
@@ -120,7 +120,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
 
             TiXmlElement *USERID = new TiXmlElement("USERID");
             MEMBER->LinkEndChild(USERID);
-            TiXmlText *USERIDTEXT = new TiXmlText(i->account.toStdString().c_str());
+            TiXmlText *USERIDTEXT = new TiXmlText(i->ID.toStdString().c_str());
             USERID->LinkEndChild(USERIDTEXT);
 
             TiXmlElement *SEX = new TiXmlElement("SEX");
@@ -241,7 +241,7 @@ bool xmlparse::Create_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save
 
         TiXmlElement *USERID = new TiXmlElement("USERID");
         UPDATE->LinkEndChild(USERID);
-        TiXmlText *USERIDTEXT = new TiXmlText(save.userInf.account.toStdString().c_str());
+        TiXmlText *USERIDTEXT = new TiXmlText(save.userInf.ID.toStdString().c_str());
         USERID->LinkEndChild(USERIDTEXT);
 
         TiXmlElement *OLDPASSWORD = new TiXmlElement("OLDPASSWORD");
@@ -430,7 +430,7 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
 
 
         save.userInf.account = QString(QLatin1String(USERNAME->FirstChild()->Value()));
-        save.userInf.account = QString(QLatin1String(USERID->FirstChild()->Value()));
+        save.userInf.ID = QString(QLatin1String(USERID->FirstChild()->Value()));
         save.userInf.sex = QString(QLatin1String(SEX->FirstChild()->Value()));
         save.userInf.mobileNumber = QString(QLatin1String(CELLPHONE->FirstChild()->Value()));
         save.userInf.officephone = QString(QLatin1String(OFFICEPHONE->FirstChild()->Value()));
@@ -710,7 +710,7 @@ bool xmlparse::Create_TRANS_LOGIN_BACK_XmlFile(QString &szFileName, saveStruct &
 
             TiXmlElement *USERID = new TiXmlElement("USERID");
             MEMBER->LinkEndChild(USERID);
-            TiXmlText *USERIDTEXT = new TiXmlText(i->account.toStdString().c_str());
+            TiXmlText *USERIDTEXT = new TiXmlText(i->ID.toStdString().c_str());
             USERID->LinkEndChild(USERIDTEXT);
 
             TiXmlElement *SEX = new TiXmlElement("SEX");
@@ -1051,7 +1051,8 @@ qint32 xmlparse::ReadXMLFromClient(const QString string)
     {
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
-        if("-1" == GET_ADDRESS->Value())
+        qDebug()<< GET_ADDRESS->FirstChild()->Value();
+        if("-1" == QString(QLatin1String(GET_ADDRESS->FirstChild()->Value())))
             return GET_FRIEND_INFORMATION;
         else
             return GET_USER_INFORMATION;
