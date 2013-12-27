@@ -83,7 +83,7 @@ void CServer::sendMessage(saveStruct &save)
     }
     else if(GET_FRIEND_INFORMATION == temp.requestKind)
     {
-        temp.peerAccount = save.peerAccount;
+        temp.logInf.account = save.myAccount;
         temp.clientSocket = save.clientSocket;
         temp.replyKind = GET_FRIEND_INFORMATION;
         data.getFriendInf(temp.logInf, temp.friendsVec);
@@ -91,7 +91,7 @@ void CServer::sendMessage(saveStruct &save)
     }
     else if(GET_USER_INFORMATION == temp.requestKind)
     {
-        temp.peerAccount = save.peerAccount;
+        temp.peerAccount = save.myAccount;
         temp.clientSocket = save.clientSocket;
         temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
         save.clientSocket->sendMessage(temp);
