@@ -18,10 +18,14 @@ public:
 
     qint32 loginRequest(const LoginInformation &logInf,//
         QVector<FriendInformation> &friendsVec);
+    qint32 login_AUTHOR_Request(QSqlQuery &query, const LoginInformation &logInf,
+                                QVector<FriendInformation> &friendsVec);
     qint32 registerRequest(const UserInformation &userInf);
     qint32 quitRequest(const QString &acc);
     qint32 messageRequest(const Message &mes);
     qint32 addFriendRequest(const Message &mes);
+    qint32 getFriendInf(const LoginInformation &logInf,//
+                        QVector<FriendInformation> &friendsVec);
     qint32 checkRequest(const QString &acc, QVector<Message> &messageVec);
     qint32 getFriendInfRequest(const QString &acc, FriendInformation &fri);
     qint32 deleteFriendRequest(const QString &myAcc, const QString &peerAcc);

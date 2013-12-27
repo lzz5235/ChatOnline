@@ -63,9 +63,38 @@ qint32 CDatabase::loginRequest(const LoginInformation &logInf, QVector<FriendInf
     }
     else
     {
-        loginSuccess(query, logInf, friendsVec);
+        //loginSuccess(query, logInf, friendsVec);
+        login_AUTHOR_Request(query, logInf, friendsVec);
         return LOGIN_SUCCESS;
     }
+}
+
+qint32 CDatabase::login_AUTHOR_Request(QSqlQuery &query, const LoginInformation &logInf, QVector<FriendInformation> &friendsVec)
+{
+    friendsVec.clear();
+
+    FriendInformation fri;
+    fri.nickName = query.value(NICKNAME).toString();
+    fri.account = logInf.account;
+    fri.SEX = query.value(SEX).toString();
+    fri.description = query.value(DESCRIPTION).toString();
+    fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
+    fri.officephone = query.value(OFFICE_NUMBER).toString();
+    fri.dormitory = query.value(DORMITORY).toString();
+    fri.mail = query.value(MAIL).toString();
+    fri.location = query.value(LOCATION).toString();
+    fri.birthday = query.value(BIRTHDAY).toString();
+    fri.status = logInf.status;
+    fri.friendKind = MYSELF;
+    fri.remark = query.value(DESCRIPTION).toString();
+    fri.avatarunmber = query.value(AVATARNUMBER).toString();
+    friendsVec.push_back(fri);
+
+    query.prepare("update user set status=:sta where account=':acc' ");
+    query.bindValue(":acc", logInf.account);
+    query.bindValue(":sta", QString::number(logInf.status));
+    query.exec();
+    errorSQLOrder(query, "loginSuccess1");
 }
 
 qint32 CDatabase::registerRequest(const UserInformation &userInf)
@@ -143,6 +172,35 @@ qint32 CDatabase::addFriendRequest(const Message &mes)
         return DISAGREE_FRIEND;
     }
     return 0;
+}
+
+qint32 CDatabase::getFriendInf(const LoginInformation &logInf, QVector<FriendInformation> &friendsVec)
+{
+    QSqlQuery query;
+    query.prepare("select * from user where account=:account");
+    query.bindValue(":account", logInf.account);
+    query.exec();
+    errorSQLOrder(query, "loginRequest1");
+
+
+    if(!query.next())
+        return LOGIN_NO_ACCOUNT ;
+    else if(query.value(PASSWORD).toString()!=logInf.password)
+        return LOGIN_WRONG_PWD ;
+    else if(query.value(STATUS) != OFFLINE)
+    {
+        qDebug()<<query.value(NICKNAME).toString();
+        qDebug()<<query.value(ACCOUNT).toString();
+        qDebug()<<query.value(PASSWORD).toString();
+        qDebug()<<query.value(SEX).toString();
+        qDebug()<<query.value(STATUS).toString();
+        return HAVE_LOGINED;
+    }
+    else
+    {
+        loginSuccess(query, logInf, friendsVec);
+        return LOGIN_SUCCESS;
+    }
 }
 
 qint32 CDatabase::checkRequest(const QString &acc, QVector<Message> &messageVec)
@@ -442,31 +500,6 @@ void CDatabase::errorSQLOrder(QSqlQuery query, QString mark)
 void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, QVector<FriendInformation> &friendsVec)
 {
     friendsVec.clear();
-
-    FriendInformation fri;
-    fri.nickName = query.value(NICKNAME).toString();
-    fri.account = logInf.account;    
-    fri.SEX = query.value(SEX).toString();
-    fri.description = query.value(DESCRIPTION).toString();
-    fri.mobileNumber = query.value(MOBILE_NUMBER).toString();
-    fri.officephone = query.value(OFFICE_NUMBER).toString();
-    fri.dormitory = query.value(DORMITORY).toString();
-    fri.mail = query.value(MAIL).toString();
-    fri.location = query.value(LOCATION).toString();
-    fri.birthday = query.value(BIRTHDAY).toString();
-    fri.status = logInf.status;
-    fri.friendKind = MYSELF;
-    fri.remark = query.value(DESCRIPTION).toString();
-    fri.avatarunmber = query.value(AVATARNUMBER).toString();
-    friendsVec.push_back(fri);
-
-
-    query.prepare("update user set status=:sta where account=':acc' ");
-    query.bindValue(":acc", logInf.account);
-    query.bindValue(":sta", QString::number(logInf.status));
-    query.exec();
-    errorSQLOrder(query, "loginSuccess1");
-
 
     query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc ))");
     query.bindValue(":acc", logInf.account);
