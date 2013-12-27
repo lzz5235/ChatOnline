@@ -54,6 +54,7 @@ qint32 CDatabase::loginRequest(const LoginInformation &logInf, QVector<FriendInf
         return LOGIN_WRONG_PWD ;
     else if(query.value(STATUS) != OFFLINE)
     {
+        qDebug()<<query.value(ID).toString();
         qDebug()<<query.value(NICKNAME).toString();
         qDebug()<<query.value(ACCOUNT).toString();
         qDebug()<<query.value(PASSWORD).toString();
@@ -74,6 +75,7 @@ qint32 CDatabase::login_AUTHOR_Request(QSqlQuery &query, const LoginInformation 
     friendsVec.clear();
 
     FriendInformation fri;
+    fri.ID = query.value(ID).toString();
     fri.nickName = query.value(NICKNAME).toString();
     fri.account = logInf.account;
     fri.SEX = query.value(SEX).toString();
@@ -243,6 +245,7 @@ qint32 CDatabase::getFriendInfRequest(const QString &acc, FriendInformation &fri
     errorSQLOrder(query, "getFriendRequest1");
     while(query.next())
     {
+        fri.ID = query.value(ID).toString();
         fri.account = query.value(ACCOUNT).toString();
         fri.nickName = query.value(NICKNAME).toString();
         fri.SEX = query.value(SEX).toString();
@@ -308,6 +311,7 @@ qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf
     errorSQLOrder(query, "getUserInfRequest1");
     while(query.next())
     {
+        userInf.ID = query.value(ID).toString();
         userInf.nickName = query.value(NICKNAME).toString();
         userInf.account = query.value(ACCOUNT).toString();
         userInf.password = query.value(PASSWORD).toString();        
@@ -520,6 +524,7 @@ void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, Q
 //        if(0 == fri.friendKind)
 //            continue;
 
+        fri.ID = query.value(ID).toString();
         fri.nickName = query.value(NICKNAME).toString();
         fri.account = query.value(ACCOUNT).toString();
         fri.SEX = query.value(SEX).toString();
