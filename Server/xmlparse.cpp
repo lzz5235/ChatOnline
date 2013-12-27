@@ -828,6 +828,121 @@ bool xmlparse::Create_RESULT_XmlFile(QString &szFileName)
     return true;
 }
 
+bool xmlparse::Create_NEW_UPDATE_XmlFile(QString &szFileName, saveStruct &save)
+{
+    try
+    {
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        //创建一个根元素并连接。
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
+        myDocument->LinkEndChild(RootElement);
+
+        TiXmlElement *HEAD = new TiXmlElement("HEAD");
+        RootElement->LinkEndChild(HEAD);
+
+        //PersonElement->SetAttribute("ID", "1");
+
+        TiXmlElement *VERSION = new TiXmlElement("VERSION");
+        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
+        HEAD->LinkEndChild(VERSION);
+        HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
+
+
+        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
+
+        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *RESULTTEXT = new TiXmlText("NEWUPDATE");
+
+        VERSION->LinkEndChild(VERSIONTEXT);
+        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(RESULTTEXT);
+
+        TiXmlElement *ACTION = new TiXmlElement("ACTION");
+        RootElement->LinkEndChild(ACTION);
+
+        TiXmlElement *MEMBERLIST = new TiXmlElement("MEMBERLIST");
+        ACTION->LinkEndChild(MEMBERLIST);
+        TiXmlElement *USERID = new TiXmlElement("USERID");
+        MEMBERLIST->LinkEndChild(USERID);
+
+        TiXmlText *USERID_DATA = new TiXmlText(save.userInf.account.toStdString().c_str());
+        USERID->LinkEndChild(USERID_DATA);
+
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
+    }
+    catch (QString& e)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool xmlparse::Create_BROADCAST_XmlFile(QString &szFileName, saveStruct &save)
+{
+    try
+    {
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        //创建一个根元素并连接。
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
+        myDocument->LinkEndChild(RootElement);
+
+        TiXmlElement *HEAD = new TiXmlElement("HEAD");
+        RootElement->LinkEndChild(HEAD);
+
+        //PersonElement->SetAttribute("ID", "1");
+
+        TiXmlElement *VERSION = new TiXmlElement("VERSION");
+        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
+        HEAD->LinkEndChild(VERSION);
+        HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
+
+
+        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
+
+        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *RESULTTEXT = new TiXmlText("BROADCAST");
+
+        VERSION->LinkEndChild(VERSIONTEXT);
+        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(RESULTTEXT);
+
+        TiXmlElement *ACTION = new TiXmlElement("ACTION");
+        RootElement->LinkEndChild(ACTION);
+
+        TiXmlElement *TIME = new TiXmlElement("TIME");
+        ACTION->LinkEndChild(TIME);
+        TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
+        ACTION->LinkEndChild(CONTENT);
+        TiXmlElement *SENDBY = new TiXmlElement("SENDBY");
+        ACTION->LinkEndChild(SENDBY);
+        TiXmlElement *WHOELSE = new TiXmlElement("WHOELSE");
+        ACTION->LinkEndChild(WHOELSE);
+
+        TiXmlText *TIME_DATA = new TiXmlText(save.userInf.account.toStdString().c_str());
+        USERID->LinkEndChild(USERID_DATA);
+
+        //
+        //something to do
+        //
+        //
+
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
+    }
+    catch (QString& e)
+    {
+        return false;
+    }
+    return true;
+}
+
 
 bool xmlparse::Read_TRANS_SEND_XmlFile(QString& string,saveStruct &save)
 {
