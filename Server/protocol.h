@@ -19,6 +19,7 @@ class CClientSocket;
 ***************************************************************/
 struct UserInformation
 {
+    QString ID;
     QString nickName;
     QString account;
     QString password;
@@ -59,6 +60,7 @@ enum
 
 struct FriendInformation
 {
+    QString ID;
     QString nickName;
     QString account;
     QString SEX;
