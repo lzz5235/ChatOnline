@@ -86,8 +86,13 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
         TiXmlElement *ACTION = new TiXmlElement("ACTION");
         RootElement->LinkEndChild(ACTION);
 
+        TiXmlElement *ACK = new TiXmlElement("ACK");
+        ACTION->LinkEndChild(ACK);
+        TiXmlText *ACKTEXT = new TiXmlText("200");
+        ACK->LinkEndChild(ACKTEXT);
+
         TiXmlElement *GET_ADDRESS = new TiXmlElement("GET_ADDRESS");
-        ACTION->LinkEndChild(GET_ADDRESS);
+        ACK->LinkEndChild(GET_ADDRESS);
 
         TiXmlElement *MEMBER_LIST = new TiXmlElement("MEMBER_LIST");
         GET_ADDRESS->LinkEndChild(MEMBER_LIST);
@@ -113,6 +118,21 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
             MEMBER->LinkEndChild(SEX);
             TiXmlText *SEXTEXT = new TiXmlText(i->SEX.toStdString().c_str());
             SEX->LinkEndChild(SEXTEXT);
+
+            TiXmlElement *AGE = new TiXmlElement("AGE");
+            MEMBER->LinkEndChild(AGE);
+            TiXmlText *AGETEXT = new TiXmlText(i->birthday.toStdString().c_str());
+            AGE->LinkEndChild(AGETEXT);
+
+            TiXmlElement *AVATARNUMBER = new TiXmlElement("AVATARNUMBER");
+            MEMBER->LinkEndChild(AVATARNUMBER);
+            TiXmlText *AVATARNUMBERTEXT = new TiXmlText(i->avatarunmber.toStdString().c_str());
+            AVATARNUMBER->LinkEndChild(AVATARNUMBERTEXT);
+
+            TiXmlElement *STATUS = new TiXmlElement("STATUS");
+            MEMBER->LinkEndChild(STATUS);
+            TiXmlText *STATUSTEXT = new TiXmlText(i->status.toStdString().c_str());
+            STATUS->LinkEndChild(STATUSTEXT);
 
             TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
             MEMBER->LinkEndChild(CONTACT);
@@ -215,10 +235,30 @@ bool xmlparse::Create_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save
         TiXmlText *USERIDTEXT = new TiXmlText(save.userInf.account.toStdString().c_str());
         USERID->LinkEndChild(USERIDTEXT);
 
+        TiXmlElement *OLDPASSWORD = new TiXmlElement("OLDPASSWORD");
+        UPDATE->LinkEndChild(OLDPASSWORD);
+        TiXmlText *OLDPASSWORDTEXT = new TiXmlText(save.userInf.password.toStdString().c_str());
+        OLDPASSWORD->LinkEndChild(OLDPASSWORDTEXT);
+
+        TiXmlElement *NEWPASSWORD = new TiXmlElement("NEWPASSWORD");
+        UPDATE->LinkEndChild(NEWPASSWORD);
+        TiXmlText *NEWPASSWORDTEXT = new TiXmlText(save.userInf.password.toStdString().c_str());
+        NEWPASSWORD->LinkEndChild(NEWPASSWORDTEXT);
+
+        TiXmlElement *NICKNAME = new TiXmlElement("NICKNAME");
+        UPDATE->LinkEndChild(NICKNAME);
+        TiXmlText *NICKNAMETEXT = new TiXmlText(save.userInf.nickName.toStdString().c_str());
+        NICKNAME->LinkEndChild(NICKNAMETEXT);
+
         TiXmlElement *SEX = new TiXmlElement("SEX");
         UPDATE->LinkEndChild(SEX);
         TiXmlText *SEXTEXT = new TiXmlText(save.userInf.sex.toStdString().c_str());
         SEX->LinkEndChild(SEXTEXT);
+
+        TiXmlElement *AGE = new TiXmlElement("AGE");
+        UPDATE->LinkEndChild(AGE);
+        TiXmlText *AGETEXT = new TiXmlText("20";
+        AGE->LinkEndChild(AGETEXT);
 
         TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
         UPDATE->LinkEndChild(CONTACT);
@@ -352,7 +392,13 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
 
         TiXmlElement *USERNAME = UPDATE->FirstChildElement();
         TiXmlElement *USERID = USERNAME->NextSiblingElement();
-        TiXmlElement *SEX = USERID->NextSiblingElement();
+
+        TiXmlElement *OLDPASSWD = USERID->NextSiblingElement();
+        TiXmlElement *NEWPASSWD = OLDPASSWD->NextSiblingElement();
+        TiXmlElement *NICKNAME = NEWPASSWD->NextSiblingElement();
+
+
+        TiXmlElement *SEX = NICKNAME->NextSiblingElement();
 
         TiXmlElement *CONTACT = SEX->NextSiblingElement();
 
@@ -384,12 +430,17 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         save.userInf.description = QString(QLatin1String(DESCRIPTION->FirstChild()->Value()));
         save.userInf.status = QString(QLatin1String(STATUS->FirstChild()->Value())).toInt();
         save.userInf.birthday = QString(QLatin1String(BIRTHDAY->FirstChild()->Value()));
+        save.userInf.nickName = QString(QLatin1String(NICKNAME->FirstChild()->Value()));
+        save.userInf.password = QString(QLatin1String(NEWPASSWD->FirstChild()->Value()));
 
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
         qDebug() << _TYPE->FirstChild()->Value() ;
         qDebug() << USERNAME->FirstChild()->Value() ;
         qDebug() << USERID->FirstChild()->Value() ;
+        qDebug() << OLDPASSWD->FirstChild()->Value();
+        qDebug() << NEWPASSWD->FirstChild()->Value();
+        qDebug() << NICKNAME->FirstChild()->Value();
         qDebug() << SEX->FirstChild()->Value() ;
         qDebug() << CELLPHONE->FirstChild()->Value() ;
         qDebug() << OFFICEPHONE->FirstChild()->Value() ;
@@ -628,10 +679,10 @@ bool xmlparse::Create_TRANS_LOGIN_BACK_XmlFile(QString &szFileName, saveStruct &
         TiXmlElement *LOGIN_BACK_NODE = new TiXmlElement("LOGIN_BACK");
         ACTION->LinkEndChild(LOGIN_BACK_NODE);
 
-        TiXmlElement *RESULT = new TiXmlElement("RESULT");
-        LOGIN_BACK_NODE->LinkEndChild(RESULT);
-        TiXmlText *SUCCESS = new TiXmlText("SUCCESS");
-        RESULT->LinkEndChild(SUCCESS);
+        TiXmlElement *ACK = new TiXmlElement("ACK");
+        LOGIN_BACK_NODE->LinkEndChild(ACK);
+        TiXmlText *SUCCESS = new TiXmlText("200");
+        ACK->LinkEndChild(SUCCESS);
 
         TiXmlElement *MEMBER_LIST = new TiXmlElement("MEMBERLIST");
         LOGIN_BACK_NODE->LinkEndChild(MEMBER_LIST);
@@ -657,6 +708,16 @@ bool xmlparse::Create_TRANS_LOGIN_BACK_XmlFile(QString &szFileName, saveStruct &
             MEMBER->LinkEndChild(SEX);
             TiXmlText *SEXTEXT = new TiXmlText(i->SEX.toStdString().c_str());
             SEX->LinkEndChild(SEXTEXT);
+
+            TiXmlElement *AGE = new TiXmlElement("AGE");
+            MEMBER->LinkEndChild(AGE);
+            TiXmlText *AGETEXT = new TiXmlText(i->birthday.toStdString().c_str());
+            AGE->LinkEndChild(AGETEXT);
+
+            TiXmlElement *AVATARNUMBER = new TiXmlElement("AVATARNUMBER");
+            MEMBER->LinkEndChild(AVATARNUMBER);
+            TiXmlText *AVATARNUMBERTEXT = new TiXmlText(i->avatarunmber.toStdString().c_str());
+            AVATARNUMBER->LinkEndChild(AVATARNUMBERTEXT);
 
             TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
             MEMBER->LinkEndChild(CONTACT);
