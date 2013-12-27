@@ -85,8 +85,8 @@ void CServer::sendMessage(saveStruct &save)
     {
         temp.peerAccount = save.peerAccount;
         temp.clientSocket = save.clientSocket;
-        data.loginRequest(temp.logInf, temp.friendsVec);
         temp.replyKind = GET_FRIEND_INFORMATION;
+        data.getFriendInf(temp.logInf, temp.friendsVec);
         save.clientSocket->sendMessage(temp);
     }
     else if(GET_USER_INFORMATION == temp.requestKind)
