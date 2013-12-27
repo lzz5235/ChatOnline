@@ -106,15 +106,7 @@ void CClientSocket::receiveMessage()
 void CClientSocket::sendMessage(saveStruct &temp)
 {
     QString data;
-    Parse.Create_RESULT_XmlFile(data);
 
-    qDebug() << "Result :"<<data;
-//    write(data);
-//    qDebug()<<data.toAscii();
-
-//    data.clear();
-    qDebug()<<sendData(data);
-    data.clear();
     if(LOGIN_SUCCESS == temp.replyKind)
     {
         //Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
@@ -124,6 +116,11 @@ void CClientSocket::sendMessage(saveStruct &temp)
     }
     else if(TALK == temp.replyKind)
     {
+        Parse.Create_RESULT_XmlFile(data);
+        qDebug() << "Result :"<<data;
+        qDebug()<<sendData(data);
+        data.clear();
+
         Parse.Create_TRANS_SEND_XmlFile(data,temp);
         sendData(data);
     }
@@ -135,7 +132,8 @@ void CClientSocket::sendMessage(saveStruct &temp)
     else if(GET_FRIEND_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
-        sendData(data);
+        qDebug()<<data;
+        qDebug()<< sendData(data);
     }
     else if(GET_USER_INFORMATION == temp.replyKind)
     {
@@ -149,7 +147,10 @@ void CClientSocket::sendMessage(saveStruct &temp)
     }
     else if(CHECK_CONNECTION == temp.replyKind)
     {
-
+        Parse.Create_RESULT_XmlFile(data);
+        qDebug() << "Result :"<<data;
+        qDebug()<<sendData(data);
+        data.clear();
     }
     data.clear();
 }
