@@ -500,6 +500,7 @@ void CDatabase::errorSQLOrder(QSqlQuery query, QString mark)
 void CDatabase::loginSuccess(QSqlQuery &query, const LoginInformation &logInf, QVector<FriendInformation> &friendsVec)
 {
     friendsVec.clear();
+    FriendInformation fri;
 
     query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc ))");
     query.bindValue(":acc", logInf.account);
