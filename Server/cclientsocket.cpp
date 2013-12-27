@@ -6,6 +6,7 @@ CClientSocket::CClientSocket(QObject *parent) :
     blockSize(0)
 {
     //QThreadPool::globalInstance()->setMaxThreadCount(20);
+    Parse.initxmlparse();
     save.clientSocket = this;
     connect(this,SIGNAL(connected()),this,SLOT(clientConnected()));
     connect(this,SIGNAL(readyRead()),this,SLOT(receiveMessage()));
