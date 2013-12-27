@@ -1,4 +1,8 @@
-﻿#include "xmlparse.h"
+﻿#ifdef _MSC_VER
+#pragma execution_character_set("utf-8")
+#endif
+
+#include "xmlparse.h"
 #include <QDebug>
 
 bool xmlparse::Read_Login_XmlFile(QString& string,saveStruct &save)
@@ -51,6 +55,11 @@ bool xmlparse::Read_Login_XmlFile(QString& string,saveStruct &save)
         return false;
     }
     return true;
+}
+
+void xmlparse::initxmlparse()
+{
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName( "GB2312" ) );
 }
 
 bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
@@ -131,7 +140,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
 
             TiXmlElement *STATUS = new TiXmlElement("STATUS");
             MEMBER->LinkEndChild(STATUS);
-            TiXmlText *STATUSTEXT = new TiXmlText(i->status.toStdString().c_str());
+            TiXmlText *STATUSTEXT = new TiXmlText(QString::number(i->status).toStdString().c_str());
             STATUS->LinkEndChild(STATUSTEXT);
 
             TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
@@ -257,7 +266,7 @@ bool xmlparse::Create_TRANS_UPDATE_XmlFile(QString &szFileName, saveStruct &save
 
         TiXmlElement *AGE = new TiXmlElement("AGE");
         UPDATE->LinkEndChild(AGE);
-        TiXmlText *AGETEXT = new TiXmlText("20";
+        TiXmlText *AGETEXT = new TiXmlText("20");
         AGE->LinkEndChild(AGETEXT);
 
         TiXmlElement *CONTACT = new TiXmlElement("CONTACT");
@@ -925,7 +934,7 @@ bool xmlparse::Create_BROADCAST_XmlFile(QString &szFileName, saveStruct &save)
         ACTION->LinkEndChild(WHOELSE);
 
         TiXmlText *TIME_DATA = new TiXmlText(save.userInf.account.toStdString().c_str());
-        USERID->LinkEndChild(USERID_DATA);
+        TIME->LinkEndChild(TIME_DATA);
 
         //
         //something to do
