@@ -189,15 +189,15 @@ qint32 CDatabase::getFriendInf(const LoginInformation &logInf, QVector<FriendInf
         return LOGIN_NO_ACCOUNT ;
     else if(query.value(PASSWORD).toString()!=logInf.password)
         return LOGIN_WRONG_PWD ;
-    else if(query.value(STATUS) != OFFLINE)
-    {
-        qDebug()<<query.value(NICKNAME).toString();
-        qDebug()<<query.value(ACCOUNT).toString();
-        qDebug()<<query.value(PASSWORD).toString();
-        qDebug()<<query.value(SEX).toString();
-        qDebug()<<query.value(STATUS).toString();
-        return HAVE_LOGINED;
-    }
+//    else if(query.value(STATUS) != OFFLINE)
+//    {
+//        qDebug()<<query.value(NICKNAME).toString();
+//        qDebug()<<query.value(ACCOUNT).toString();
+//        qDebug()<<query.value(PASSWORD).toString();
+//        qDebug()<<query.value(SEX).toString();
+//        qDebug()<<query.value(STATUS).toString();
+//        return HAVE_LOGINED;
+//    }
     else
     {
         loginSuccess(query, logInf, friendsVec);
