@@ -20,7 +20,7 @@ public:
 signals:
         void sendSignal(saveStruct &temper);
         void userLoginSignal(UserInformation &userinfo);
-        void deleteSignal(QString &account);
+        void deleteSignal(saveStruct &saveinfo);
     
 public slots:
         void clientConnected();

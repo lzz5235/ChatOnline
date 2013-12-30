@@ -28,6 +28,7 @@ void CClientSocket::clientDisconnected()
 {
     //delete socket;
     qDebug() << Description <<"client disconnected event";
+
 }
 
 void CClientSocket::receiveMessage()
@@ -146,14 +147,18 @@ bool CClientSocket::sendMessage(saveStruct &temp)
     {
         flag =  sendResult("Result");
     }
+    else if(CHANGE_STATUE == temp.replyKind)
+    {
+        Parse.Create_LOGINEDINFO_XmlFile(data,temp);
+        flag = sendData(data);
+    }
     data.clear();
     return flag;
 }
 
 void CClientSocket::deleteSocket()
 {
-    if(!save.myAccount.isEmpty())
-        emit deleteSignal(save.myAccount);
+    emit deleteSignal(save);
     deleteLater();
 }
 
