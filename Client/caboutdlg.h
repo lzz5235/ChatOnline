@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QPoint>
 #include <QMouseEvent>
+#include <QTextCodec>
+#include "command/data.h"
 
 namespace Ui {
 class CAboutDlg;

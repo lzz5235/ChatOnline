@@ -35,6 +35,8 @@ protected:
     virtual void RspXmlSend(string strRsp, XMLPARA &back);
     virtual void RspXmlTest(string strRsp, XMLPARA &back);
     virtual void RspXmlResult(string strRsp, XMLPARA &back);
+    virtual void RspXmlLoginInfo(string strRsp, XMLPARA &back);
+    virtual void RspXmlNewUpdate(string strRsp, XMLPARA &back);
 
 private:
     string getVersion();

@@ -5,6 +5,7 @@ MainWindow::MainWindow(CConnect *link, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName(CODEDECODE));
     ui->setupUi(this);
 }
 

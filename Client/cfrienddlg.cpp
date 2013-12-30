@@ -73,6 +73,7 @@ void CFriendDlg::initWidget()
     QString str = QString("QFrame#avatar{border-image:url(:/head/resource/head/%1.jpg)}")
         .arg(QString::number(m_myfrd.avatarNumber));
     ui->lb_headPic->setStyleSheet(str);
+    ui->lb_frdName->setAlignment(Qt::AlignHCenter);
     ui->lb_frdName->setText(m_myfrd.nickName);
     ui->le_address->setText(QString("%1 %2").arg(m_myfrd.city).arg(m_myfrd.dormitory));
     ui->le_age->setText(QString("%1").arg(m_myfrd.age));

@@ -17,7 +17,7 @@
 
 CXMLBuild::CXMLBuild()
 {
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName( "GB2312" ) );
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName( "utf-8" ) );
 }
 
 CXMLBuild::~CXMLBuild()
@@ -119,105 +119,141 @@ string CXMLBuild::TRANS_GET_ADDRESS(string who)
     return strxml;
 }
 
-string CXMLBuild::TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, string broadcast)
+string CXMLBuild::TRANS_SEND(string from, string nickname_f, string to, string nickname_t, string content, string time, string broadcast)
 {
-    string strxml(xmlFind("TRANS_GET_ADDRESS.xml"));
+    string strxml(xmlFind("TRANS_SEND.xml"));
+    CEasyXml xml;
+    xml.Open(strxml);
 
     list<XMLNODEINFO> lstNodeInfo;
     XMLNODEINFO nodeinfo;
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/USERID";
     nodeinfo.strData = from;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/NICKNAME";
     nodeinfo.strData = nickname_f;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
+
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/MESSAGESENDTIME";
+    nodeinfo.strData = time;
+    lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/TO/USERID";
     nodeinfo.strData = to;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/TO/NICKNAME";
     nodeinfo.strData = nickname_t;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/BROADCAST";
     nodeinfo.strData = broadcast;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/CONTENT";
     nodeinfo.strData = content;
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
-    CSimpleXml xml;
-    xml.OpenXml(strxml);
-    xml.ModifyXml(lstNodeInfo);
-    xml.GetXml(strxml);
+//here simple xml is not work
+//    CSimpleXml xml;
+//    xml.OpenXml(strxml);
+//    xml.ModifyXml(lstNodeInfo);
+//    xml.GetXml(strxml);
+    strxml = xml.GetXml();
     return strxml;
 }
 
 string CXMLBuild::TRANS_UPDATE(UserInformation user)
 {
     string strxml(xmlFind("TRANS_UPDATE.xml"));
+    CEasyXml xml;
+    xml.Open(strxml);
 
     list<XMLNODEINFO> lstNodeInfo;
     XMLNODEINFO nodeinfo;
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/USERNAME";
-    nodeinfo.strData = user.nickName.toStdString();
+    nodeinfo.strData = user.account.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/USERID";
-    nodeinfo.strData = user.userID;
+    nodeinfo.strData = QString::number(user.userID).toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
-    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/PASSWORD";
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/NICKNAME";
+    nodeinfo.strData = user.nickName.toStdString();
+    lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
+
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/NEWPASSWORD";
     nodeinfo.strData = user.password.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/SEX";
     nodeinfo.strData = user.sex.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/AGE";
-    nodeinfo.strData = user.age;
+    nodeinfo.strData = QString::number(user.age).toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/CONTACT/CELLPHONE";
     nodeinfo.strData = user.cellphone.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/CONTACT/OFFICEPHONE";
     nodeinfo.strData = user.officephone.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/CONTACT/MAIL";
     nodeinfo.strData = user.mail.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/OTHER_INFORMATION";
     nodeinfo.strData = user.other.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/DORMITORY";
     nodeinfo.strData = user.dormitory.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/DESCRIPTION";
     nodeinfo.strData = user.description.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/STATUS";
-    nodeinfo.strData = user.status;
+    nodeinfo.strData = QString::number(user.status).toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/BIRTHDAY";
     nodeinfo.strData = user.birthday.toStdString();
     lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
-    CSimpleXml xml;
-    xml.OpenXml(strxml);
-    xml.ModifyXml(lstNodeInfo);
-    xml.GetXml(strxml);
+//    CSimpleXml xml;
+//    xml.OpenXml(strxml);
+//    xml.ModifyXml(lstNodeInfo);
+//    xml.GetXml(strxml);
+    strxml = xml.GetXml();
     return strxml;
 }
 

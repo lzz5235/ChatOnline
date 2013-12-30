@@ -20,6 +20,7 @@ class CPrivateInfo : public QDialog
 public:
     explicit CPrivateInfo(CConnect *link, IMakeXml *xml, UserInformation myself, QWidget *parent = 0);
     ~CPrivateInfo();
+    void updateMyInfo(UserInformation myinfo);
 
 private:
     CConnect            *m_link;
@@ -34,6 +35,7 @@ protected:
     void mousePressEvent(QMouseEvent * ev);
     void mouseMoveEvent(QMouseEvent *ev);
     bool eventFilter(QObject *watched, QEvent *event);
+    void closeEvent(QCloseEvent *);
 
 private:
     void initWnd();
@@ -47,9 +49,10 @@ public slots:
     void clickedPastButton();
     void clickedNextButton();
     void clickedConfirm();
-    void connected2server();
-    void connect2serverFaild();
-    void readBack(string data);
+
+signals:
+    void privateClose();
+    void updatedMyInfo(UserInformation);
 };
 
 #endif // CPRIVATEINFO_H

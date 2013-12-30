@@ -25,7 +25,8 @@ protected:
     virtual void RspXmlSend(string strRsp, XMLPARA &back) = 0;
     virtual void RspXmlTest(string strRsp, XMLPARA &back) = 0;
     virtual void RspXmlResult(string strRsp, XMLPARA &back) = 0;
-
+    virtual void RspXmlLoginInfo(string strRsp, XMLPARA &back) = 0;
+    virtual void RspXmlNewUpdate(string strRsp, XMLPARA &back) = 0;
 };
 
 #endif // CXMLINTERFACE_H

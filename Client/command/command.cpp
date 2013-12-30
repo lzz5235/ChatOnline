@@ -96,6 +96,7 @@ int CCommand::parseRsp(string strRsp, XMLPARA &back)
         break;
 
     case SENDMESSAGE:
+    case GETMESSAGE:
         RspXmlSend(strRsp, back);
         break;
 
@@ -103,12 +104,16 @@ int CCommand::parseRsp(string strRsp, XMLPARA &back)
         RspXmlGetAddress(strRsp, back);
         break;
 
-    case UPDATEINFO:
-        RspXmlUpdate(strRsp, back);
-        break;
-
     case TEST:
         RspXmlTest(strRsp, back);
+        break;
+
+    case NEWUPDATE:
+        RspXmlNewUpdate(strRsp, back);
+        break;
+
+    case LOGININFO:
+        RspXmlLoginInfo(strRsp, back);
         break;
     }
     return -1;
@@ -185,10 +190,11 @@ string CCommand::xmlSend(XMLPARA &xmlSend)
     string strRecverUserId = getElement(xmlSend.mapCmdPara, USERRECVERID);
     string strRecverNickName = getElement(xmlSend.mapCmdPara, USERRECVERNAME);
 
+    string strTime = getElement(xmlSend.mapCmdPara, USERSENDTIME);
     string strContent = getElement(xmlSend.mapCmdPara, USERCONTENT);
     string strBeBroadcast = getElement(xmlSend.mapCmdPara, USERBROADCAST);
 
-    return m_xml.TRANS_SEND(strSenderUserID, strSenderNickName, strRecverUserId, strRecverNickName, strContent, strBeBroadcast);
+    return m_xml.TRANS_SEND(strSenderUserID, strSenderNickName, strRecverUserId, strRecverNickName, strContent, strTime, strBeBroadcast);
 }
 
 string CCommand::xmlLogout(XMLPARA &xmlLogout)
@@ -294,6 +300,11 @@ void CCommand::RspXmlLogin(string strRsp, XMLPARA &back)
             xml.AccessXmlNode(xmlnode, QUERY);
             mapTermInfo.insert(make_pair(USERDORMITORY, xmlnode.strData));
 
+            xmlnode.strNodeName = "MEMBER/BIRTHDAY";
+            xmlnode.strData = "";
+            xml.AccessXmlNode(xmlnode, QUERY);
+            mapTermInfo.insert(make_pair(USERBIRTHDAY, xmlnode.strData));
+
             back.lstCmdPara.push_back(mapTermInfo);
         }
     }
@@ -305,7 +316,7 @@ void CCommand::RspXmlGetAddress(string strRsp, XMLPARA &back)
     xml.OpenXml(strRsp);
     XMLNODEINFO xmlnode;
 
-    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/GET_ADDRESS/ACK";
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/ACK";
     xml.AccessXmlNode(xmlnode, QUERY);
     back.xmlBack.mapBackPara[GETADDRESSRESULT] = xmlnode.strData;
 
@@ -402,10 +413,100 @@ void CCommand::RspXmlLogout(string strRsp, XMLPARA &back)
 
 void CCommand::RspXmlSend(string strRsp, XMLPARA &back)
 {
+    CSimpleXml xml;
+    xml.OpenXml(strRsp);
+    XMLNODEINFO xmlnode;
+
+    CEasyXml eXMl;
+    eXMl.Open(strRsp);
+
+    back.xmlBack.mapBackPara[GETMESSAGERESULT] = GETMESSAGESUCCESSFUL;
+
+    map<string, string> mapTermInfo;
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/USERID";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(SENDERMESSAGEID, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/NICKNAME";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(SENDERNICKNAME, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/TO/USERID";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(RECVERMESSAGEID, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/TO/NICKNAME";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(RECVERNICKNAME, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/CONTENT";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+
+    eXMl.Query("TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/CONTENT", xmlnode.strData);
+    mapTermInfo.insert(make_pair(MESSAGECONTENT, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/BROADCAST";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(MESSAGEBROADCAST, xmlnode.strData));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/FROM/MESSAGESENDTIME";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(MESSAGESENDTIME, ConvertTimeFormat(xmlnode.strData)));
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/TO/MESSAGEARRIVETIME";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(MESSAGERECVTIME, xmlnode.strData));
+
+    back.lstCmdPara.push_back(mapTermInfo);
 
 }
 
 void  CCommand::RspXmlTest(string strRsp, XMLPARA &back)
 {
 
+}
+
+void CCommand::RspXmlLoginInfo(string strRsp, XMLPARA &back)
+{
+    CSimpleXml xml;
+    xml.OpenXml(strRsp);
+    XMLNODEINFO xmlnode;
+
+    back.xmlBack.mapBackPara[LOGININFORESULT] = LOGININFOSUCCESSFUL;
+
+    map<string, string> mapTermInfo;
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/MEMBERLIST/USERID";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(LOGININFOUSERID, xmlnode.strData));
+
+    back.lstCmdPara.push_back(mapTermInfo);
+}
+
+void CCommand::RspXmlNewUpdate(string strRsp, XMLPARA &back)
+{
+    CSimpleXml xml;
+    xml.OpenXml(strRsp);
+    XMLNODEINFO xmlnode;
+
+    back.xmlBack.mapBackPara[NEWUPDATERESULT] = NEWUPDATESUCCESSFUL;
+
+    map<string, string> mapTermInfo;
+
+    xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/MEMBERLIST/USERID";
+    xmlnode.strData = "";
+    xml.AccessXmlNode(xmlnode, QUERY);
+    mapTermInfo.insert(make_pair(NEWUPDATEUSERID, xmlnode.strData));
+
+    back.lstCmdPara.push_back(mapTermInfo);
 }

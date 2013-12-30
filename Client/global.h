@@ -1,6 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 #include <string>
+#include <list>
+#include <QString>
 using namespace std;
 
 typedef string strXml;
@@ -64,10 +66,22 @@ enum FRIENDSTATUS
     QUIT                    //quit
 };
 
+//登录状态查询函数
+static map<int, string> mpsSta2Enm;
+inline void initMpSta2Enm()
+{
+    mpsSta2Enm.insert(pair<int, string>(OFFLINE, "离线"));
+    mpsSta2Enm.insert(pair<int, string>(ONLINE, "在线"));
+    mpsSta2Enm.insert(pair<int, string>(FREE, "呼叫我吧"));
+    mpsSta2Enm.insert(pair<int, string>(BUSY, "忙碌"));
+    mpsSta2Enm.insert(pair<int, string>(LEAVE, "离开"));
+    mpsSta2Enm.insert(pair<int, string>(DISTURB, "请勿打搅"));
+}
+
 enum GENDER                 //性别
 {
     MALE = 0,
-    FEMAIL
+    FEMALE
 };
 
 enum FUTURE
@@ -75,15 +89,31 @@ enum FUTURE
     ABOUT = 1               //future buttons
 };
 
+struct recordItem
+{
+    QString sendid;
+    QString recvid;
+    QString content;
+    QString time;
+};
+
+struct historyItem
+{
+    QString userid;
+    list<recordItem> sndOrder;
+};
 
 //this is very important release must emit
 #define DEBUG 1
 
-#define ANIMATIONTIME 1000*0.5
+#define ANIMATIONTIME 1000*0.2
 
 #define allAvatar   34
 
 //self info file
 #define HISTORY    "history"
+
+//every time save history
+#define SAVEHISTORYTIME 10000
 
 #endif // GLOBAL_H

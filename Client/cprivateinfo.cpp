@@ -12,7 +12,6 @@ CPrivateInfo::CPrivateInfo(CConnect *link, IMakeXml *xml, UserInformation myself
     initWnd();
     initWidget();
     initAction();
-    //QWidget::installEventFilter(this);
 }
 
 CPrivateInfo::~CPrivateInfo()
@@ -66,6 +65,11 @@ bool CPrivateInfo::eventFilter(QObject *watched, QEvent *event)
   return false ;
 }
 
+void CPrivateInfo::closeEvent(QCloseEvent *)
+{
+    emit privateClose();
+}
+
 void CPrivateInfo::initWnd()
 {
     //drop frame
@@ -85,20 +89,42 @@ void CPrivateInfo::initWnd()
 
     //将密码栏和验证密码栏设置为密码风格
     ui->passwordLineEdit->setEchoMode(QLineEdit::Password);
+    ui->passwordLineEdit_2->setEchoMode(QLineEdit::Password);
     ui->confirmPwdLineEdit->setEchoMode(QLineEdit::Password);
+    ui->nicknameLineEdit->setText(m_userinfo.nickName);
+    ui->birthdayLineEdit->setText(m_userinfo.birthday);
+    ui->mobileNumLineEdit->setText(m_userinfo.cellphone);
+    ui->phoneNumLineEdit->setText(m_userinfo.officephone);
+    ui->cityLineEdit->setText(QString("%1 %2").arg(m_userinfo.city).arg(m_userinfo.dormitory));
+    ui->aboutTextEdit->setText(m_userinfo.description);
+    ui->mail->setText(m_userinfo.mail);
+
+    switch(m_userinfo.sex.toInt())
+    {
+    case MALE:
+        ui->sex->setCurrentIndex(MALE);
+        break;
+    case FEMALE:
+        ui->sex->setCurrentIndex(FEMALE);
+        break;
+    }
 }
 
 void CPrivateInfo::initWidget()
 {
     //头像设置
-    m_num = 1;
+    m_num = m_userinfo.avatarNumber;
     ui->avatarFrame->setObjectName("avatar");
     QString str = QString("QFrame#avatar{border-image:url(:/head/resource/head/%1.jpg)}")
-        .arg(QString::number(m_num));
+        .arg(QString::number(m_userinfo.avatarNumber));
     ui->avatarFrame->setStyleSheet(str);
     ui->avatarLabel->setAlignment(Qt::AlignCenter);
-    QString headNum = QString("1 / %1").arg(QString::number(allAvatar));
+    QString headNum = QString("%1 / %2").arg(QString::number(m_userinfo.avatarNumber)).arg(QString::number(allAvatar));
     ui->avatarLabel->setText(headNum);
+    ui->accountLineEdit->setText(m_userinfo.account);
+    ui->accountLineEdit->setReadOnly(true);
+    ui->sex->insertItem(MALE, "男");
+    ui->sex->insertItem(FEMALE, "女");
 }
 
 void CPrivateInfo::initAction()
@@ -108,7 +134,7 @@ void CPrivateInfo::initAction()
     connect(ui->pastButton, SIGNAL(clicked()), this, SLOT(clickedPastButton()));
     connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(clickedNextButton()));
     connect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(clickedConfirm()));
-
+    connect(ui->quitPushButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void CPrivateInfo::disAction()
@@ -118,6 +144,7 @@ void CPrivateInfo::disAction()
     disconnect(ui->pastButton, SIGNAL(clicked()), this, SLOT(clickedPastButton()));
     disconnect(ui->nextButton, SIGNAL(clicked()), this, SLOT(clickedNextButton()));
     disconnect(ui->pb_confirm, SIGNAL(clicked()), this, SLOT(clickedConfirm()));
+    disconnect(ui->quitPushButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void CPrivateInfo::clickedPastButton()
@@ -166,7 +193,7 @@ bool CPrivateInfo::informationRestrain()
             tr("Nickname's Format is wrong. Please try again"));
         return false;
     }
-    regExp.setPattern("^\\d{0,15}$");
+    regExp.setPattern("(^(\\d{3,4}-)\\d{7,8})$|(1[0-9]{10})");
     if(!ui->phoneNumLineEdit->text().isEmpty() &&
         !regExp.exactMatch(ui->phoneNumLineEdit->text()))
     {
@@ -219,7 +246,7 @@ bool CPrivateInfo::passwordRestrain()
         return false;
     }
 
-    if(ui->passwordLineEdit->text() != ui->confirmPwdLineEdit->text())
+    if(ui->passwordLineEdit_2->text() != ui->confirmPwdLineEdit->text())
     {
         //QMessageBox::critical(this, "Error", "两次输入密码不相同，请再试一遍");
         QMessageBox::critical(this, tr("Error"),
@@ -229,29 +256,40 @@ bool CPrivateInfo::passwordRestrain()
     return true;
 }
 
+void CPrivateInfo::updateMyInfo(UserInformation myinfo)
+{
+    m_userinfo = myinfo;
+}
+
 void CPrivateInfo::clickedConfirm()
 {
-    if(informationRestrain())
-        passwordRestrain();
-}
+    if(!informationRestrain())
+    {
+        this->show();
+        return;
+    }
+    if(!passwordRestrain())
+    {
+        this->show();
+        return;
+    }
 
-void CPrivateInfo::connected2server()
-{
-    qDebug() << "login connected successful!" << endl;
-}
+    UserInformation myself = m_userinfo;
+    myself.avatarNumber = m_num;
+    myself.birthday = ui->birthdayLineEdit->text();
+    myself.cellphone = ui->mobileNumLineEdit->text();
+    myself.nickName = ui->nicknameLineEdit->text();
+    myself.dormitory = ui->cityLineEdit->text();
+    myself.description = ui->aboutTextEdit->toPlainText();
+    myself.mail = ui->mail->text();
+    myself.officephone = ui->phoneNumLineEdit->text();
+    myself.other = ui->aboutTextEdit->toPlainText();
+    myself.age = ui->age->text().toInt();
+    if(ui->sex->currentIndex() == MALE)
+        myself.sex.setNum(MALE);
+    else
+        myself.sex.setNum(FEMALE);
 
-void CPrivateInfo::connect2serverFaild()
-{
-    qDebug() << "login connected faild" << endl;
-}
 
-void CPrivateInfo::readBack(string data)
-{
-#ifdef DEBUG
-    QMessageBox::information(NULL, ("check"),
-        ("CPrivateInfo Test to connecte to server successful, and return is %s.", data.c_str()));
-#endif
-
-
-    //m_MXml->parseRsp(data, )
+    emit updatedMyInfo(myself);
 }

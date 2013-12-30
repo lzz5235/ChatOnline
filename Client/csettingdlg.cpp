@@ -14,7 +14,6 @@ CSettingDlg::CSettingDlg(CConnect *link, IMakeXml *xml, QWidget *parent) :
     m_MXml(xml),
     m_bActive(true)
 {
-    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("GB2312"));
     ui->setupUi(this);
     initWnd();
     loadSetting();

@@ -27,11 +27,13 @@ enum cmdtype
     RESULT = 1,
     LOGIN,
     LOGIN_BACK,
+    LOGININFO,
     LOGOUT,
     SENDMESSAGE,
     GETMESSAGE,
     GETADDRESS,
     UPDATEINFO,
+    NEWUPDATE,
     TEST
 };
 
@@ -44,8 +46,9 @@ inline void initstrCMD2enumCMD()
     mpstr2enm.insert(pair<string, int>("LOGIN_BACK", LOGIN_BACK));
     mpstr2enm.insert(pair<string, int>("SEND", GETMESSAGE));
     mpstr2enm.insert(pair<string, int>("ADDRESS", GETADDRESS));
-    mpstr2enm.insert(pair<string, int>("LOGINEDINFO", LOGIN));
-    mpstr2enm.insert(pair<string, int>("NEWUPDATE", UPDATEINFO));
+    mpstr2enm.insert(pair<string, int>("LOGINEDINFO", LOGININFO));
+    mpstr2enm.insert(pair<string, int>("UPDATE", UPDATEINFO));
+    mpstr2enm.insert(pair<string, int>("NEWUPDATE", NEWUPDATE));
 }
 
 typedef cmdtype require;
@@ -141,8 +144,6 @@ enum
     GET_ALL_SUCCESS = 16,
     NO_MESSAGE = 41,                                //没有信息
     HAVE_MESSAGE = 42,                              //有信息
-    HAVE_TALK_MESSAGE = 43,
-    ALREAD_FRIENDS = 53,                            //回应好友请求
     GET_FRIEND_SUCCESS = 61,                        //获得好友资料
     GET_USER_INF_SUCCESS = 63,                      //获得（好友的）详细资料
     CHANGE_INFORMATION_SUCCESS = 64,                //改变自身资料成功
@@ -152,6 +153,7 @@ enum
 };
 
 #define OS_SYSTEM   "MAC"
+#define CODEDECODE  "GB2312"
 
 //LOGIN
 #define USERNAME    "username"
@@ -185,6 +187,8 @@ enum
 #define USERSENDERNAME  "usersendername"
 #define USERRECVERNAME  "userrecvername"
 #define USERBROADCAST   "userbroadcast"
+#define USERSENDTIME    "usersendtime"
+#define BROADCAST       "false"
 
 //GetAddress
 #define USERGETWHO      "usergetwho"
@@ -196,5 +200,29 @@ enum
 //GETADDRESS BACK
 #define GETADDRESSRESULT    "getaddressresult"
 #define GETADDRESSSUCCESSFUL    "200"
+
+//MESSAGE
+#define SENDERMESSAGEID     "sendermessageid"
+#define RECVERMESSAGEID     "recvermessageid"
+#define SENDERNICKNAME      "sendernickname"
+#define RECVERNICKNAME      "recvernickname"
+#define MESSAGECONTENT      "messagecontent"
+#define MESSAGESENDTIME     "messagesendtime"
+#define MESSAGERECVTIME     "messagerecvtime"
+#define MESSAGEBROADCAST    "messagebroadcast"
+
+//GETMESSAGE
+#define GETMESSAGERESULT    "getmessageresult"
+#define GETMESSAGESUCCESSFUL    "200"
+
+//LOGININFO
+#define LOGININFORESULT     "logininforesult"
+#define LOGININFOSUCCESSFUL     "200"
+#define LOGININFOUSERID     "logininfouserid"
+
+//NEWUPDATE
+#define NEWUPDATERESULT     "newupdateresult"
+#define NEWUPDATESUCCESSFUL "200"
+#define NEWUPDATEUSERID     "newupdateuserid"
 
 #endif // DATA_H

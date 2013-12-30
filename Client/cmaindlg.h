@@ -1,11 +1,14 @@
 #ifndef CMAINDLG_H
 #define CMAINDLG_H
 
+#include <QTimer>
+#include <QMutex>
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QMessageBox>
 #include <QSystemTrayIcon>
+#include <QPropertyAnimation>
 #include <QSignalMapper>
 #include "command/command.h"
 #include "connect/connect.h"
@@ -15,6 +18,9 @@
 #include "cchatroom.h"
 #include "caboutdlg.h"
 #include "cprivateinfo.h"
+
+class CChatRoom;
+class CFriendItem;
 
 namespace Ui {
     class CMainDlg;
@@ -74,11 +80,12 @@ private:
     void insertItem(FriendInformation &frd);
     void initMyself();
     void initMyDataDir();
+    void createHistory();
     void privateSet();
     void getMessage(string &data);
     void getAddress(string &data);
-    void getNewLogin(string &data);
-    void getNewUpdage(string &data);
+    void getloginedInfo(string &data);
+    void getNewUpdate(string &data);
     void getResult(string &data);
 
     template <typename T>
@@ -101,7 +108,14 @@ private slots:
     void showFutureWnd();
     void animationStop();
     void animationShake();
-    void initFriends();
+    void initFriends(string strWho = "-1");
+    void closePrivateDlg();
+    void saveHistory();
+    void write2File(QString, historyItem);
+    void readFromHistoryItemForSave(QFile *, recordItem);
+    void sendMessage(XMLPARA);
+    void rotateUpdateIcon();
+    void updateMyself(UserInformation);
 
 private:
     IMakeXml                            *m_MXml;
@@ -111,6 +125,15 @@ private:
     UserInformation                     *m_myself;
     QPoint                              m_Ptbefore;
     QPoint                              m_Ptcur;
+    bool                                m_privateOpen;
+    QMap<QString, historyItem>          m_allHistory;
+    QTimer                              *m_cycleSaveHistory;
+    QTimer                              *m_cycleRotateUpdateIcon;
+    QMutex                              m_mtxHistory;
+    int                                 m_iAngel;
+
+signals:
+    void getSuccessful(recordItem);
 };
 
 #endif // CMAINDLG_H
