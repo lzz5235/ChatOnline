@@ -68,6 +68,7 @@ void CServer::sendMessage(saveStruct &save)
         temp.clientSocket = save.clientSocket;
         temp.replyKind = data.loginRequest(temp.logInf, temp.friendsVec);
         QMap<QString, CClientSocket*>::iterator iter;
+        ClientSocketMap.insert(temp.logInf.account, temp.clientSocket);
         save.clientSocket->sendMessage(temp);
         if(LOGIN_SUCCESS == temp.replyKind)
             changeStatu(temp.logInf.account, temp.logInf.status);
@@ -79,7 +80,10 @@ void CServer::sendMessage(saveStruct &save)
         temp.replyKind = data.quitRequest(temp.logInf.account);
         save.clientSocket->sendMessage(temp);
         if(0 == temp.replyKind)
+        {
             changeStatu(temp.logInf.account, temp.logInf.status);
+            ClientSocketMap.remove(temp.logInf.account);
+        }
     }
     else if(GET_FRIEND_INFORMATION == temp.requestKind)
     {
