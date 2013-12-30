@@ -112,7 +112,7 @@ bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save
         {
             TiXmlElement *MEMBER = new TiXmlElement("MEMBER");
             MEMBER_LIST->LinkEndChild(MEMBER);
-            TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
+            TiXmlElement *USERNAME = new TiXmlElement("NICKNAME");
             MEMBER->LinkEndChild(USERNAME);
             TiXmlText *USERNAMETEXT = new TiXmlText(i->nickName.toStdString().c_str());
             USERNAME->LinkEndChild(USERNAMETEXT);
@@ -643,7 +643,9 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
         TiXmlText *CONTENTTEXT = new TiXmlText(save.message.text.toStdString().c_str());
         CONTENT->LinkEndChild(CONTENTTEXT);
 
-        myDocument->SaveFile(szFileName.toStdString().c_str());//保存到文件
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
     }
     catch (QString& e)
     {
@@ -702,7 +704,7 @@ bool xmlparse::Create_TRANS_LOGIN_BACK_XmlFile(QString &szFileName, saveStruct &
         {
             TiXmlElement *MEMBER = new TiXmlElement("MEMBER");
             MEMBER_LIST->LinkEndChild(MEMBER);
-            TiXmlElement *USERNAME = new TiXmlElement("USERNAME");
+            TiXmlElement *USERNAME = new TiXmlElement("NICKNAME");
             MEMBER->LinkEndChild(USERNAME);
             TiXmlText *USERNAMETEXT = new TiXmlText(i->nickName.toStdString().c_str());
             USERNAME->LinkEndChild(USERNAMETEXT);
@@ -1011,7 +1013,7 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& string,saveStruct &save)
         qDebug() << NICKNAME2->FirstChild()->Value() ;
         qDebug() << MESSAGEARRIVETIME2->FirstChild()->Value() ;
 
-        save.message.BROADCAST = QString(QLatin1String(BROADCAST->FirstChild()->Value())).toInt();
+        save.message.BROADCAST = QString(QLatin1String(BROADCAST->FirstChild()->Value()));
         save.message.text = QString(QLatin1String(CONTENT->FirstChild()->Value()));
         qDebug() << BROADCAST->FirstChild()->Value() ;
         qDebug() << CONTENT->FirstChild()->Value() ;
