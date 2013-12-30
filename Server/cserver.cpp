@@ -51,11 +51,11 @@ void CServer::friendRequest(const saveStruct &save)
     }
 }
 
-void CServer::disconnect(QString &account)
+void CServer::disconnect(saveStruct &saveinfo)
 {
-
-    ClientSocketMap.remove(account);
-    data.quitRequest(account);
+    qDebug()<<"!!!!";
+    ClientSocketMap.remove(saveinfo.message.fromfriend);
+    data.quitRequest(saveinfo.myAccount);
 }
 
 void CServer::sendMessage(saveStruct &save)
@@ -67,7 +67,7 @@ void CServer::sendMessage(saveStruct &save)
         temp.logInf = save.logInf;
         temp.clientSocket = save.clientSocket;
         temp.replyKind = data.loginRequest(temp.logInf, temp.friendsVec);
-        QMap<QString, CClientSocket*>::iterator iter;
+        //QMap<QString, CClientSocket*>::iterator iter;
         ClientSocketMap.insert(temp.friendsVec.first().nickName, temp.clientSocket);
         save.clientSocket->sendMessage(temp);
         if(LOGIN_SUCCESS == temp.replyKind)
@@ -82,6 +82,7 @@ void CServer::sendMessage(saveStruct &save)
         if(0 == temp.replyKind)
         {
             changeStatu(temp.logInf.account, temp.logInf.status);
+            data.quitRequest(temp.logInf.account);
             ClientSocketMap.remove(temp.logInf.account);
         }
     }
@@ -203,7 +204,7 @@ void CServer::incomingConnection(qintptr socketDescriptor)
     client->SetSocket(socketDescriptor);
 
     connect(client,SIGNAL(sendSignal(saveStruct&)),this,SLOT(sendMessage(saveStruct&)));
-    connect(client,SIGNAL(deleteSignal(QString&)),this,SLOT(disconnect(QString&)));
+    connect(client,SIGNAL(deleteSignal(saveStruct&)),this,SLOT(disconnect(saveStruct&)));
 }
 
 
@@ -213,13 +214,15 @@ void CServer::changeStatu(const QString &acc, qint32 status)
     temp.status = status;
     temp.peerAccount = acc;
     data.changeStatusRequest(acc, temp.status);
-    data.getFriendsAccount(acc, temp.accountVec);
+    data.getFriendsAccount(acc, temp.accountVec);//store USER  ID
 
-    QMap<QString, CClientSocket*>::iterator iter;
-    for(int i=0;i<temp.accountVec.size();i++)
+    QMap<QString, CClientSocket*>::iterator iter = ClientSocketMap.begin();
+    while(iter !=ClientSocketMap.end())
     {
-        iter = ClientSocketMap.find(temp.accountVec[i]);
-        if(iter != ClientSocketMap.end())
+        if(iter.key()!=temp.friendsVec.first().nickName)
+        {
             iter.value()->sendMessage(temp);
+        }
+        iter++;
     }
 }

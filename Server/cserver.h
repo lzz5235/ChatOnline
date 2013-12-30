@@ -25,7 +25,7 @@ public:
 signals:
     
 public slots:
-    void disconnect(QString &account);
+    void disconnect(saveStruct &saveinfo);
     void sendMessage(saveStruct &saveinfo);
 
 protected:
