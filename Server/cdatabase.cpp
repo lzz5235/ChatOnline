@@ -52,16 +52,16 @@ qint32 CDatabase::loginRequest(const LoginInformation &logInf, QVector<FriendInf
         return LOGIN_NO_ACCOUNT ;
     else if(query.value(PASSWORD).toString()!=logInf.password)
         return LOGIN_WRONG_PWD ;
-    else if(query.value(STATUS) != OFFLINE)
-    {
-        qDebug()<<query.value(ID).toString();
-        qDebug()<<query.value(NICKNAME).toString();
-        qDebug()<<query.value(ACCOUNT).toString();
-        qDebug()<<query.value(PASSWORD).toString();
-        qDebug()<<query.value(SEX).toString();
-        qDebug()<<query.value(STATUS).toString();
-        return HAVE_LOGINED;
-    }
+//    else if(query.value(STATUS) != OFFLINE)
+//    {
+//        qDebug()<<query.value(ID).toString();
+//        qDebug()<<query.value(NICKNAME).toString();
+//        qDebug()<<query.value(ACCOUNT).toString();
+//        qDebug()<<query.value(PASSWORD).toString();
+//        qDebug()<<query.value(SEX).toString();
+//        qDebug()<<query.value(STATUS).toString();
+//        return HAVE_LOGINED;
+//    }
     else
     {
         //loginSuccess(query, logInf, friendsVec);
@@ -423,15 +423,15 @@ void CDatabase::getFriendsAccount(const QString &acc, QVector<QString> &friVec)
 {
     friVec.clear();
     QSqlQuery query;
-    query.prepare("select account from user where id in(select friendid from friend where id in(select id from user where account=:acc))");
+    query.prepare("select * from user where id in(select friendid from friend where id in(select id from user where account=:acc))");
     query.bindValue(":acc", acc);
     query.exec();
     errorSQLOrder(query, "getFriendsAccount1");
 
     while(query.next())
     {
-        if(query.value(2).toInt() != 0)
-            friVec.push_back(query.value(1).toString());
+        if(query.value(ACCOUNT)!= 0)
+            friVec.push_back(query.value(ID).toString());
     }
 }
 
