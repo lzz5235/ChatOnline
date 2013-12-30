@@ -20,6 +20,7 @@ public:
     bool Create_RESULT_XmlFile(QString &szFileName);
     bool Create_NEW_UPDATE_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_BROADCAST_XmlFile(QString& szFileName,saveStruct &save);
+    bool Create_LOGINEDINFO_XmlFile(QString& szFileName,saveStruct &save);
 
 
 public:

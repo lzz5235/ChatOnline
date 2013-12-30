@@ -957,6 +957,67 @@ bool xmlparse::Create_BROADCAST_XmlFile(QString &szFileName, saveStruct &save)
     return true;
 }
 
+bool xmlparse::Create_LOGINEDINFO_XmlFile(QString &szFileName, saveStruct &save)
+{
+    try
+    {
+        TiXmlDocument *myDocument = new TiXmlDocument();
+        //创建一个根元素并连接。
+        TiXmlElement *RootElement = new TiXmlElement("TRANS_NOTIFICATION");
+        myDocument->LinkEndChild(RootElement);
+
+        TiXmlElement *HEAD = new TiXmlElement("HEAD");
+        RootElement->LinkEndChild(HEAD);
+
+        //PersonElement->SetAttribute("ID", "1");
+
+        TiXmlElement *VERSION = new TiXmlElement("VERSION");
+        TiXmlElement *MESSAGEID = new TiXmlElement("MESSAGEID");
+        TiXmlElement *TYPE = new TiXmlElement("TYPE");
+        HEAD->LinkEndChild(VERSION);
+        HEAD->LinkEndChild(MESSAGEID);
+        HEAD->LinkEndChild(TYPE);
+
+
+        TiXmlText *VERSIONTEXT = new TiXmlText("0.1");
+
+        TiXmlText *MESSAGEIDTEXT = new TiXmlText("0");
+        TiXmlText *RESULTTEXT = new TiXmlText("LOGINEDINFO");
+
+        VERSION->LinkEndChild(VERSIONTEXT);
+        MESSAGEID->LinkEndChild(MESSAGEIDTEXT);
+        TYPE->LinkEndChild(RESULTTEXT);
+
+        TiXmlElement *ACTION = new TiXmlElement("ACTION");
+        RootElement->LinkEndChild(ACTION);
+
+        TiXmlElement *MEMBERLIST = new TiXmlElement("MEMBERLIST");
+        ACTION->LinkEndChild(MEMBERLIST);
+        TiXmlElement *USERID = new TiXmlElement("USERID");
+        MEMBERLIST->LinkEndChild(USERID);
+
+//        QMap<QString,QString>::Iterator iter = save.accountMap.begin();
+//        QString temp;
+//        while(iter!=save.accountMap.end())
+//        {
+//            temp +=iter.value();
+//            temp +=",";
+//        }
+
+        TiXmlText *USERID_DATA = new TiXmlText(save.friendsVec.first().ID.toStdString().c_str());
+        USERID->LinkEndChild(USERID_DATA);
+
+        TiXmlPrinter printer;
+        myDocument->Accept(&printer);
+        szFileName = QString::fromLocal8Bit(printer.CStr(),-1);
+    }
+    catch (QString& e)
+    {
+        return false;
+    }
+    return true;
+}
+
 
 bool xmlparse::Read_TRANS_SEND_XmlFile(QString& string,saveStruct &save)
 {
