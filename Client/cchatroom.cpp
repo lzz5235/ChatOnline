@@ -66,7 +66,7 @@ void CChatRoom::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        sleep(0.1);
+        //sleep(0.1);
     }
 }
 
