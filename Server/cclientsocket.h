@@ -29,6 +29,7 @@ public slots:
         void deleteSocket();
 private:
         bool sendData(QString strData);
+        bool sendResult(QString strData);
         saveStruct save;
         int Description; // User ID
         qint16 blockSize;

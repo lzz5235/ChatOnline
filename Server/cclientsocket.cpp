@@ -116,13 +116,9 @@ void CClientSocket::sendMessage(saveStruct &temp)
     }
     else if(TALK == temp.replyKind)
     {
-        Parse.Create_RESULT_XmlFile(data);
-        qDebug() << "Result :"<<data;
-        qDebug()<<sendData(data);
-        data.clear();
-
         Parse.Create_TRANS_SEND_XmlFile(data,temp);
-        sendData(data);
+        qDebug() << data;
+        qDebug()<< sendData(data);
     }
     else if(QUIT == temp.replyKind)
     {
@@ -147,10 +143,7 @@ void CClientSocket::sendMessage(saveStruct &temp)
     }
     else if(CHECK_CONNECTION == temp.replyKind)
     {
-        Parse.Create_RESULT_XmlFile(data);
-        qDebug() << "Result :"<<data;
-        qDebug()<<sendData(data);
-        data.clear();
+        sendResult("Result");
     }
     data.clear();
 }
@@ -180,4 +173,13 @@ bool CClientSocket::sendData(QString strData)
         return true;
     else
         return false;
+}
+
+bool CClientSocket::sendResult(QString strData)
+{
+    QString data;
+    Parse.Create_RESULT_XmlFile(data);
+    qDebug() << "Result :"<<data;
+    qDebug()<<sendData(data);
+    data.clear();
 }
