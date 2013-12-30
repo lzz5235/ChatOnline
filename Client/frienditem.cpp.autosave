@@ -36,7 +36,7 @@ void CFriendItem::initWnd()
 
     m_pAnimation = new QPropertyAnimation(this, "geometry");
     QRect geo = this->geometry();
-    m_pAnimation->setDuration(5000);
+    m_pAnimation->setDuration(1000);
     m_pAnimation->setKeyValueAt(0.0,QRect(geo.x(),geo.y(),width(),height()));
     m_pAnimation->setKeyValueAt(0.25,QRect(geo.x()-2,geo.y()+2,width(),height()));
     m_pAnimation->setKeyValueAt(0.5,QRect(geo.x(),geo.y(),width(),height()));

@@ -8,6 +8,10 @@
 #include "command/data.h"
 #include "connect/connect.h"
 #include "cfrienddlg.h"
+#include "cmaindlg.h"
+#include "chistory.h"
+
+class CMainDlg;
 
 namespace Ui {
 class CChatRoom;
@@ -18,20 +22,21 @@ class CChatRoom : public QDialog
     Q_OBJECT
 
 public:
-    explicit CChatRoom(CConnect *link, IMakeXml *xml, UserInformation myself, FriendInformation frd, QWidget *parent = 0);
+    explicit CChatRoom(IMakeXml *xml, UserInformation myself, FriendInformation frd, CMainDlg *parent = 0);
     ~CChatRoom();
     bool OnClose();
 
 private:
     Ui::CChatRoom                       *ui;
-    IMakeXml                            *m_MXml;
-    CConnect                            *m_link;
     UserInformation                     m_myself;
     FriendInformation                   m_friend;
     QPoint                              m_Ptbefore;
     QPoint                              m_Ptcur;
     bool                                m_bAtClose;
     CFriendDlg                          *m_myfriendinfo;
+    CMainDlg                            *m_parent;
+    IMakeXml                            *m_xml;
+    CHistory                            *m_history;
 
 protected:
     void mousePressEvent(QMouseEvent * ev);
@@ -49,12 +54,13 @@ public:
     void friendInfo();
 
 private slots:
-    void connected2server();
-    void connect2serverFaild();
-    void readBack(string data);
+    void pressSendMessage();
+    void updateHistory(recordItem);
+    void readHistory();
 
 signals:
     void closeWnd();
+    void sendMessage(XMLPARA);
 };
 
 #endif // CCHATROOM_H

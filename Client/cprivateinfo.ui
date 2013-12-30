@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>460</width>
-    <height>668</height>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>20</x>
      <y>40</y>
-     <width>417</width>
-     <height>617</height>
+     <width>419</width>
+     <height>709</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -204,7 +204,57 @@
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="9" column="1">
+       <widget class="QLineEdit" name="age"/>
+      </item>
       <item row="7" column="1">
+       <widget class="QLineEdit" name="cityLineEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>生日：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="birthdayLineEdit"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="mobileNumLineEdit"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>住址:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="mail"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>邮箱：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="text">
+         <string>性别：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>年龄：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
        <widget class="QTextEdit" name="aboutTextEdit">
         <property name="minimumSize">
          <size>
@@ -227,9 +277,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="mobileNumLineEdit"/>
-      </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
@@ -247,42 +294,15 @@
       <item row="2" column="1">
        <widget class="QLineEdit" name="phoneNumLineEdit"/>
       </item>
-      <item row="7" column="0">
+      <item row="10" column="0">
        <widget class="QLabel" name="label_12">
         <property name="text">
          <string>个人描述：</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>生日：</string>
-        </property>
-       </widget>
-      </item>
       <item row="6" column="1">
-       <widget class="QLineEdit" name="cityLineEdit"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="birthdayLineEdit"/>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>住址:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="birthdayLineEdit_2"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>邮箱：</string>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="sex"/>
       </item>
      </layout>
     </item>

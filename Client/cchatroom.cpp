@@ -1,19 +1,22 @@
 #include "cchatroom.h"
 #include "ui_cchatroom.h"
 
-CChatRoom::CChatRoom(CConnect *link, IMakeXml *xml, UserInformation myself, FriendInformation frd, QWidget *parent) :
+CChatRoom::CChatRoom(IMakeXml *xml,
+                     UserInformation myself,
+                     FriendInformation frd,
+                     CMainDlg *parent) :
     ui(new Ui::CChatRoom),
-    m_link(link),
-    m_MXml(xml),
+    m_xml(xml),
     m_myself(myself),
     m_friend(frd),
-    m_myfriendinfo(NULL)
+    m_myfriendinfo(NULL),
+    m_parent(parent),
+    m_history(NULL)
 {
     ui->setupUi(this);
     initWnd();
     initWidget();
     initAction();
-    QWidget::installEventFilter(this);
 }
 
 CChatRoom::~CChatRoom()
@@ -130,35 +133,17 @@ void CChatRoom::initAction()
 
     //because qt showminimize() function is not work
     connect(ui->pb_min, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
-    connect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
-    connect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
-    //connect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
+    connect(ui->pb_send_2, SIGNAL(clicked()), this, SLOT(pressSendMessage()));
+    connect(ui->pb_close_3, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
+    connect(m_parent, SIGNAL(getSuccessful(recordItem)), this, SLOT(updateHistory(recordItem)));
+    connect(ui->pb_record_2, SIGNAL(clicked()), this, SLOT(readHistory()));
 }
 
 void CChatRoom::disAction()
 {
     disconnect(ui->pb_close, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
-    disconnect(m_link, SIGNAL(connectedsuccessful()), this, SLOT(connected2server()));
-    disconnect(m_link, SIGNAL(connectionFailedSignal()),this, SLOT(connect2serverFaild()));
-    //disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
-}
-
-void CChatRoom::connected2server()
-{
-
-}
-
-void CChatRoom::connect2serverFaild()
-{
-
-}
-
-void CChatRoom::readBack(string data)
-{
-#ifdef DEBUG
-    QMessageBox::information(NULL, ("check"),
-        ("CChatRoom Test to connecte to server successful, and return is %s.", data.c_str()));
-#endif
+    //because qt showminimize() function is not work
+    connect(ui->pb_min, SIGNAL(clicked()), this, SIGNAL(closeWnd()));
 }
 
 void CChatRoom::friendInfo()
@@ -179,3 +164,69 @@ void CChatRoom::friendInfo()
         m_myfriendinfo->show();
     }
 }
+
+void CChatRoom::pressSendMessage()
+{
+    QString strMessage = ui->textEdit->toPlainText();
+    if(strMessage.isEmpty())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("请输入发送内容");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+    }
+
+    XMLPARA xmlSend;
+    xmlSend.iCmdType = SENDMESSAGE;
+
+    xmlSend.mapCmdPara[USERSENDERID] = QString::number(m_myself.userID).toStdString();
+    xmlSend.mapCmdPara[USERSENDERNAME] = m_myself.nickName.toStdString();
+    xmlSend.mapCmdPara[USERRECVERID] = QString::number(m_friend.userID).toStdString();
+    xmlSend.mapCmdPara[USERRECVERNAME] = m_friend.nickName.toStdString();
+    xmlSend.mapCmdPara[USERCONTENT] = strMessage.toStdString();
+    xmlSend.mapCmdPara[USERBROADCAST] = BROADCAST;
+    xmlSend.mapCmdPara[USERSENDTIME] = GetCurrTime();
+
+    emit sendMessage(xmlSend);
+    ui->textEdit->clear();
+}
+
+void CChatRoom::updateHistory(recordItem record)
+{
+    if(record.sendid == QString::number(m_friend.userID) && record.recvid == QString::number(m_myself.userID))
+    {
+        QString qstrTime = QString(ConvertTimeFormat(record.time.toStdString()).c_str());
+        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_friend.nickName).arg(qstrTime).arg(record.content));
+    }
+    else if(record.recvid == QString::number(m_friend.userID) && record.sendid == QString::number(m_myself.userID))
+    {
+        QString qstrTime = QString(ConvertTimeFormat(record.time.toStdString()).c_str());
+        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_myself.nickName).arg(qstrTime).arg(record.content));
+    }
+}
+
+void CChatRoom::readHistory()
+{
+    qDebug() << "lock successful" << endl;
+    QString filePath = "./" + m_myself.account + "/" + QString::number(m_friend.userID);
+    qDebug() << "file name is " << filePath << endl;
+    QString history;
+    QFile infoFile(filePath);
+    if(!infoFile.exists())
+    {
+        qDebug() << "no record in this account" << endl;
+    }
+    else
+    {
+        infoFile.open( QIODevice::Text | QIODevice::ReadOnly);
+        qDebug() << "read " << filePath << "'s file" << endl;
+        QTextStream out(&infoFile);
+        //out.setCodec(CODEDECODE);
+        history = out.readAll();
+        m_history = new CHistory(m_friend, history);
+        m_history->show();
+    }
+
+}
+

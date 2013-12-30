@@ -15,7 +15,6 @@
         <file>template/MEMBER.xml</file>
         <file>template/TRANS_ADDRESS.xml</file>
         <file>template/TRANS_GET_ADDRESS.xml</file>
-        <file>template/TRANS_GET_MEMBER.xml</file>
         <file>template/TRANS_LOGIN_BACK.xml</file>
         <file>template/TRANS_LOGIN.xml</file>
         <file>template/TRANS_LOGOUT.xml</file>
@@ -28,6 +27,9 @@
         <file>resource/pic/DSBtn.png</file>
         <file>template/TRANS_UPDATE.xml</file>
         <file>resource/pic/bar.png</file>
+        <file>template/TRANS_ LOGINEDINFO.xml</file>
+        <file>template/TRANS_NEW_UPDATE.xml</file>
+        <file>template/TRANS_BROADCAST.xml</file>
     </qresource>
     <qresource prefix="/head">
         <file>resource/head/0.jpg</file>

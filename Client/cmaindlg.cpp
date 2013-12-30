@@ -7,23 +7,26 @@
 CMainDlg::CMainDlg(CConnect *link, IMakeXml *xml,  UserInformation *myself, QWidget *parent):
     QDialog(parent),
     ui(new Ui::CMainDlg),
-    m_link(link),
+    m_privateSetDlg(NULL),
     m_MXml(xml),
+    m_link(link),
     m_myself(myself),
     m_Ptbefore(QPoint(0, 0)),
-    m_privateSetDlg(NULL)
+    m_privateOpen(false),
+    m_iAngel(0)
 {
     ui->setupUi(this);
     initWnd();
     initWidget();
     initAction();
-    //主窗口需要接受所有消息,所以不用disconnect
-    //QWidget::installEventFilter(this);
+    initMpSta2Enm();
 }
 
 CMainDlg::~CMainDlg()
 {
     delete ui;
+    if(m_cycleSaveHistory)
+        delete m_cycleSaveHistory;
 }
 
 void CMainDlg::mousePressEvent(QMouseEvent * ev)
@@ -92,7 +95,7 @@ void CMainDlg::initWnd()
     setPalette(pal);
     ui->lb_top->setStyleSheet("#lb_topbar{border-image:url(:resource/pic/top_bar.png); border-radius: 4px;}");
     ui->pb_close->setStyleSheet("#pb_close{border-image:url(:resource/pic/close.png);}");
-    ui->pb_fresh->setStyleSheet("#pb_fresh{border-image:url(:resource/pic/fresh_cycle.png);}");
+    ui->pb_fresh->setStyleSheet("#pb_fresh{border-image:url(:resource/pic/main_back.png);}");
     ui->pb_setting->setStyleSheet("#pb_setting{border-image:url(:resource/pic/DSBtn.png);}");
     ui->pb_addfriend->setHidden(true);
     ui->pb_min->setStyleSheet("#pb_min{border-image:url(:resource/pic/min.png);}");
@@ -108,7 +111,7 @@ void CMainDlg::initWidget()
     ui->tb_friend->addItem(groupBox, "您的好友");
 
     //设置当前所布局的组件与四周的边界
-    layout->setContentsMargins(MARGINTOOLBUTTON, MARGINTOOLBUTTON, MARGINTOOLBUTTON, MARGINTOOLBUTTON);
+    layout->setContentsMargins(MARGINTOOLBUTTON - 5, MARGINTOOLBUTTON - 10, MARGINTOOLBUTTON, MARGINTOOLBUTTON);
 
     //居中对齐
     layout->setAlignment(Qt::AlignTop);
@@ -123,6 +126,19 @@ void CMainDlg::initWidget()
     m_animation = new QTimer(this);
     initMyself();
     initMyDataDir();
+
+    m_privateSetDlg = new CPrivateInfo(m_link, m_MXml, *m_myself);
+    m_privateSetDlg->setWindowFlags(Qt::FramelessWindowHint);
+
+    m_cycleSaveHistory = new QTimer();
+    connect(m_cycleSaveHistory, SIGNAL(timeout()), this, SLOT(saveHistory()));
+    m_cycleSaveHistory->setInterval(SAVEHISTORYTIME);
+    m_cycleSaveHistory->start();
+
+    m_cycleRotateUpdateIcon = new QTimer();
+    connect(m_cycleRotateUpdateIcon, SIGNAL(timeout()), this, SLOT(rotateUpdateIcon()));
+    m_cycleRotateUpdateIcon->setInterval(ANIMATIONTIME);
+    m_cycleRotateUpdateIcon->start();
 }
 
 void CMainDlg::initAction()
@@ -145,6 +161,8 @@ void CMainDlg::initAction()
     connect(m_acAbout, SIGNAL(triggered()), this, SLOT(furuteAbout()));
     connect(ui->pb_setting, SIGNAL(clicked()), this, SLOT(showFutureWnd()));
     connect(ui->pb_fresh, SIGNAL(clicked()), this, SLOT(initFriends()));
+    connect(m_privateSetDlg, SIGNAL(privateClose()), this, SLOT(closePrivateDlg()));
+    connect(m_privateSetDlg, SIGNAL(updatedMyInfo(UserInformation)), this, SLOT(updateMyself(UserInformation)));
 }
 
 void CMainDlg::disAction()
@@ -168,11 +186,11 @@ void CMainDlg::disAction()
     disconnect(ui->pb_setting, SIGNAL(clicked()), this, SLOT(showFutureWnd()));
 }
 
-void CMainDlg::initFriends()
+void CMainDlg::initFriends(string strWho)
 {
     XMLPARA xmlGetAddress;
     xmlGetAddress.iCmdType = GETADDRESS;
-    xmlGetAddress.mapCmdPara.insert(pair<string, string>(USERGETWHO, "-1"));
+    xmlGetAddress.mapCmdPara.insert(pair<string, string>(USERGETWHO, strWho));
     string strGetAddress = m_MXml->parseCmd2Xml(xmlGetAddress);
 
     if(m_link->getStatus() != CONNECTED)
@@ -191,19 +209,6 @@ void CMainDlg::initFriends()
         }
     }
 
-    ServerNode ser;
-    CGV gv;
-    string ip = gv.getIp();
-    string port = gv.getPort();
-    ser.Ip = ip;
-    ser.Port = port;
-    m_link->setServer(ser);
-    if(!m_link->conct2Server())
-    {
-        qDebug() << m_link->getError();
-        return;
-    }
-
     qDebug() << "send to get address " << strGetAddress.c_str() << endl;
     m_link->sendData(strGetAddress);
 }
@@ -214,22 +219,21 @@ void CMainDlg::updateFriends()
     int itemCount = layout->count();
     while(itemCount)
     {
+        disconnect(layout->itemAt(0)->widget(), SIGNAL(sendMessage(string, XMLPARA)), this, SLOT(sendMessage(string, XMLPARA)));
         delete layout->itemAt(0)->widget();
         itemCount--;
     }
-    layout->update();
     QVector<FriendInformation>::Iterator it = m_vcFriends.begin();
     while(it != m_vcFriends.end())
     {
         insertItem(*it);
         it++;
     }
-
 }
 
 void CMainDlg::insertItem(FriendInformation &frd)
 {
-    CFriendItem *item = new CFriendItem(m_link, m_MXml, frd, *m_myself, this);
+    CFriendItem *item = new CFriendItem(m_MXml, frd, *m_myself, this);
     item->setStyleSheet("QToolButton{border-style: flat;}");
     QString strHead = QString(":/head/resource/head/%1.jpg").arg(frd.avatarNumber);
     if(frd.status == OFFLINE)
@@ -248,10 +252,19 @@ void CMainDlg::insertItem(FriendInformation &frd)
     item->setIconSize(size);
     item->setAutoRaise(false);
     item->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    item->setText(frd.nickName);
-    item->setFixedSize(FRDWIDTH - 30, FRDHEIGH);
+    string status = getElement(mpsSta2Enm, frd.status);
+    item->setText(QString("%1 (%2)").arg(frd.nickName).arg(QString(status.c_str())));
+    item->setFixedSize(FRDWIDTH, FRDHEIGH);
+    item->setFocus();
+    connect(item, SIGNAL(sendMessage(XMLPARA)), this, SLOT(sendMessage(XMLPARA)));
     layout->addWidget(item);
-    m_frndMap.insert(frd.account, item);
+    m_frndMap.insert(QString::number(frd.userID), item);
+    historyItem history;
+    history.userid = frd.userID;
+
+    m_mtxHistory.tryLock(500);
+    m_allHistory.insert(QString::number(frd.userID), history);
+    m_mtxHistory.unlock();
 }
 
 void CMainDlg::close()
@@ -381,33 +394,41 @@ void CMainDlg::readBack(string data)
     {
         case GETMESSAGE:
         {
-            qDebug() << "getmessage " << endl;
+            qDebug() << "GETMESSAGE " << endl;
+            getMessage(data);
             break;
         }
 
         case GETADDRESS:
         {
-            qDebug() << "getmessage " << endl;
+            qDebug() << "GETADDRESS " << endl;
             getAddress(data);
             break;
         }
 
         case RESULT:
         {
-            qDebug() << "getmessage " << endl;
+            qDebug() << "RESULT " << endl;
             break;
         }
 
-        case LOGIN:
+        case LOGININFO:
         {
-            qDebug() << "getmessage " << endl;
+            qDebug() << "LOGININFO " << endl;
+            getloginedInfo(data);
             break;
         }
 
         case UPDATEINFO:
         {
-            qDebug() << "getmessage " << endl;
+            qDebug() << "UPDATEINFO " << endl;
             break;
+        }
+
+        case NEWUPDATE:
+        {
+            qDebug() << "NEWUPDATE" << endl;
+            getNewUpdate(data);
         }
     }
 }
@@ -478,6 +499,7 @@ void CMainDlg::ontrayIconactivated(QSystemTrayIcon::ActivationReason reason)
      switch(reason)
      {
         case QSystemTrayIcon::Trigger:
+        {
             if(this->isHidden())
             {
                 Qt::WindowFlags flags = Qt::Widget;
@@ -488,19 +510,30 @@ void CMainDlg::ontrayIconactivated(QSystemTrayIcon::ActivationReason reason)
                 this->showNormal();
             }
             break;
+        }
         case QSystemTrayIcon::DoubleClick:
+        {
             if(this->isHidden())
             {
                 setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
                 this->showNormal();
             }
-            break;
+        }
+        break;
         case QSystemTrayIcon::MiddleClick:
+         {
+            #ifdef DEBUG
             QMessageBox::information(this,"MiddleClick","trayIcon MiddleClicked!");
+            #endif
             break;
+         }
         case QSystemTrayIcon::Context:
+        {
+            #ifdef DEBUG
             QMessageBox::information(this,"Context","trayIcon Context!");
+            #endif
             break;
+        }
         default:
              break;
      }
@@ -515,12 +548,9 @@ void CMainDlg::furuteAbout()
 {
     qDebug() << "furuteAbout " << endl;
     CAboutDlg about;
+    m_mnFuture->menuAction()->setVisible(false);
     about.show();
     about.exec();
-    m_mnFuture->menuAction()->setVisible(false);
-    m_animation = new QTimer(this);
-    connect(m_animation, SIGNAL(timeout()), this, SLOT(animationShake()));
-    m_animation->start(ANIMATIONTIME);
 }
 
 void CMainDlg::showFutureWnd()
@@ -547,9 +577,17 @@ void CMainDlg::showFutureWnd()
 
 void CMainDlg::privateSet()
 {
-    m_privateSetDlg = new CPrivateInfo(m_link, m_MXml, *m_myself);
-    m_privateSetDlg->setWindowFlags(Qt::FramelessWindowHint);
-    m_privateSetDlg->show();
+    if(m_privateOpen == false)
+    {
+        m_privateSetDlg->updateMyInfo(*m_myself);
+        m_privateSetDlg->show();
+        m_privateOpen = true;
+    }
+}
+
+void CMainDlg::closePrivateDlg()
+{
+    m_privateOpen = false;
 }
 
 void CMainDlg::animationStop()
@@ -560,13 +598,96 @@ void CMainDlg::animationStop()
 void CMainDlg::animationShake()
 {
     QString strHead = QString(":/head/resource/head/28.jpg");
-    rotateWidget(m_frndMap.begin().value(), -10, strHead);
+
+    //rotateWidget(m_frndMap.begin().value(), angel[m_iAngel], strHead);
+    if(m_iAngel == 4)
+        m_iAngel = 0;
+    m_iAngel++;
+
     qDebug() << "start animation" << endl;
+}
+
+void CMainDlg::rotateUpdateIcon()
+{
+    if(m_iAngel == -360)
+    {
+        m_iAngel = 0;
+    }
+    m_iAngel -= 10;
+    QString img = ":resource/pic/fresh_cycle.png";
+    rotateWidget(ui->pb_fresh, m_iAngel, img);
+    ui->pb_fresh->update();
+}
+
+void CMainDlg::updateMyself(UserInformation myself)
+{
+    XMLPARA xmlupdate;
+    xmlupdate.iCmdType = UPDATEINFO;
+
+    xmlupdate.mapCmdPara[USERNICKNAME] = myself.nickName.toStdString();
+    xmlupdate.mapCmdPara[USERSEX] = myself.sex.toStdString();
+    xmlupdate.mapCmdPara[USERNAME] = myself.account.toStdString();
+    xmlupdate.mapCmdPara[USERID] = QString::number(myself.userID).toStdString();
+    xmlupdate.mapCmdPara[USERAGE] = QString::number(myself.age).toStdString();
+    xmlupdate.mapCmdPara[USERCELLPHONE] = myself.cellphone.toStdString();
+    xmlupdate.mapCmdPara[USEROFFICEPHONE] = myself.officephone.toStdString();
+    xmlupdate.mapCmdPara[USERMAIL] = myself.mail.toStdString();
+    xmlupdate.mapCmdPara[USEROTHER] = myself.other.toStdString();
+    xmlupdate.mapCmdPara[USERDORMITORY] = myself.dormitory.toStdString();
+    xmlupdate.mapCmdPara[USERDESCRIPTION] = myself.description.toStdString();
+    xmlupdate.mapCmdPara[USERSTATUS] = QString::number(myself.status).toStdString();
+    xmlupdate.mapCmdPara[USERBIRTHDAY] = myself.birthday.toStdString();
+    xmlupdate.mapCmdPara[USERAVATARNUM] = QString::number(myself.avatarNumber).toStdString();
+    xmlupdate.mapCmdPara[USERCITY] = myself.city.toStdString();
+
+    string xml = m_MXml->parseCmd2Xml(xmlupdate);
+    if(m_link->getStatus() != CONNECTED)
+    {
+        ServerNode ser;
+        CGV gv;
+        string ip = gv.getIp();
+        string port = gv.getPort();
+        ser.Ip = ip;
+        ser.Port = port;
+        m_link->setServer(ser);
+        if(!m_link->conct2Server())
+        {
+            qDebug() << m_link->getError();
+            return;
+        }
+    }
+
+    qDebug() << "send to update myself " << xml.c_str() << endl;
+    m_link->sendData(xml);
 }
 
 void CMainDlg::getMessage(string &data)
 {
+    XMLPARA back;
+    back.iCmdType = GETMESSAGE;
+    m_MXml->parseRsp(data, back);
 
+    if(GETMESSAGESUCCESSFUL == back.xmlBack.mapBackPara[GETMESSAGERESULT])
+    {
+        m_mtxHistory.tryLock(500);
+        list<map<string, string> >::iterator itPara = back.lstCmdPara.begin();
+        if(itPara != back.lstCmdPara.end())
+        {
+            string recvid = (*itPara)[SENDERMESSAGEID];
+            QMap<QString, historyItem>::Iterator it = m_allHistory.find(QString(recvid.c_str()));
+            recordItem record;
+            if(it != m_allHistory.end())
+            {
+                record.content = QString((*itPara)[MESSAGECONTENT].c_str());
+                record.time = QString((*itPara)[MESSAGESENDTIME].c_str());
+                record.sendid = QString((*itPara)[SENDERMESSAGEID].c_str());
+                record.recvid = QString((*itPara)[RECVERMESSAGEID].c_str());
+                it.value().sndOrder.push_back(record);
+                emit getSuccessful(record);
+            }
+        }
+        m_mtxHistory.unlock();
+    }
 }
 
 void CMainDlg::getAddress(string &data)
@@ -582,7 +703,7 @@ void CMainDlg::getAddress(string &data)
         {
             FriendInformation frd;
             frd.userID = atoi((*it)[USERID].c_str());
-            frd.nickName = QString("    %1").arg((*it)[USERNICKNAME].c_str());
+            frd.nickName = QString("%1").arg((*it)[USERNICKNAME].c_str());
             frd.age = atoi((*it)[USERAGE].c_str());
             frd.avatarNumber = atoi((*it)[USERAVATARNUM].c_str());
             frd.other = QString((*it)[USERDESCRIPTION].c_str());
@@ -604,17 +725,190 @@ void CMainDlg::getAddress(string &data)
     }
 }
 
-void CMainDlg::getNewLogin(string &data)
+void CMainDlg::getloginedInfo(string &data)
 {
+    XMLPARA xmlLoginInfo;
+    xmlLoginInfo.iCmdType = LOGININFO;
 
+    m_MXml->parseRsp(data, xmlLoginInfo);
+    if(LOGININFOSUCCESSFUL == xmlLoginInfo.xmlBack.mapBackPara[LOGININFORESULT])
+    {
+        list<map<string, string> >::iterator it = xmlLoginInfo.lstCmdPara.begin();
+        if(it != xmlLoginInfo.lstCmdPara.end())
+        {
+            string strLoginInfo = (*it)[LOGININFOUSERID];
+            initFriends(strLoginInfo);
+        }
+    }
 }
 
-void CMainDlg::getNewUpdage(string &data)
+void CMainDlg::getNewUpdate(string &data)
 {
+    XMLPARA xmlLoginInfo;
+    xmlLoginInfo.iCmdType = NEWUPDATE;
 
+    m_MXml->parseRsp(data, xmlLoginInfo);
+    if(NEWUPDATESUCCESSFUL == xmlLoginInfo.xmlBack.mapBackPara[NEWUPDATERESULT])
+    {
+        list<map<string, string> >::iterator it = xmlLoginInfo.lstCmdPara.begin();
+        if(it != xmlLoginInfo.lstCmdPara.end())
+        {
+            string strLoginInfo = (*it)[NEWUPDATEUSERID];
+            initFriends(strLoginInfo);
+        }
+    }
 }
 
 void CMainDlg::getResult(string &data)
 {
 
+}
+
+void CMainDlg::saveHistory()
+{
+    if(m_mtxHistory.tryLock(500))
+    {
+        qDebug() << "lock successful" << endl;
+        createHistory();
+        m_mtxHistory.unlock();
+        qDebug() << "unlock successful" << endl;
+        return;
+    }
+    qDebug() << "lock unsuccessful" << endl;
+}
+
+void CMainDlg::createHistory()
+{
+    QMap<QString, historyItem>::Iterator it = m_allHistory.begin();
+    while(it != m_allHistory.end())
+    {
+        QDir curDataDic(m_myself->account);
+        if(curDataDic.exists())
+        {
+            QString filePath = "./" + m_myself->account + "/" + it.key();
+            write2File(filePath, *it);
+        }
+        else
+        {
+            if(QDir::current().mkdir(m_myself->account))
+            {
+                qDebug() << "create directory successful" << endl;
+            }
+            else
+            {
+                qDebug() << "create directory faild" << endl;
+                return;
+            }
+
+            QString filePath = "./" + m_myself->account + "/" + it.key();
+            write2File(filePath, *it);
+        }
+        it.value().sndOrder.clear();
+        it++;
+    }
+}
+
+void CMainDlg::write2File(QString filePath, historyItem item)
+{
+    QFile infoFile(filePath);
+    if(!infoFile.exists())
+    {
+        infoFile.open( QIODevice::Text | QIODevice::ReadWrite);
+        qDebug() << "create file name " << filePath << endl;
+        list<recordItem>::iterator itRecord = item.sndOrder.begin();
+        while(itRecord != item.sndOrder.end())
+        {
+            recordItem record = *itRecord;
+            readFromHistoryItemForSave(&infoFile, record);
+            itRecord++;
+        }
+
+        infoFile.close();
+    }
+    else
+    {
+        infoFile.open( QIODevice::Text | QIODevice::ReadWrite);
+        qDebug() << "create file name " << filePath << endl;
+        list<recordItem>::iterator itRecord = item.sndOrder.begin();
+        while(itRecord != item.sndOrder.end())
+        {
+            recordItem record = *itRecord;
+            readFromHistoryItemForSave(&infoFile, record);
+            itRecord++;
+        }
+    }
+}
+
+void CMainDlg::readFromHistoryItemForSave(QFile *filePath, recordItem record)
+{
+    if(record.sendid.toInt() == m_myself->userID)
+    {
+        QString qstrRecord = QString("%1 %2 \n  %3 \n\n").arg(m_myself->nickName).arg(record.time).arg(record.content);
+        qDebug() << "record is " << qstrRecord << endl;
+        if(filePath->isWritable())
+        {
+            QTextStream in(filePath);
+            //in.setCodec(CODEDECODE);
+            in.seek(filePath->size());
+            in << qstrRecord;
+            //filePath->write(qstrRecord.toStdString().c_str(), qstrlen(qstrRecord.toStdString().c_str()));
+        }
+    }
+    else
+    {
+        QMap<QString, CFriendItem*>::Iterator itFindWho = m_frndMap.find(record.sendid);
+        if(itFindWho != m_frndMap.end())
+        {
+            FriendInformation frd = (*itFindWho.value()).getInformation();
+            QString qstrRecord = QString("%1 %2 \n  %3 \n\n").arg(frd.nickName).arg(record.time).arg(record.content);
+            qDebug() << "record is " << qstrRecord << endl;
+            if(filePath->isWritable())
+            {
+                QTextStream in(filePath);
+                //in.setCodec("utf-8");
+                in.seek(filePath->size());
+                in << qstrRecord;
+                //filePath->write(qstrRecord.toStdString().c_str(), qstrlen(qstrRecord.toStdString().c_str()));
+            }
+        }
+    }
+}
+
+void CMainDlg::sendMessage(XMLPARA data)
+{
+    if(m_link->getStatus() != CONNECTED)
+    {
+        ServerNode ser;
+        CGV gv;
+        string ip = gv.getIp();
+        string port = gv.getPort();
+        ser.Ip = ip;
+        ser.Port = port;
+        m_link->setServer(ser);
+        if(!m_link->conct2Server())
+        {
+            qDebug() << m_link->getError();
+            return;
+        }
+    }
+
+    string message = m_MXml->parseCmd2Xml(data);
+    qDebug() << "send message " << message.c_str() << endl;
+    if(m_link->sendData(message))
+    {
+        m_mtxHistory.tryLock(500);
+        string recvid = data.mapCmdPara[USERRECVERID];
+        QMap<QString, historyItem>::Iterator it = m_allHistory.find(QString(recvid.c_str()));
+        recordItem record;
+        if(it != m_allHistory.end())
+        {
+            record.content = QString(data.mapCmdPara[USERCONTENT].c_str());
+            record.time = QString(data.mapCmdPara[USERSENDTIME].c_str());
+            record.sendid = QString(data.mapCmdPara[USERSENDERID].c_str());
+            record.recvid = QString(recvid.c_str());
+            it.value().sndOrder.push_back(record);
+            emit getSuccessful(record);
+        }
+        m_mtxHistory.unlock();
+    }
 }

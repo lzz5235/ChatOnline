@@ -126,7 +126,7 @@ string ConvertTimeFormat(C_STR strTime)
 	LPCSTR lpstr = strTime.c_str();
 	char szTime[32];
 	memset(szTime, 0, 32);
-	sprintf(szTime, "%c%c%c%c-%c%c-%c%cT%c%c:%c%c:%c%c", lpstr[0], lpstr[1], lpstr[2], lpstr[3], 
+    sprintf(szTime, "%c%c%c%c-%c%c-%c%c %c%c:%c%c:%c%c", lpstr[0], lpstr[1], lpstr[2], lpstr[3],
 		lpstr[4], lpstr[5], 
 		lpstr[6], lpstr[7], 
 		lpstr[8], lpstr[9], 
@@ -697,6 +697,22 @@ int getElement(map<string, int> &from, string key)
     }
     else
         return -1;
+}
+
+string  getElement(map<int, string> &from, int key)
+{
+    map<int, string>::iterator it = from.begin();
+    if(it == from.end())
+        return "";
+
+    it = from.find(key);
+    if(it != from.end())
+    {
+        qDebug() << "element is " << it->second.c_str() << "type is " << it->first;
+        return it->second;
+    }
+    else
+        return "";
 }
 
 QImage convert2Gray(const QString img, QSize size)

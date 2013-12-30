@@ -178,28 +178,6 @@ void CLogin::toSettingDlg()
 
 void CLogin::submit()
 {
-//    this->hide();
-//    QVector<FriendInformation> vcFrnd;
-
-//    UserInformation *lzz1 = new UserInformation;
-//    lzz1->nickName = "王绪国";
-//    lzz1->other = "lzz";
-//    lzz1->status = 1;
-//    lzz1->avatarNumber = 8;
-
-//    FriendInformation lzz;
-//    lzz.name = "lizhaozhong";
-//    lzz.remark = "lzz";
-//    lzz.status = 1;
-//    lzz.avatarNumber = 10;
-//    vcFrnd.push_back(lzz);
-
-//    m_maindlg = new CMainDlg(m_link, m_MXml, lzz1);
-//    m_maindlg->initFriends(vcFrnd);
-//    m_maindlg->setWindowFlags(Qt::FramelessWindowHint);
-//    m_maindlg->show();
-//    m_maindlg->exec();
-
     if(!inputCheck())
     {
         return;
@@ -285,6 +263,13 @@ void CLogin::loginBack(string &data)
         m_userinfo.avatarNumber = atoi((*it)[USERAVATARNUM].c_str());
         m_userinfo.other = QString((*it)[USERDESCRIPTION].c_str());
         m_userinfo.account = ui->le_username->text();
+        m_userinfo.mail = QString((*it)[USERMAIL].c_str());
+        m_userinfo.birthday = QString((*it)[USERBIRTHDAY].c_str());
+        m_userinfo.cellphone = QString((*it)[USERCELLPHONE].c_str());
+        m_userinfo.officephone = QString((*it)[USEROFFICEPHONE].c_str());
+        m_userinfo.city = QString((*it)[USERCITY].c_str());
+        m_userinfo.dormitory = QString((*it)[USERDORMITORY].c_str());
+        m_userinfo.sex = QString((*it)[USERSEX].c_str());
         m_maindlg = new CMainDlg(m_link, m_MXml, &m_userinfo);
         m_maindlg->setWindowFlags(Qt::FramelessWindowHint);
         this->hide();
