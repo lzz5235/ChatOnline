@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QMap>
 
 class CServer;
 class CClientSocket;
@@ -124,7 +125,6 @@ struct saveStruct
         QVector<Message> messageVec;
         QVector<FriendInformation> friendsVec;
         QVector<QString> accountVec;
-
 };
 
 
