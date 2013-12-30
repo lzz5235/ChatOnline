@@ -103,49 +103,51 @@ void CClientSocket::receiveMessage()
     emit sendSignal(save);
 }
 
-void CClientSocket::sendMessage(saveStruct &temp)
+bool CClientSocket::sendMessage(saveStruct &temp)
 {
     QString data;
+    bool flag = false;
 
     if(LOGIN_SUCCESS == temp.replyKind)
     {
         //Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
         Parse.Create_TRANS_LOGIN_BACK_XmlFile(data,temp);
         qDebug()<<data;
-        sendData(data);
+        flag = sendData(data);
     }
     else if(TALK == temp.replyKind)
     {
         Parse.Create_TRANS_SEND_XmlFile(data,temp);
         qDebug() << data;
-        qDebug()<< sendData(data);
+        flag = sendData(data);
     }
     else if(QUIT == temp.replyKind)
     {
         Parse.Create_RESULT_XmlFile(data);
-        sendData(data);
+        flag = sendData(data);
     }
     else if(GET_FRIEND_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
         qDebug()<<data;
-        qDebug()<< sendData(data);
+        flag = sendData(data);
     }
     else if(GET_USER_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
-        sendData(data);
+        flag = sendData(data);
     }
     else if(CHANGE_INFORMATION == temp.replyKind)
     {
         Parse.Create_TRANS_UPDATE_XmlFile(data,temp);
-        sendData(data);
+        flag = sendData(data);
     }
     else if(CHECK_CONNECTION == temp.replyKind)
     {
-        sendResult("Result");
+        flag =  sendResult("Result");
     }
     data.clear();
+    return flag;
 }
 
 void CClientSocket::deleteSocket()

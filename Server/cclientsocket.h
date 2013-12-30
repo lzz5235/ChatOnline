@@ -13,8 +13,9 @@ class CClientSocket : public QTcpSocket
 {
     Q_OBJECT
 public:
-    explicit CClientSocket(QObject *parent = 0);
-    void SetSocket(int Descriptor);
+        explicit CClientSocket(QObject *parent = 0);
+        void SetSocket(int Descriptor);
+
 
 signals:
         void sendSignal(saveStruct &temper);
@@ -25,7 +26,7 @@ public slots:
         void clientConnected();
         void clientDisconnected();
         void receiveMessage();
-        void sendMessage(saveStruct &temper);
+        bool sendMessage(saveStruct &temper);
         void deleteSocket();
 private:
         bool sendData(QString strData);
