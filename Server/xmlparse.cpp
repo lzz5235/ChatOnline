@@ -1,5 +1,5 @@
 ﻿#ifdef _MSC_VER
-#pragma execution_character_set("utf-8")
+#pragma execution_character_set("UTF-8")
 #endif
 
 #include "xmlparse.h"
@@ -59,7 +59,7 @@ bool xmlparse::Read_Login_XmlFile(QString& string,saveStruct &save)
 
 void xmlparse::initxmlparse()
 {
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName( "GB2312" ) );
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName( "UTF-8" ) );
 }
 
 bool xmlparse::Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save)
@@ -429,18 +429,18 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         TiXmlElement *BIRTHDAY = STATUS->NextSiblingElement();
 
 
-        save.userInf.account = QString(QLatin1String(USERNAME->FirstChild()->Value()));
-        save.userInf.ID = QString(QLatin1String(USERID->FirstChild()->Value()));
-        save.userInf.sex = QString(QLatin1String(SEX->FirstChild()->Value()));
-        save.userInf.mobileNumber = QString(QLatin1String(CELLPHONE->FirstChild()->Value()));
-        save.userInf.officephone = QString(QLatin1String(OFFICEPHONE->FirstChild()->Value()));
-        save.userInf.mail = QString(QLatin1String(MAIL->FirstChild()->Value()));
-        save.userInf.dormitory = QString(QLatin1String(DORMITORY->FirstChild()->Value()));
-        save.userInf.description = QString(QLatin1String(DESCRIPTION->FirstChild()->Value()));
+        save.userInf.account = QString::fromLocal8Bit(USERNAME->FirstChild()->Value());
+        save.userInf.ID = QString::fromLocal8Bit(USERID->FirstChild()->Value());
+        save.userInf.sex = QString::fromLocal8Bit(SEX->FirstChild()->Value());
+        save.userInf.mobileNumber = QString::fromLocal8Bit(CELLPHONE->FirstChild()->Value());
+        save.userInf.officephone = QString::fromLocal8Bit(OFFICEPHONE->FirstChild()->Value());
+        save.userInf.mail = QString::fromLocal8Bit(MAIL->FirstChild()->Value());
+        save.userInf.dormitory = QString::fromLocal8Bit(DORMITORY->FirstChild()->Value());
+        save.userInf.description = QString::fromLocal8Bit(DESCRIPTION->FirstChild()->Value());
         save.userInf.status = QString(QLatin1String(STATUS->FirstChild()->Value())).toInt();
-        save.userInf.birthday = QString(QLatin1String(BIRTHDAY->FirstChild()->Value()));
-        save.userInf.nickName = QString(QLatin1String(NICKNAME->FirstChild()->Value()));
-        save.userInf.password = QString(QLatin1String(NEWPASSWD->FirstChild()->Value()));
+        save.userInf.birthday = QString::fromLocal8Bit(BIRTHDAY->FirstChild()->Value());
+        save.userInf.nickName = QString::fromLocal8Bit(NICKNAME->FirstChild()->Value());
+        save.userInf.password = QString::fromLocal8Bit(NEWPASSWD->FirstChild()->Value());
 
         qDebug() << VERSION->FirstChild()->Value() ;
         qDebug() << MESSAGEID->FirstChild()->Value() ;
@@ -545,7 +545,7 @@ bool xmlparse::Read_TRANS_LOGOUT_XmlFile(QString& string,saveStruct &save)
         qDebug() << TYPE->FirstChild()->Value() ;
         qDebug() << USERNAME->FirstChild()->Value() ;
         save.status = OFFLINE;
-        save.logInf.account = QString(QLatin1String(USERNAME->FirstChild()->Value()));
+        save.logInf.account = QString::fromLocal8Bit(USERNAME->FirstChild()->Value());
     }
     catch (QString& e)
     {
@@ -597,7 +597,7 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
 
         TiXmlElement *FROM = new TiXmlElement("FROM");
         MESSAGE->LinkEndChild(FROM);
-        TiXmlElement *To = new TiXmlElement("To");
+        TiXmlElement *To = new TiXmlElement("TO");
         MESSAGE->LinkEndChild(To);
 
 
@@ -608,7 +608,7 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
 
         TiXmlElement *NICKNAME1 = new TiXmlElement("NICKNAME");
         FROM->LinkEndChild(NICKNAME1);
-        TiXmlText *NICKNAMETEXT = new TiXmlText(save.message.fromfriend.toStdString().c_str());
+        TiXmlText *NICKNAMETEXT = new TiXmlText(save.message.fromfriend.toStdString().c_str());        
         NICKNAME1->LinkEndChild(NICKNAMETEXT);
 
         TiXmlElement *MESSAGESENDTIME1 = new TiXmlElement("MESSAGESENDTIME");
@@ -641,6 +641,9 @@ bool xmlparse::Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save)
         TiXmlElement *CONTENT = new TiXmlElement("CONTENT");
         MESSAGE->LinkEndChild(CONTENT);
         TiXmlText *CONTENTTEXT = new TiXmlText(save.message.text.toStdString().c_str());
+        qDebug()<<save.message.text;
+        //qDebug()<<save.message.text.toStdString();
+        //qdebug()<<save.message.text.toStdString().c_str();
         CONTENT->LinkEndChild(CONTENTTEXT);
 
         TiXmlPrinter printer;
@@ -1000,23 +1003,24 @@ bool xmlparse::Read_TRANS_SEND_XmlFile(QString& string,saveStruct &save)
         qDebug() << TYPE->FirstChild()->Value() ;
 
         save.message.fromfriendid = QString(QLatin1String(USERID1->FirstChild()->Value())).toInt();
-        save.message.fromfriend = QString(QLatin1String(NICKNAME1->FirstChild()->Value()));
+        save.message.fromfriend = QString::fromLocal8Bit(NICKNAME1->FirstChild()->Value());
         save.message.DateSend = QString(QLatin1String(MESSAGEARRIVETIME1->FirstChild()->Value()));
         qDebug() << USERID1->FirstChild()->Value() ;
         qDebug() << NICKNAME1->FirstChild()->Value() ;
         qDebug() << MESSAGEARRIVETIME1->FirstChild()->Value() ;
 
         save.message.tofriendid = QString(QLatin1String(USERID2->FirstChild()->Value())).toInt();
-        save.message.tofriend = QString(QLatin1String(NICKNAME2->FirstChild()->Value()));
+        save.message.tofriend = QString::fromLocal8Bit(NICKNAME2->FirstChild()->Value());
         save.message.DateRec = QString(QLatin1String(MESSAGEARRIVETIME2->FirstChild()->Value()));
         qDebug() << USERID2->FirstChild()->Value() ;
         qDebug() << NICKNAME2->FirstChild()->Value() ;
         qDebug() << MESSAGEARRIVETIME2->FirstChild()->Value() ;
 
         save.message.BROADCAST = QString(QLatin1String(BROADCAST->FirstChild()->Value()));
-        save.message.text = QString(QLatin1String(CONTENT->FirstChild()->Value()));
+        save.message.text = QString::fromLocal8Bit(CONTENT->FirstChild()->Value());
         qDebug() << BROADCAST->FirstChild()->Value() ;
         qDebug() << CONTENT->FirstChild()->Value() ;
+        qDebug() << QString::fromLocal8Bit(CONTENT->FirstChild()->Value());
 
     }
     catch (QString& e)
@@ -1037,33 +1041,33 @@ qint32 xmlparse::ReadXMLFromClient(const QString string)
     TiXmlElement *HEAD = RootElement->FirstChildElement();
     TiXmlElement *TYPE = HEAD->FirstChildElement()->NextSiblingElement()->NextSiblingElement();
 
-    if("LOGIN" ==QString(QLatin1String(TYPE->FirstChild()->Value())))
+    if("LOGIN" ==QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
         return LOGIN;
     }
-    else if ("UPDATE" == QString(QLatin1String(TYPE->FirstChild()->Value())))
+    else if ("UPDATE" == QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
         return CHANGE_INFORMATION;
     }
-    else if("SEND" == QString(QLatin1String(TYPE->FirstChild()->Value())))
+    else if("SEND" == QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
             return HAVE_MESSAGE;
     }
-    else if("GET_ADDRESS" == QString(QLatin1String(TYPE->FirstChild()->Value())))
+    else if("GET_ADDRESS" == QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
         TiXmlElement *ACTION = HEAD->NextSiblingElement();
         TiXmlElement *GET_ADDRESS = ACTION->FirstChildElement();
         qDebug()<< GET_ADDRESS->FirstChild()->Value();
-        if("-1" == QString(QLatin1String(GET_ADDRESS->FirstChild()->Value())))
+        if("-1" == QString::fromLocal8Bit(GET_ADDRESS->FirstChild()->Value()))
             return GET_FRIEND_INFORMATION;
         else
             return GET_USER_INFORMATION;
     }
-    else if("LOGOUT" == QString(QLatin1String(TYPE->FirstChild()->Value())))
+    else if("LOGOUT" == QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
         return QUIT;
     }
-    else if("TEST"==QString(QLatin1String(TYPE->FirstChild()->Value())))
+    else if("TEST"==QString::fromLocal8Bit(TYPE->FirstChild()->Value()))
     {
         return CHECK_CONNECTION;
     }
