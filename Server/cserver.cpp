@@ -96,9 +96,10 @@ void CServer::sendMessage(saveStruct &save)
     }
     else if(GET_USER_INFORMATION == temp.requestKind)
     {
-        temp.peerAccount = save.myAccount;
+        temp.myAccount = save.myAccount;
         temp.clientSocket = save.clientSocket;
-        temp.replyKind = data.getUserInfRequest(temp.peerAccount, temp.userInf);
+        temp.replyKind = GET_USER_INFORMATION;
+        data.getUserInfRequest(temp.myAccount, temp.userInf);
         save.clientSocket->sendMessage(temp);
     }
     else if(TALK == temp.requestKind)
