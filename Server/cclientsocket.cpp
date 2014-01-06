@@ -86,7 +86,7 @@ void CClientSocket::receiveMessage()
         Parse.Read_TRANS_GET_ADDRESS_XmlFile(m_data,save);
         save.requestKind = GET_USER_INFORMATION;
         save.myAccount = save.logInf.account;
-        save.peerAccount = save.logInf.account;
+//        save.peerAccount = save.logInf.account;
     }
     else if(CHECK_CONNECTION ==code)
     {
@@ -135,7 +135,8 @@ bool CClientSocket::sendMessage(saveStruct &temp)
     }
     else if(GET_USER_INFORMATION == temp.replyKind)
     {
-        Parse.Create_TRANS_ADDRESS_XmlFile(data,temp);
+        Parse.Create_TRANS_USER_ADDRESS_XmlFile(data,temp);
+        qDebug()<<data;
         flag = sendData(data);
     }
     else if(CHANGE_INFORMATION == temp.replyKind)
