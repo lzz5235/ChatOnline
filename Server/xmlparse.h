@@ -14,6 +14,7 @@ public:
 
     void initxmlparse();
     bool Create_TRANS_ADDRESS_XmlFile(QString& szFileName,saveStruct &save);
+    bool Create_TRANS_USER_ADDRESS_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_TRANS_UPDATE_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_TRANS_SEND_XmlFile(QString& szFileName,saveStruct &save);
     bool Create_TRANS_LOGIN_BACK_XmlFile(QString& szFileName,saveStruct &save);
