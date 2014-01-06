@@ -302,11 +302,11 @@ qint32 CDatabase::deleteFriendRequest(const QString &myAcc, const QString &peerA
 //    int status;
 
 //};
-qint32 CDatabase::getUserInfRequest(const QString &acc, UserInformation &userInf)
+qint32 CDatabase::getUserInfRequest(const QString &IDNumber, UserInformation &userInf)
 {
     QSqlQuery query;
-    query.prepare("select * from user where account=:acc");
-    query.bindValue(":acc", acc);
+    query.prepare("select * from user where ID=:ID");
+    query.bindValue(":ID", IDNumber);
     query.exec();
     errorSQLOrder(query, "getUserInfRequest1");
     while(query.next())
