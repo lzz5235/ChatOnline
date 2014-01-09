@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QApplication.h>
 #include "mainwindow.h"
 #include "clogin.h"
 #include "csettingdlg.h"

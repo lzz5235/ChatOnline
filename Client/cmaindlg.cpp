@@ -59,7 +59,7 @@ void CMainDlg::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.5);
+        sleep(0.5);
     }
 }
 

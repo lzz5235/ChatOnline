@@ -204,6 +204,11 @@ string CXMLBuild::TRANS_UPDATE(UserInformation user)
     lstNodeInfo.push_back(nodeinfo);
     xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/AVATARNUM";
+    nodeinfo.strData = QString::number(user.avatarNumber).toStdString();
+    lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
+
     nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/SEX";
     nodeinfo.strData = user.sex.toStdString();
     lstNodeInfo.push_back(nodeinfo);
