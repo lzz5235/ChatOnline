@@ -66,7 +66,7 @@ void CChatRoom::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.1);
+        sleep(0.1);
     }
 }
 
@@ -125,6 +125,7 @@ void CChatRoom::initWidget()
     ui->f_otherside->setStyleSheet(strIcon);
     ui->lb_friendInfo->setText(m_friend.nickName);
     ui->lb_friendInfo->setAlignment(Qt::AlignHCenter);
+    ui->te_output->setReadOnly(true);
 }
 
 void CChatRoom::initAction()
@@ -196,13 +197,11 @@ void CChatRoom::updateHistory(recordItem record)
 {
     if(record.sendid == QString::number(m_friend.userID) && record.recvid == QString::number(m_myself.userID))
     {
-        QString qstrTime = QString(ConvertTimeFormat(record.time.toStdString()).c_str());
-        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_friend.nickName).arg(qstrTime).arg(record.content));
+        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_friend.nickName).arg(record.time).arg(record.content));
     }
     else if(record.recvid == QString::number(m_friend.userID) && record.sendid == QString::number(m_myself.userID))
     {
-        QString qstrTime = QString(ConvertTimeFormat(record.time.toStdString()).c_str());
-        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_myself.nickName).arg(qstrTime).arg(record.content));
+        ui->te_output->append(QString("%1 %2:\n    %3\n").arg(m_myself.nickName).arg(record.time).arg(record.content));
     }
 }
 

@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     caboutdlg.cpp \
     cprivateinfo.cpp \
     cfrienddlg.cpp \
-    chistory.cpp
+    chistory.cpp \
+    cbulletin.cpp
 HEADERS += mainwindow.h \
     connect/connect.h \
     xml/McuMakeXMLInterface.h \
@@ -58,7 +59,8 @@ HEADERS += mainwindow.h \
     caboutdlg.h \
     cprivateinfo.h \
     cfrienddlg.h \
-    chistory.h
+    chistory.h \
+    cbulletin.h
 FORMS += \
     clogin.ui \
     csettingdlg.ui \
@@ -67,7 +69,8 @@ FORMS += \
     caboutdlg.ui \
     cprivateinfo.ui \
     cfrienddlg.ui \
-    chistory.ui
+    chistory.ui \
+    bulletin.ui
 
 RESOURCES += \
     res.qrc

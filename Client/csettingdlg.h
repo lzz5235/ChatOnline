@@ -22,7 +22,7 @@ public:
     ~CSettingDlg();
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event);
+    //bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Ui::CSettingDlg *ui;

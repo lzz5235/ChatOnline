@@ -105,6 +105,7 @@ private slots:
     void ontrayIconactivated(QSystemTrayIcon::ActivationReason reason);
     void editFinished();
     void furuteAbout();
+    void futureTest();
     void showFutureWnd();
     void animationStop();
     void animationShake();

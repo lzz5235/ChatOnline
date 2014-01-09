@@ -413,12 +413,10 @@ void CCommand::RspXmlLogout(string strRsp, XMLPARA &back)
 
 void CCommand::RspXmlSend(string strRsp, XMLPARA &back)
 {
+    qDebug() << __FUNCTION__ << strRsp.c_str() << endl;
     CSimpleXml xml;
     xml.OpenXml(strRsp);
     XMLNODEINFO xmlnode;
-
-    CEasyXml eXMl;
-    eXMl.Open(strRsp);
 
     back.xmlBack.mapBackPara[GETMESSAGERESULT] = GETMESSAGESUCCESSFUL;
 
@@ -447,8 +445,6 @@ void CCommand::RspXmlSend(string strRsp, XMLPARA &back)
     xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/CONTENT";
     xmlnode.strData = "";
     xml.AccessXmlNode(xmlnode, QUERY);
-
-    eXMl.Query("TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/CONTENT", xmlnode.strData);
     mapTermInfo.insert(make_pair(MESSAGECONTENT, xmlnode.strData));
 
     xmlnode.strNodeName = "TRANS_NOTIFICATION/ACTION/SEND/MESSAGE/BROADCAST";

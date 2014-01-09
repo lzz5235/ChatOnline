@@ -7,6 +7,7 @@
 #include "cmaindlg.h"
 #include "extern.h"
 #include <QMenu>
+#include <QStyle>
 #include <QTimer>
 #include <QToolButton>
 #include <QMessageBox>
@@ -54,7 +55,8 @@ private:
     QMenu                       *m_menu;
     CMainDlg                    *m_parent;
     IMakeXml                    *m_xml;
-    QPropertyAnimation          *m_pAnimation;
+    QTimer                      *m_msgTipTimer;
+    QSize                       m_normalIconSize;
 
 private:
     //将好友状态从数字形式转换为字符串形式
@@ -82,7 +84,8 @@ public slots:
     //修改好友状态
     void changeRemark(const QString &newRemark);
     void changeStatus(int status);
-    void startAnimation(recordItem);
+    void messageTip(recordItem);
+    void changeIcon();
 };
 
 #endif

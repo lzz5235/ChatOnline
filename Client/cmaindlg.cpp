@@ -20,6 +20,7 @@ CMainDlg::CMainDlg(CConnect *link, IMakeXml *xml,  UserInformation *myself, QWid
     initWidget();
     initAction();
     initMpSta2Enm();
+    initFriends(ALLUSER);
 }
 
 CMainDlg::~CMainDlg()
@@ -58,7 +59,7 @@ void CMainDlg::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        //sleep(0.5);
+        sleep(0.5);
     }
 }
 
@@ -159,6 +160,7 @@ void CMainDlg::initAction()
     connect(trayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(ontrayIconactivated(QSystemTrayIcon::ActivationReason)));
     connect(ui->lb_myselfinfo, SIGNAL(editingFinished()), this, SLOT(editFinished()));
     connect(m_acAbout, SIGNAL(triggered()), this, SLOT(furuteAbout()));
+    connect(m_acTest, SIGNAL(triggered()), this, SLOT(futureTest()));
     connect(ui->pb_setting, SIGNAL(clicked()), this, SLOT(showFutureWnd()));
     connect(ui->pb_fresh, SIGNAL(clicked()), this, SLOT(initFriends()));
     connect(m_privateSetDlg, SIGNAL(privateClose()), this, SLOT(closePrivateDlg()));
@@ -348,6 +350,7 @@ void CMainDlg::changeState(int n)
     ui->lb_status->setPixmap(QPixmap::fromImage(img));
 
     //here link to server change myself status
+    updateMyself(*m_myself);
 }
 
 void CMainDlg::setStatusFromInt(int n, QString &str) const
@@ -387,6 +390,7 @@ void CMainDlg::readBack(string data)
     QMessageBox::information(NULL, ("check"),
         ("Test to connecte to server successful, and return is %s.", data.c_str()));
 #endif
+    qDebug() << "return is " << data.c_str() << endl;
 
     int rtCmd = m_MXml->parseRspType(data);
     qDebug() << "maindlg back is " << rtCmd << endl;
@@ -553,6 +557,11 @@ void CMainDlg::furuteAbout()
     about.exec();
 }
 
+void CMainDlg::futureTest()
+{
+
+}
+
 void CMainDlg::showFutureWnd()
 {
     qDebug() << " m_mnFuture->show();" << endl;
@@ -663,6 +672,7 @@ void CMainDlg::updateMyself(UserInformation myself)
 
 void CMainDlg::getMessage(string &data)
 {
+    qDebug() << data.c_str() << "is return" << endl;
     XMLPARA back;
     back.iCmdType = GETMESSAGE;
     m_MXml->parseRsp(data, back);
@@ -679,6 +689,7 @@ void CMainDlg::getMessage(string &data)
             if(it != m_allHistory.end())
             {
                 record.content = QString((*itPara)[MESSAGECONTENT].c_str());
+                qDebug() << record.content << endl;
                 record.time = QString((*itPara)[MESSAGESENDTIME].c_str());
                 record.sendid = QString((*itPara)[SENDERMESSAGEID].c_str());
                 record.recvid = QString((*itPara)[RECVERMESSAGEID].c_str());
@@ -878,13 +889,6 @@ void CMainDlg::sendMessage(XMLPARA data)
 {
     if(m_link->getStatus() != CONNECTED)
     {
-        ServerNode ser;
-        CGV gv;
-        string ip = gv.getIp();
-        string port = gv.getPort();
-        ser.Ip = ip;
-        ser.Port = port;
-        m_link->setServer(ser);
         if(!m_link->conct2Server())
         {
             qDebug() << m_link->getError();
