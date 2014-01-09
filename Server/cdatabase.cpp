@@ -333,15 +333,35 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
 {
     QSqlQuery query;
 
-    query.prepare("delete from user where account=:acc");
-    query.bindValue(":acc", userInf.account);
-    query.exec();
-    errorSQLOrder(query, "changeInformationRequest1");
-    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
-                  ":officephone,:dormitory,:mail,:location,:lastlogintime,"
-                    ":registertime, :birthday,:avatarunmber )");
+//    query.prepare("delete from user where account=:acc");
+//    query.bindValue(":acc", userInf.account);
+//    query.exec();
+//    errorSQLOrder(query, "changeInformationRequest1");
+//    query.prepare("insert into user values(NULL,:name,:acc,:pwd,:sex,:description,:status,:mobilephone,"
+//                  ":officephone,:dormitory,:mail,:location,:lastlogintime,"
+//                    ":registertime, :birthday,:avatarunmber )");
+//    "id  INTEGER PRIMARY KEY,"
+//    "nickname  CHAR(18) NULL,"
+//    "account  CHAR NULL,"
+//    "password  CHAR(18) NULL,"
+//    "sex CHAR(7) NULL,"
+//    "description  LONG VARCHAR NULL,"
+//    "status  INTEGER NULL,"
+//    "mobilephone  INTEGER NULL,"
+//    "officephone  INTEGER NULL,"
+//    "dormitory  VARCHAR(20) NULL,"
+//    "mail  VARCHAR(20) NULL,"
+//    "location  VARCHAR(20) NULL,"
+//    "lastlogintime  DATE NULL,"
+//    "registertime  CHAR(18) NULL,"
+//    "birthday  INTEGER NULL,"
+//    "avatarunmber INTEGER NULL)"
+    query.prepare("update user set nickname =:name,password=:pwd,sex=:sex,description=:description,"
+                  "mobilephone=:mobilephone,officephone = :officephone,dormitory=:dormitory,mail = :mail ,"
+                  "location=:location,lastlogintime=:lastlogintime,registertime=:registertime,birthday=:birthday,"
+                  "avatarunmber=:avatarunmber where account=:acc");
     query.bindValue(":name", userInf.nickName);
-    query.bindValue(":acc", userInf.account);
+
     query.bindValue(":pwd", userInf.password);
     query.bindValue(":sex",userInf.sex);
     query.bindValue(":description", userInf.description);
@@ -354,6 +374,7 @@ qint32 CDatabase::changeInformationRequest(const UserInformation &userInf)
     query.bindValue(":registertime", userInf.registertime);
     query.bindValue(":birthday", userInf.birthday);
     query.bindValue(":avatarunmber", userInf.avatarunmber);
+    query.bindValue(":acc", userInf.account);
     query.exec();
     errorSQLOrder(query, "changeInformationRequest2");
     return CHANGE_INFORMATION_SUCCESS;
