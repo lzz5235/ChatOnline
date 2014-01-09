@@ -65,7 +65,7 @@ bool CConnect::sendData(string strData)
     out.setVersion(QDataStream::Qt_4_8);
 
     out << (qint16)0;
-    out << QString(strData.c_str());
+    out << QString::fromStdString(strData);
 
     out.device()->seek(0);
     out << (qint16)(block.size() - sizeof(qint16));

@@ -116,4 +116,10 @@ struct historyItem
 //every time save history
 #define SAVEHISTORYTIME 10000
 
+//头像闪烁的间隔时间
+#define HEADIMGSHININGTIME  500
+
+//所有的用户
+#define ALLUSER "-1"
+
 #endif // GLOBAL_H

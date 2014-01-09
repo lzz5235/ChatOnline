@@ -17,7 +17,9 @@ void preInit()
 
 int main(int argc, char *argv[])
 {
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("GB2312"));
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8"); //获取系统编码
+    QTextCodec::setCodecForLocale(codec);
+
     QApplication a(argc, argv);
     preInit();
     IMakeXml *xml = new CCommand(VERSION_2);

@@ -34,15 +34,10 @@ void CFriendItem::initWnd()
     setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
     setButtonStatus();
 
-    m_pAnimation = new QPropertyAnimation(this, "geometry");
-    QRect geo = this->geometry();
-    m_pAnimation->setDuration(5000);
-    m_pAnimation->setKeyValueAt(0.0,QRect(geo.x(),geo.y(),width(),height()));
-    m_pAnimation->setKeyValueAt(0.25,QRect(geo.x()-2,geo.y()+2,width(),height()));
-    m_pAnimation->setKeyValueAt(0.5,QRect(geo.x(),geo.y(),width(),height()));
-    m_pAnimation->setKeyValueAt(0.75,QRect(geo.x()+2,geo.y()+2,width(),height()));
-    m_pAnimation->setKeyValueAt(1.0,QRect(geo.x(),geo.y(),width(),height()));
-    m_pAnimation->start();
+    m_msgTipTimer = new QTimer(this);
+    m_msgTipTimer->setInterval(HEADIMGSHININGTIME);
+
+    m_normalIconSize = this->iconSize();
 }
 
 void CFriendItem::initWidget()
@@ -57,7 +52,8 @@ void CFriendItem::initAction()
     connect(this, SIGNAL(clicked()), this, SLOT(clickedFriendButton()));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(clickedRightButton(const QPoint &)));
     connect(m_room, SIGNAL(sendMessage(XMLPARA)), this, SIGNAL(sendMessage(XMLPARA)));
-    connect(m_parent, SIGNAL(getSuccessful(recordItem)), this, SLOT(startAnimation(recordItem)));
+    connect(m_parent, SIGNAL(getSuccessful(recordItem)), this, SLOT(messageTip(recordItem)));
+    connect(m_msgTipTimer, SIGNAL(timeout()), this, SLOT(changeIcon()));
 }
 
 void CFriendItem::disAction()
@@ -165,10 +161,11 @@ void CFriendItem::openChatRoom()
         return;
     }
 
-    if(m_pAnimation)
-        m_pAnimation->stop();
     m_room->show();
     m_isOpen = true;
+    this->setIconSize(m_normalIconSize);
+    if(m_msgTipTimer)
+        m_msgTipTimer->stop();
 }
 
 void CFriendItem::chatRoomQuit()
@@ -202,12 +199,27 @@ void CFriendItem::closeChatRoom()
 	}
 }
 
-void CFriendItem::startAnimation(recordItem record)
+void CFriendItem::messageTip(recordItem item)
 {
-    if ( NULL != m_pAnimation && record.sendid == QString::number(m_friInf.userID))
+    if(item.sendid == QString::number(m_friInf.userID))
     {
-        m_pAnimation->start();
+        m_msgTipTimer->start();
     }
 }
 
+void CFriendItem::changeIcon()
+{
+    QSize size = this->iconSize();
+    if(size == m_normalIconSize)
+    {
+        size.setHeight(AVATAR_SIZE - 30);
+        size.setWidth(AVATAR_SIZE - 30);
+        this->setIconSize(size);
+    }
+    else
+    {
+        this->setIconSize(m_normalIconSize);
+    }
+
+}
 

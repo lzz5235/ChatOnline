@@ -83,27 +83,27 @@ void CSettingDlg::disAction()
     disconnect(m_link, SIGNAL(dataIsReady(string)), this, SLOT(readBack(string)));
 }
 
-bool CSettingDlg::eventFilter(QObject *watched, QEvent *event)
-{
-  if( watched == this )
-  {
-      //窗口停用，变为不活动的窗口
-      if(QEvent::WindowDeactivate == event->type() && m_bActive == true)
-      {
-          qDebug() << "deactive status " << endl;
-          disAction();
-          m_bActive = false;
-          return true ;
-      }
-      else if(QEvent::WindowActivate == event->type() && m_bActive == false)
-      {
-          initAction();
-          m_bActive = true;
-          return false ;
-      }
-  }
-  return false ;
-}
+//bool CSettingDlg::eventFilter(QObject *watched, QEvent *event)
+//{
+//  if( watched == this )
+//  {
+//      //窗口停用，变为不活动的窗口
+//      if(QEvent::WindowDeactivate == event->type() && m_bActive == true)
+//      {
+//          qDebug() << "deactive status " << endl;
+//          disAction();
+//          m_bActive = false;
+//          return true ;
+//      }
+//      else if(QEvent::WindowActivate == event->type() && m_bActive == false)
+//      {
+//          initAction();
+//          m_bActive = true;
+//          return false ;
+//      }
+//  }
+//  return false ;
+//}
 
 bool CSettingDlg::checkServer()
 {
