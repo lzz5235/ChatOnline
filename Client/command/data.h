@@ -68,6 +68,7 @@ struct UserInformation
     int         userID;                             //用户id，主要用来传输中
     QString     account;                            //account
     QString     password;                           //password
+    QString     newpassword;                        //newpassword
     QString     nickName;                           //呢称
     int         avatarNumber;                       //headIcon
     int         status;                             //登录状态
@@ -166,6 +167,7 @@ enum
 #define USERNICKNAME    "nickname"
 #define USERID          "userid"
 #define USERPASSWORD    "userpassword"
+#define USERNEWPWD      "usernewpasswod"
 #define USERSEX         "usersex"
 #define USERAGE         "userage"
 #define USERCELLPHONE   "usercellphone"

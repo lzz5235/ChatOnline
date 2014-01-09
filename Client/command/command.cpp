@@ -160,6 +160,7 @@ string CCommand::xmlUpdate(XMLPARA &xmlUpdate)
     string strAvatarNumber = getElement(xmlUpdate.mapCmdPara, USERAVATARNUM);
     string strCity = getElement(xmlUpdate.mapCmdPara, USERCITY);
     string strPassword = getElement(xmlUpdate.mapCmdPara, USERPASSWORD);
+    string strnewpwd = getElement(xmlUpdate.mapCmdPara, USERNEWPWD);
 
     UserInformation user;
     user.account = QString(strUserName.c_str());
@@ -178,6 +179,7 @@ string CCommand::xmlUpdate(XMLPARA &xmlUpdate)
     user.sex = QString(strSex.c_str());
     user.status = QString(strStatus.c_str()).toInt();
     user.password = QString(strPassword.c_str());
+    user.newpassword = QString(strnewpwd.c_str());
 
     return m_xml.TRANS_UPDATE(user);
 }

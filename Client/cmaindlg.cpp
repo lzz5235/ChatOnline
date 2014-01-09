@@ -59,7 +59,7 @@ void CMainDlg::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        sleep(0.5);
+        //sleep(0.5);
     }
 }
 
@@ -648,6 +648,8 @@ void CMainDlg::updateMyself(UserInformation myself)
     xmlupdate.mapCmdPara[USERBIRTHDAY] = myself.birthday.toStdString();
     xmlupdate.mapCmdPara[USERAVATARNUM] = QString::number(myself.avatarNumber).toStdString();
     xmlupdate.mapCmdPara[USERCITY] = myself.city.toStdString();
+    xmlupdate.mapCmdPara[USERNEWPWD] = myself.newpassword.toStdString();
+    xmlupdate.mapCmdPara[USERPASSWORD] = myself.password.toStdString();
 
     string xml = m_MXml->parseCmd2Xml(xmlupdate);
     if(m_link->getStatus() != CONNECTED)

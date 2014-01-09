@@ -194,8 +194,13 @@ string CXMLBuild::TRANS_UPDATE(UserInformation user)
     lstNodeInfo.push_back(nodeinfo);
     xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 
-    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/NEWPASSWORD";
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/OLDPASSWORD";
     nodeinfo.strData = user.password.toStdString();
+    lstNodeInfo.push_back(nodeinfo);
+    xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
+
+    nodeinfo.strNodeName = "TRANS_NOTIFICATION/ACTION/UPDATE/NEWPASSWORD";
+    nodeinfo.strData = user.newpassword.toStdString();
     lstNodeInfo.push_back(nodeinfo);
     xml.Modify(nodeinfo.strNodeName, nodeinfo.strData);
 

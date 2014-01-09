@@ -41,7 +41,7 @@ void CPrivateInfo::mouseMoveEvent(QMouseEvent *ev)
     {
         this->move(mv->globalX() - m_Ptcur.rx(), mv->globalY() - m_Ptcur.ry());
         m_Ptbefore = mv->globalPos();
-        sleep(0.1);
+        //sleep(0.1);
     }
 }
 
@@ -176,7 +176,7 @@ void CPrivateInfo::clickedNextButton()
 bool CPrivateInfo::informationRestrain()
 {
     QRegExp regExp;
-    regExp.setPattern("^[A-Za-z][A-Za-z0-9]{5,19}$");
+    regExp.setPattern("^[A-Za-z][A-Za-z0-9]{2,19}$");
     if(!regExp.exactMatch(ui->accountLineEdit->text()))
     {
         //QMessageBox::critical(this, "Error", "帐号格式错误，请再试一遍");
@@ -285,6 +285,8 @@ void CPrivateInfo::clickedConfirm()
     myself.officephone = ui->phoneNumLineEdit->text();
     myself.other = ui->aboutTextEdit->toPlainText();
     myself.age = ui->age->text().toInt();
+    myself.newpassword = ui->passwordLineEdit_2->text();
+    myself.password = ui->passwordLineEdit->text();
     if(ui->sex->currentIndex() == MALE)
         myself.sex.setNum(MALE);
     else
