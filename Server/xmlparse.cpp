@@ -537,8 +537,9 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
 
 
         TiXmlElement *SEX = NICKNAME->NextSiblingElement();
+        TiXmlElement *AGE = SEX->NextSiblingElement();
 
-        TiXmlElement *CONTACT = SEX->NextSiblingElement();
+        TiXmlElement *CONTACT = AGE->NextSiblingElement();
 
         TiXmlElement *CELLPHONE = CONTACT->FirstChildElement();
         TiXmlElement *OFFICEPHONE = CELLPHONE->NextSiblingElement();
@@ -561,6 +562,7 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         save.userInf.account = QString::fromLocal8Bit(USERNAME->FirstChild()->Value());
         save.userInf.ID = QString::fromLocal8Bit(USERID->FirstChild()->Value());
         save.userInf.sex = QString::fromLocal8Bit(SEX->FirstChild()->Value());
+        //save.userInf.age
         save.userInf.mobileNumber = QString::fromLocal8Bit(CELLPHONE->FirstChild()->Value());
         save.userInf.officephone = QString::fromLocal8Bit(OFFICEPHONE->FirstChild()->Value());
         save.userInf.mail = QString::fromLocal8Bit(MAIL->FirstChild()->Value());
@@ -580,10 +582,11 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         qDebug() << NEWPASSWD->FirstChild()->Value();
         qDebug() << NICKNAME->FirstChild()->Value();
         qDebug() << SEX->FirstChild()->Value() ;
+        qDebug() << AGE->FirstChild()->Value() ;
         qDebug() << CELLPHONE->FirstChild()->Value() ;
         qDebug() << OFFICEPHONE->FirstChild()->Value() ;
         qDebug() << TYPE->FirstChild()->Value() ;
-        qDebug() << CONTENT->FirstChild()->Value() ;
+        //qDebug() << CONTENT->FirstChild()->Value() ;
         qDebug() << MAIL->FirstChild()->Value() ;
         qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
         qDebug() << DORMITORY->FirstChild()->Value() ;
