@@ -6,6 +6,7 @@
 #include "protocol.h"
 
 #define PATH "/home/lzz/Notification.db"
+//#define PATH "/tmp/Notification.db"
 //#define PATH "/Users/huddy1985/Desktop/Notification/ChatOnline/build-Server-Desktop_Qt_5_0_2_clang_64bit-Debug/Server.app/Contents/Notification.db"
 
 
