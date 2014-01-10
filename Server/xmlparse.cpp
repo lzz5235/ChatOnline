@@ -534,9 +534,10 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         TiXmlElement *OLDPASSWD = USERID->NextSiblingElement();
         TiXmlElement *NEWPASSWD = OLDPASSWD->NextSiblingElement();
         TiXmlElement *NICKNAME = NEWPASSWD->NextSiblingElement();
+        TiXmlElement *AVATARNUM = NICKNAME->NextSiblingElement();
 
 
-        TiXmlElement *SEX = NICKNAME->NextSiblingElement();
+        TiXmlElement *SEX = AVATARNUM->NextSiblingElement();
         TiXmlElement *AGE = SEX->NextSiblingElement();
 
         TiXmlElement *CONTACT = AGE->NextSiblingElement();
@@ -562,7 +563,7 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         save.userInf.account = QString::fromLocal8Bit(USERNAME->FirstChild()->Value());
         save.userInf.ID = QString::fromLocal8Bit(USERID->FirstChild()->Value());
         save.userInf.sex = QString::fromLocal8Bit(SEX->FirstChild()->Value());
-        //save.userInf.age
+        save.userInf.avatarunmber = QString::fromLocal8Bit(AVATARNUM->FirstChild()->Value());
         save.userInf.mobileNumber = QString::fromLocal8Bit(CELLPHONE->FirstChild()->Value());
         save.userInf.officephone = QString::fromLocal8Bit(OFFICEPHONE->FirstChild()->Value());
         save.userInf.mail = QString::fromLocal8Bit(MAIL->FirstChild()->Value());
@@ -573,26 +574,26 @@ bool xmlparse::Read_TRANS_UPDATE_XmlFile(QString &string, saveStruct &save)
         save.userInf.nickName = QString::fromLocal8Bit(NICKNAME->FirstChild()->Value());
         save.userInf.password = QString::fromLocal8Bit(NEWPASSWD->FirstChild()->Value());
 
-        qDebug() << VERSION->FirstChild()->Value() ;
-        qDebug() << MESSAGEID->FirstChild()->Value() ;
-        qDebug() << _TYPE->FirstChild()->Value() ;
-        qDebug() << USERNAME->FirstChild()->Value() ;
-        qDebug() << USERID->FirstChild()->Value() ;
-        qDebug() << OLDPASSWD->FirstChild()->Value();
-        qDebug() << NEWPASSWD->FirstChild()->Value();
-        qDebug() << NICKNAME->FirstChild()->Value();
-        qDebug() << SEX->FirstChild()->Value() ;
-        qDebug() << AGE->FirstChild()->Value() ;
-        qDebug() << CELLPHONE->FirstChild()->Value() ;
-        qDebug() << OFFICEPHONE->FirstChild()->Value() ;
-        qDebug() << TYPE->FirstChild()->Value() ;
-        //qDebug() << CONTENT->FirstChild()->Value() ;
-        qDebug() << MAIL->FirstChild()->Value() ;
-        qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
-        qDebug() << DORMITORY->FirstChild()->Value() ;
-        qDebug() << DESCRIPTION->FirstChild()->Value() ;
-        qDebug() << STATUS->FirstChild()->Value() ;
-        qDebug() << BIRTHDAY->FirstChild()->Value() ;
+//        qDebug() << VERSION->FirstChild()->Value() ;
+//        qDebug() << MESSAGEID->FirstChild()->Value() ;
+//        qDebug() << _TYPE->FirstChild()->Value() ;
+//        qDebug() << USERNAME->FirstChild()->Value() ;
+//        qDebug() << USERID->FirstChild()->Value() ;
+//        qDebug() << OLDPASSWD->FirstChild()->Value();
+//        qDebug() << NEWPASSWD->FirstChild()->Value();
+//        qDebug() << NICKNAME->FirstChild()->Value();
+//        qDebug() << SEX->FirstChild()->Value() ;
+//        qDebug() << AGE->FirstChild()->Value() ;
+//        qDebug() << CELLPHONE->FirstChild()->Value() ;
+//        qDebug() << OFFICEPHONE->FirstChild()->Value() ;
+//        qDebug() << TYPE->FirstChild()->Value() ;
+//        //qDebug() << CONTENT->FirstChild()->Value() ;
+//        qDebug() << MAIL->FirstChild()->Value() ;
+//        qDebug() << OTHER_INFORMATION->FirstChild()->Value() ;
+//        qDebug() << DORMITORY->FirstChild()->Value() ;
+//        qDebug() << DESCRIPTION->FirstChild()->Value() ;
+//        qDebug() << STATUS->FirstChild()->Value() ;
+//        qDebug() << BIRTHDAY->FirstChild()->Value() ;
 
     }
     catch (QString& e)
@@ -898,13 +899,19 @@ bool xmlparse::Create_TRANS_LOGIN_BACK_XmlFile(QString &szFileName, saveStruct &
 
             TiXmlElement *OTHER_INFORMATION = new TiXmlElement("OTHER_INFORMATION");
             MEMBER->LinkEndChild(OTHER_INFORMATION);
-            TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText("none");
+            TiXmlText *OTHER_INFORMATIONTEXT = new TiXmlText(i->description.toStdString().c_str());
             OTHER_INFORMATION->LinkEndChild(OTHER_INFORMATIONTEXT);
 
             TiXmlElement *DORMITORY = new TiXmlElement("DORMITORY");
             MEMBER->LinkEndChild(DORMITORY);
-            TiXmlText *DORMITORYTEXT = new TiXmlText("none");
+            TiXmlText *DORMITORYTEXT = new TiXmlText(i->dormitory.toStdString().c_str());
             DORMITORY->LinkEndChild(DORMITORYTEXT);
+
+            TiXmlElement *BIRTHDAY = new TiXmlElement("BIRTHDAY");
+            MEMBER->LinkEndChild(BIRTHDAY);
+            TiXmlText *BIRTHDAYTEXT = new TiXmlText(i->birthday.toStdString().c_str());
+            BIRTHDAY->LinkEndChild(BIRTHDAYTEXT);
+
             i++;
         }
         TiXmlPrinter printer;
