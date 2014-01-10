@@ -124,9 +124,12 @@ void CServer::sendMessage(saveStruct &save)
     else if(CHANGE_INFORMATION == temp.requestKind)
     {
         temp.userInf = save.userInf;
-        temp.replyKind = data.changeInformationRequest(temp.userInf);
+        temp.replyKind =  data.changeInformationRequest(temp.userInf);
+        temp.clientSocket = save.clientSocket;
+        if(CHANGE_INFORMATION_SUCCESS == temp.replyKind)
+            temp.clientSocket->sendMessage(temp);
         QMap<QString, CClientSocket*>::iterator iter;
-
+        temp.replyKind = CHANGE_INFORMATION;
         for(iter=ClientSocketMap.begin();iter!=ClientSocketMap.end();iter++)
         {
            iter.value()->sendMessage(temp);
