@@ -153,6 +153,10 @@ bool CClientSocket::sendMessage(saveStruct &temp)
         Parse.Create_LOGINEDINFO_XmlFile(data,temp);
         flag = sendData(data);
     }
+    else if(CHANGE_INFORMATION_SUCCESS ==temp.replyKind)
+    {
+        flag =  sendResult("Result");
+    }
     data.clear();
     return flag;
 }
